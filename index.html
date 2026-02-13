@@ -1,0 +1,3032 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>KC Jain Advocate - Supreme Court Lawyer (Enhanced)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ---------- ORIGINAL CSS - FULLY INTACT, ONLY ENHANCED & FIXED ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Scroll Progress - enhanced */
+        #scrollProgress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #1a3a5f, #4a90e2);
+            z-index: 1001;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(74,144,226,0.5);
+        }
+
+        /* Loading Overlay */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1002;
+            flex-direction: column;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #e4edf5;
+            border-top: 5px solid #1a3a5f;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Header & Navigation - enhanced */
+        header {
+            background: linear-gradient(135deg, #1a3a5f 0%, #2c5282 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            color: #4a90e2;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .logo h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-tagline {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 2px;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            position: relative;
+        }
+
+        nav a:hover, nav a.active {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        nav a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: #4a90e2;
+            border-radius: 2px;
+        }
+
+        #mobileMenuBtn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Hero Section - enhanced */
+        .hero-section {
+            background: linear-gradient(rgba(26, 58, 95, 0.9), rgba(26, 58, 95, 0.9)), url('https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 60px 0 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 4px solid #4a90e2;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .hero-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        /* ===== PROFILE SECTION - IMAGE LEFT, TEXT RIGHT (FULLY RESPONSIVE) ===== */
+        .profile-container {
+            max-width: 1000px;
+            margin: 30px auto 0;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(12px);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.25);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .profile-image-wrapper {
+            flex: 0 0 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-image-wrapper img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            transition: transform 0.3s ease;
+        }
+        
+        .profile-image-wrapper img:hover {
+            transform: scale(1.02);
+        }
+        
+        .profile-content-right {
+            flex: 1;
+            text-align: left;
+            padding: 15px 20px;
+        }
+
+        /* JUSTICE INTEGRITY EXCELLENCE TEXT - RIGHT SIDE */
+        .profile-motto {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.9rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 4px;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            margin-bottom: 25px;
+            line-height: 1.3;
+        }
+        
+        .profile-motto span {
+            display: inline-block;
+            padding: 0 8px;
+            color: #ffd966;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin: 0 2px;
+        }
+
+        .profile-upload-btn {
+            margin-top: 20px;
+        }
+
+        /* ---------- RESPONSIVE FIX: MOBILE PE IMAGE UPAR, TEXT NICHE ---------- */
+        @media screen and (max-width: 768px) {
+            .profile-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+                padding: 30px 20px;
+            }
+            
+            .profile-image-wrapper {
+                flex: 0 0 auto;
+                width: 100%;
+            }
+            
+            .profile-image-wrapper img {
+                width: 180px;
+                height: 180px;
+                margin: 0 auto;
+            }
+            
+            .profile-content-right {
+                text-align: center;
+                width: 100%;
+                padding: 10px 5px;
+            }
+            
+            .profile-motto {
+                font-size: 1.6rem;
+                letter-spacing: 2px;
+            }
+            
+            .profile-motto span {
+                display: inline-block;
+                margin: 5px 2px;
+            }
+            
+            .hero-content h2 {
+                font-size: 2.2rem;
+            }
+            
+            .hero-content p {
+                font-size: 1rem;
+                padding: 15px;
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .profile-motto {
+                font-size: 1.3rem;
+                letter-spacing: 1px;
+            }
+            
+            .profile-motto span {
+                padding: 0 5px;
+            }
+            
+            .profile-image-wrapper img {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .hero-content h2 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* Stats Cards - enhanced */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #1a3a5f;
+            border-bottom: 4px solid transparent;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(26,58,95,0.15);
+            border-bottom: 4px solid #4a90e2;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            color: #4a90e2;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1a3a5f;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Content Sections - enhanced */
+        .content-section {
+            margin-bottom: 50px;
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(74,144,226,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eaeaea;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #1a3a5f;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #4a90e2;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            width: 300px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        /* Content Cards Grid - enhanced */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            border: 1px solid #eaeaea;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 16px 30px rgba(26,58,95,0.12);
+            border-color: #4a90e2;
+        }
+
+        .card-media {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .card-image, .card-video-thumb {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .video-play-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .video-play-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .content-card:hover .card-image,
+        .content-card:hover .card-video-thumb {
+            transform: scale(1.05);
+        }
+
+        .card-header {
+            padding: 20px 20px 10px;
+            position: relative;
+        }
+
+        .card-category {
+            display: inline-block;
+            padding: 5px 12px;
+            background: #1a3a5f;
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .card-date {
+            color: #666;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .card-body {
+            padding: 0 20px 15px;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            color: #1a3a5f;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .card-text {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .read-more-btn {
+            background: none;
+            border: none;
+            color: #4a90e2;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 5px 0;
+            margin-top: 5px;
+        }
+
+        .card-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #eaeaea;
+            display: flex;
+            justify-content: flex-end;
+            background: #f8f9fa;
+        }
+
+        /* ADMIN PANEL - HIDDEN ON LOAD (FIXED) */
+        .admin-panel {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid #dee2e6;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: none;
+        }
+
+        .admin-panel.visible {
+            display: block;
+        }
+
+        /* QR PREVIEW - HIDDEN ON LOAD (FIXED) */
+        .qr-preview {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .qr-preview.visible {
+            display: block;
+        }
+
+        /* Rest of the CSS - EXACTLY ORIGINAL */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .required::after {
+            content: '*';
+            color: #dc3545;
+            margin-left: 3px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .file-upload {
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #4a90e2;
+            background: #f8f9fa;
+        }
+
+        .file-upload i {
+            font-size: 2rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        /* Buttons - enhanced */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1a3a5f 0%, #2c5282 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2c5282 0%, #3c72b2 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(26, 58, 95, 0.2);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #20c997 0%, #1ea079 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #b21f2d 100%);
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: linear-gradient(135deg, #138496 0%, #11707f 100%);
+            transform: translateY(-2px);
+        }
+
+        .admin-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .delete-item-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .delete-item-btn:hover {
+            background: #c82333;
+        }
+
+        /* QR System */
+        .qr-display {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        #qr-code-img {
+            width: 200px;
+            height: 200px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background: white;
+        }
+
+        .qr-data {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .qr-data-row {
+            display: flex;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .qr-data-label {
+            flex: 0 0 150px;
+            font-weight: 600;
+            color: #1a3a5f;
+        }
+
+        .qr-data-value {
+            flex: 1;
+            color: #555;
+        }
+
+        /* QR History Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .qr-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .qr-table th, .qr-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .qr-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #1a3a5f;
+        }
+
+        .qr-table tr:hover {
+            background: #f5f7fa;
+        }
+
+        .qr-small {
+            width: 60px;
+            height: 60px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 3px;
+            background: white;
+        }
+
+        /* Toast Notifications */
+        #toastContainer {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1003;
+        }
+
+        .toast {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            border-left: 4px solid #4a90e2;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left-color: #28a745;
+        }
+
+        .toast.error {
+            border-left-color: #dc3545;
+        }
+
+        .toast.warning {
+            border-left-color: #ffc107;
+        }
+
+        .toast.info {
+            border-left-color: #17a2b8;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1004;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-content img, .modal-content video {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal:hover {
+            background: rgba(0, 0, 0, 0.9);
+            transform: scale(1.1);
+        }
+
+        /* Filter Buttons */
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: #1a3a5f;
+            color: white;
+            border-color: #1a3a5f;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
+
+        .empty-state h3 {
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        /* Footer - enhanced */
+        footer {
+            background: #1a3a5f;
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #4a90e2;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #4a90e2;
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #4a90e2;
+        }
+
+        .copyright {
+            text-align: center;
+            padding: 20px;
+            background: #0f2640;
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design - COMPLETE FIX */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: 10px;
+                margin-top: 15px;
+            }
+
+            nav.active {
+                display: flex;
+            }
+
+            #mobileMenuBtn {
+                display: block;
+                position: absolute;
+                right: 20px;
+                top: 20px;
+            }
+
+            .hero-content h2 {
+                font-size: 2rem;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .qr-display {
+                flex-direction: column;
+            }
+
+            #qr-code-img {
+                align-self: center;
+            }
+
+            .qr-data-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .qr-data-label {
+                flex: none;
+            }
+            
+            /* Profile responsive already handled above */
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h2 {
+                font-size: 1.6rem;
+            }
+            
+            .hero-content p {
+                font-size: 0.95rem;
+            }
+            
+            .stat-card {
+                padding: 20px 15px;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .content-section {
+                padding: 20px 15px;
+            }
+        }
+
+        /* ---------- ENHANCEMENTS: ADDED FOR BETTER UX ---------- */
+        .profile-edit-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .profile-edit-btn:hover {
+            background: white;
+            color: #1a3a5f;
+        }
+        .btn-preview {
+            background: #1a3a5f;
+            color: white;
+            border: 1px solid #4a90e2;
+        }
+        .btn-preview:hover {
+            background: #0f2640;
+        }
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll Progress -->
+    <div id="scrollProgress"></div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Loading content...</p>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-balance-scale logo-icon"></i>
+                <div>
+                    <h1>KC Jain Advocate</h1>
+                    <div class="logo-tagline">Supreme Court Lawyer</div>
+                </div>
+            </div>
+            
+            <button id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav id="navMenu">
+                <a href="#home" class="active"><i class="fas fa-home"></i> Home</a>
+                <a href="#profile"><i class="fas fa-user"></i> Profile</a>
+                <a href="#cases"><i class="fas fa-gavel"></i> Cases</a>
+                <a href="#posts"><i class="fas fa-newspaper"></i> Posts</a>
+                <a href="#blogs"><i class="fas fa-blog"></i> Blogs</a>
+                <a href="#announcements"><i class="fas fa-bullhorn"></i> Announcements</a>
+                <a href="#qr-system-section" id="openQRFormMenu"><i class="fas fa-qrcode"></i> Tree QR System</a>
+                <a href="#admin" id="openAdminMenu"><i class="fas fa-cog"></i> Admin Panel</a>
+                <a href="#contact"><i class="fas fa-envelope"></i> Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="home">
+        <div class="hero-content">
+            <!-- LEFT: Profile Image -->
+            <div class="profile-image-wrapper">
+                <img id="profile-image" src="https://drive.google.com/uc?export=download&id=1F3kOJLQjVEU3Ba3HZ1FsIswi4HCVP04Q" alt="KC Jain Advocate">
+                <button class="profile-edit-btn" onclick="document.getElementById('profile-upload').click()">
+                    <i class="fas fa-camera"></i> Change Photo
+                </button>
+                <input type="file" id="profile-upload" accept="image/*" style="display: none;">
+            </div>
+            <!-- RIGHT: Justice Integrity Excellence Text + Button -->
+            <div class="profile-content-right">
+                <div class="profile-motto">
+                    <span>JUSTICE</span> · <span>INTEGRITY</span> · <span>EXCELLENCE</span>
+                </div>
+                <p>With over 36 years of experience in Supreme Court litigation, KC Jain Advocate specializes in PIL, Environmental Law, and Constitutional matters. Committed to delivering justice with utmost dedication and expertise.</p>
+                <a href="#contact" class="btn btn-primary" style="margin-top: 15px;"><i class="fas fa-phone-alt"></i> Schedule Consultation</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Stats Section -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-gavel stat-icon"></i>
+                <div class="stat-number" id="cases-count">0</div>
+                <div class="stat-label">Landmark Cases</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-newspaper stat-icon"></i>
+                <div class="stat-number" id="posts-count">0</div>
+                <div class="stat-label">Legal Posts</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-blog stat-icon"></i>
+                <div class="stat-number" id="blogs-count">0</div>
+                <div class="stat-label">Blog Articles</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-bullhorn stat-icon"></i>
+                <div class="stat-number" id="announcements-count">0</div>
+                <div class="stat-label">Announcements</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-qrcode stat-icon"></i>
+                <div class="stat-number" id="qr-count">0</div>
+                <div class="stat-label">Tree QR Codes</div>
+            </div>
+        </section>
+
+        <!-- Admin Panel Section -->
+        <section class="content-section" id="admin">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-cog"></i> Admin Panel</h2>
+                <div>
+                    <button id="close-admin" class="btn btn-danger" style="display: none;">
+                        <i class="fas fa-times"></i> Close Panel
+                    </button>
+                    <button id="refresh-content" class="btn btn-secondary">
+                        <i class="fas fa-sync"></i> Refresh
+                    </button>
+                    <button id="demo-preview-btn" class="btn btn-info" style="margin-left: 10px;">
+                        <i class="fas fa-eye"></i> Preview Demo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Admin Panel - HIDDEN ON LOAD (display: none in CSS) -->
+            <div class="admin-panel" id="adminPanel">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="content-type" class="required"><i class="fas fa-tag"></i> Content Type</label>
+                        <select id="content-type" class="form-control">
+                            <option value="case">Case Study</option>
+                            <option value="post">Legal Post</option>
+                            <option value="blog">Blog Article</option>
+                            <option value="announcement">Announcement</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="content-category" class="required"><i class="fas fa-folder"></i> Category</label>
+                        <input type="text" id="content-category" class="form-control" placeholder="e.g., PIL, Environment, RTI">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="content-title" class="required"><i class="fas fa-heading"></i> Title</label>
+                    <input type="text" id="content-title" class="form-control" placeholder="Enter title...">
+                </div>
+
+                <div class="form-group">
+                    <label for="content-text" class="required"><i class="fas fa-file-alt"></i> Content</label>
+                    <textarea id="content-text" class="form-control" placeholder="Enter content..." rows="8"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="content-image-upload"><i class="fas fa-image"></i> Upload Image</label>
+                        <div class="file-upload" onclick="document.getElementById('content-image-upload').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Click to upload image</p>
+                            <small>Max size: 5MB (JPG, PNG, GIF)</small>
+                            <input type="file" id="content-image-upload" accept="image/*">
+                        </div>
+                        <div id="image-preview" style="margin-top: 10px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="content-video-upload"><i class="fas fa-video"></i> Upload Video</label>
+                        <div class="file-upload" onclick="document.getElementById('content-video-upload').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Click to upload video</p>
+                            <small>Max size: 20MB (MP4, MOV)</small>
+                            <input type="file" id="content-video-upload" accept="video/*">
+                        </div>
+                        <div id="video-preview" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="content-image-url"><i class="fas fa-link"></i> OR Image URL</label>
+                    <input type="url" id="content-image-url" class="form-control" placeholder="https://drive.google.com/file/d/...">
+                </div>
+
+                <div class="form-group">
+                    <label for="content-video-url"><i class="fas fa-link"></i> OR Video URL</label>
+                    <input type="url" id="content-video-url" class="form-control" placeholder="https://drive.google.com/file/d/...">
+                </div>
+
+                <div class="btn-group">
+                    <button id="submit-content" class="btn btn-success">
+                        <i class="fas fa-save"></i> Save Content
+                    </button>
+                    <button id="clear-form" class="btn btn-secondary">
+                        <i class="fas fa-broom"></i> Clear Form
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cases Section -->
+        <section class="content-section" id="cases">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-gavel"></i> Landmark Cases</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="pil">PIL</button>
+                    <button class="filter-btn" data-filter="environment">Environment</button>
+                    <button class="filter-btn" data-filter="rti">RTI</button>
+                    <button class="filter-btn" data-filter="general">General</button>
+                </div>
+                <input type="text" id="cases-search" class="search-box" placeholder="Search cases...">
+            </div>
+            <div id="cases-container" class="content-grid">
+                <!-- Cases will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Posts Section -->
+        <section class="content-section" id="posts">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-newspaper"></i> Legal Posts</h2>
+                <input type="text" id="posts-search" class="search-box" placeholder="Search posts...">
+            </div>
+            <div id="posts-container" class="content-grid">
+                <!-- Posts will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Blogs Section -->
+        <section class="content-section" id="blogs">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-blog"></i> Blog Articles</h2>
+                <input type="text" id="blogs-search" class="search-box" placeholder="Search blogs...">
+            </div>
+            <div id="blogs-container" class="content-grid">
+                <!-- Blogs will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Announcements Section -->
+        <section class="content-section" id="announcements">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-bullhorn"></i> Announcements</h2>
+                <input type="text" id="announcements-search" class="search-box" placeholder="Search announcements...">
+            </div>
+            <div id="announcements-container" class="content-grid">
+                <!-- Announcements will be loaded here -->
+            </div>
+        </section>
+
+        <!-- QR System Section -->
+        <section class="content-section" id="qr-system-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-qrcode"></i> Tree QR Code System</h2>
+                <div>
+                    <button id="close-qr" class="btn btn-danger" style="display: none;">
+                        <i class="fas fa-times"></i> Close QR System
+                    </button>
+                </div>
+            </div>
+
+            <!-- QR Form -->
+            <form id="qr-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tree-id" class="required"><i class="fas fa-tree"></i> Tree ID *</label>
+                        <input type="text" id="tree-id" class="form-control" placeholder="e.g., TREE-001" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tree-name" class="required"><i class="fas fa-leaf"></i> Tree Name *</label>
+                        <input type="text" id="tree-name" class="form-control" placeholder="e.g., Mango Tree" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="scientific-name"><i class="fas fa-seedling"></i> Scientific Name</label>
+                        <input type="text" id="scientific-name" class="form-control" placeholder="e.g., Mangifera indica">
+                    </div>
+                    <div class="form-group">
+                        <label for="planted-date" class="required"><i class="fas fa-calendar-alt"></i> Planted Date *</label>
+                        <input type="date" id="planted-date" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="location" class="required"><i class="fas fa-map-marker-alt"></i> Location *</label>
+                        <input type="text" id="location" class="form-control" placeholder="e.g., Central Park, Delhi" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="coordinates"><i class="fas fa-map-pin"></i> Coordinates</label>
+                        <input type="text" id="coordinates" class="form-control" placeholder="e.g., 28.6139° N, 77.2090° E">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="planted-by" class="required"><i class="fas fa-user"></i> Planted By *</label>
+                        <input type="text" id="planted-by" class="form-control" placeholder="e.g., KC Jain Foundation" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="maintenance-by"><i class="fas fa-tools"></i> Maintenance By</label>
+                        <input type="text" id="maintenance-by" class="form-control" placeholder="e.g., Park Department">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tree-age"><i class="fas fa-birthday-cake"></i> Tree Age (years)</label>
+                        <input type="number" id="tree-age" class="form-control" placeholder="e.g., 5">
+                    </div>
+                    <div class="form-group">
+                        <label for="tree-height"><i class="fas fa-ruler-vertical"></i> Tree Height (feet)</label>
+                        <input type="number" id="tree-height" class="form-control" placeholder="e.g., 15">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tree-health"><i class="fas fa-heartbeat"></i> Health Status</label>
+                        <select id="tree-health" class="form-control">
+                            <option value="Excellent">Excellent</option>
+                            <option value="Good" selected>Good</option>
+                            <option value="Fair">Fair</option>
+                            <option value="Poor">Poor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="watering-schedule"><i class="fas fa-tint"></i> Watering Schedule</label>
+                        <input type="text" id="watering-schedule" class="form-control" placeholder="e.g., Twice a week">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="last-maintenance"><i class="fas fa-calendar-check"></i> Last Maintenance</label>
+                        <input type="date" id="last-maintenance" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="next-maintenance"><i class="fas fa-calendar-plus"></i> Next Maintenance</label>
+                        <input type="date" id="next-maintenance" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tree-description"><i class="fas fa-file-alt"></i> Description</label>
+                    <textarea id="tree-description" class="form-control" placeholder="Enter tree description..." rows="4"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="tree-image-upload"><i class="fas fa-image"></i> Tree Image</label>
+                        <div class="file-upload" onclick="document.getElementById('tree-image-upload').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Upload Tree Image</p>
+                            <small>Max size: 5MB (JPG, PNG)</small>
+                            <input type="file" id="tree-image-upload" accept="image/*">
+                        </div>
+                        <div id="tree-image-preview" style="margin-top: 10px;"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tree-video-upload"><i class="fas fa-video"></i> Tree Video</label>
+                        <div class="file-upload" onclick="document.getElementById('tree-video-upload').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Upload Tree Video</p>
+                            <small>Max size: 20MB (MP4)</small>
+                            <input type="file" id="tree-video-upload" accept="video/*">
+                        </div>
+                        <div id="tree-video-preview" style="margin-top: 10px;"></div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-qrcode"></i> Generate QR Code
+                    </button>
+                    <button type="button" id="clear-qr-form" class="btn btn-secondary">
+                        <i class="fas fa-broom"></i> Clear Form
+                    </button>
+                </div>
+            </form>
+
+            <!-- QR Preview Section - HIDDEN ON LOAD (display: none in CSS) -->
+            <div id="qr-preview-section" class="qr-preview">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fas fa-check-circle"></i> QR Code Generated</h2>
+                </div>
+                
+                <div class="qr-display">
+                    <img id="qr-code-img" src="" alt="QR Code">
+                    <div class="qr-data">
+                        <div id="qr-data-display"></div>
+                        <div id="qr-media-preview" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button id="print-qr" class="btn btn-info">
+                        <i class="fas fa-print"></i> Print QR
+                    </button>
+                    <button id="save-qr" class="btn btn-success">
+                        <i class="fas fa-download"></i> Save QR Code
+                    </button>
+                    <button id="generate-another" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Generate Another
+                    </button>
+                </div>
+            </div>
+
+            <!-- QR History -->
+            <div style="margin-top: 40px;">
+                <div class="section-header">
+                    <h2 class="section-title"><i class="fas fa-history"></i> QR History</h2>
+                    <input type="text" id="qr-search" class="search-box" placeholder="Search QR codes...">
+                </div>
+                <div id="qr-history-container">
+                    <!-- QR history will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Contact Section -->
+    <section class="content-section" id="contact">
+        <div class="section-header">
+            <h2 class="section-title"><i class="fas fa-envelope"></i> Contact Us</h2>
+        </div>
+        <div class="contact-info" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+            <div class="contact-item" style="flex-direction: column; text-align: center; padding: 30px;">
+                <i class="fas fa-map-marker-alt" style="font-size: 2.5rem;"></i>
+                <h3 style="margin: 15px 0 10px;">Office Address</h3>
+                <p>Supreme Court Complex<br>New Delhi - 110001<br>India</p>
+            </div>
+            <div class="contact-item" style="flex-direction: column; text-align: center; padding: 30px;">
+                <i class="fas fa-phone" style="font-size: 2.5rem;"></i>
+                <h3 style="margin: 15px 0 10px;">Contact Number</h3>
+                <p>+91 94122 63072</p>
+            </div>
+            <div class="contact-item" style="flex-direction: column; text-align: center; padding: 30px;">
+                <i class="fas fa-envelope" style="font-size: 2.5rem;"></i>
+                <h3 style="margin: 15px 0 10px;">Email Address</h3>
+                <p>kcjain@gmail.com</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>KC Jain Advocate</h3>
+                <p>Supreme Court Lawyer with expertise in PIL, Environmental Law, and Constitutional matters. Committed to justice and legal excellence.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#profile">Profile</a></li>
+                    <li><a href="#cases">Cases</a></li>
+                    <li><a href="#posts">Posts</a></li>
+                    <li><a href="#blogs">Blogs</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal Areas</h3>
+                <ul class="footer-links">
+                    <li><a href="#cases?filter=pil">Public Interest Litigation</a></li>
+                    <li><a href="#cases?filter=environment">Environmental Law</a></li>
+                    <li><a href="#cases?filter=rti">Right to Information</a></li>
+                    <li><a href="#cases?filter=constitutional">Constitutional Law</a></li>
+                    <li><a href="#cases?filter=civil">Civil Litigation</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Office Hours</h3>
+                <p>Monday - Saturday: 10:00 AM - 6:00 PM</p>
+                <p>Sunday: By Appointment Only</p>
+                <p style="margin-top: 15px;"></p>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2026 KC Jain Advocate. All rights reserved. | Supreme Court of India Enrolled</p>
+        </div>
+    </footer>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal close-image-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <img id="modal-image" src="" alt="Full Size Image">
+        </div>
+    </div>
+
+    <!-- Video Modal -->
+    <div id="video-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal close-video-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <video id="modal-video" controls>
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div id="video-info" style="padding: 20px;"></div>
+        </div>
+    </div>
+
+    <!-- Content Detail Modal -->
+    <div id="content-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px; max-height: 90%; overflow-y: auto;">
+            <button class="close-modal close-content-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="content-modal-body" style="padding: 30px;">
+                <!-- Full content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Enhanced app state with ALL features - Python Backend Version
+    let app = {
+        content: [],
+        qrData: [],
+        profileImage: 'https://drive.google.com/uc?export=download&id=1F3kOJLQjVEU3Ba3HZ1FsIswi4HCVP04Q',
+        uploadQueue: [],
+        apiBaseUrl: window.location.hostname === 'localhost' ? 'http://localhost:5000' : '',
+        
+        async init() {
+            this.setupScrollProgress();
+            this.setupImageErrorHandling();
+            this.setupEventListeners();
+            await this.loadSavedProfileImage();
+            await this.loadAllContent();
+            
+            // Hide admin panel and QR preview on load
+            const adminPanel = document.getElementById('adminPanel');
+            const qrPreview = document.getElementById('qr-preview-section');
+            if (adminPanel) adminPanel.style.display = 'none';
+            if (qrPreview) qrPreview.style.display = 'none';
+            
+            const adminSection = document.getElementById('admin');
+            const closeAdminBtn = document.getElementById('close-admin');
+            const closeQrBtn = document.getElementById('close-qr');
+            
+            if (adminSection) adminSection.style.display = 'block';
+            if (closeAdminBtn) closeAdminBtn.style.display = 'none';
+            if (closeQrBtn) closeQrBtn.style.display = 'none';
+            
+            this.hideLoading();
+            this.enhanceUI();
+        },
+        
+        // ENHANCEMENT: additional UI tweaks
+        enhanceUI() {
+            const profileUpload = document.getElementById('profile-upload');
+            if (profileUpload) {
+                profileUpload.addEventListener('change', (e) => this.handleProfileImageUpload(e));
+            }
+            
+            const demoBtn = document.getElementById('demo-preview-btn');
+            if (demoBtn) {
+                demoBtn.addEventListener('click', () => {
+                    this.loadDemoContent();
+                    this.showToast('Demo content loaded for preview', 'info');
+                });
+            }
+        },
+        
+        // API Call method
+        async apiCall(endpoint, method = 'GET', data = null) {
+            const url = `${this.apiBaseUrl}/api${endpoint}`;
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        },
+        
+        // Setup scroll progress indicator
+        setupScrollProgress() {
+            window.addEventListener('scroll', () => {
+                const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+                document.getElementById('scrollProgress').style.width = scrolled + '%';
+            });
+        },
+
+        // Setup image error handling
+        setupImageErrorHandling() {
+            document.addEventListener('error', (e) => {
+                if (e.target.tagName === 'IMG' && !e.target.hasAttribute('data-error-handled')) {
+                    e.target.setAttribute('data-error-handled', 'true');
+                    if (e.target.id === 'profile-image') {
+                        e.target.src = 'https://drive.google.com/uc?export=download&id=1F3kOJLQjVEU3Ba3HZ1FsIswi4HCVP04Q';
+                    } else {
+                        e.target.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'400\' height=\'200\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'200\' y=\'100\' font-family=\'Arial\' font-size=\'16\' fill=\'%23666\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EEmpty Image%3C/text%3E%3C/svg%3E';
+                    }
+                    e.target.style.objectFit = 'contain';
+                    e.target.style.backgroundColor = '#f8f9fa';
+                }
+            }, true);
+        },
+        
+        // Setup all event listeners
+        setupEventListeners() {
+            // Mobile menu toggle
+            document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                document.getElementById('navMenu').classList.toggle('active');
+            });
+            
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('nav') && !e.target.closest('#mobileMenuBtn')) {
+                    document.getElementById('navMenu').classList.remove('active');
+                }
+            });
+            
+            // OPEN ADMIN PANEL
+            document.getElementById('openAdminMenu').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const adminPanel = document.getElementById('adminPanel');
+                const closeAdminBtn = document.getElementById('close-admin');
+                const adminSection = document.getElementById('admin');
+                
+                adminSection.style.display = 'block';
+                adminPanel.style.display = 'block';
+                closeAdminBtn.style.display = 'inline-flex';
+                
+                adminSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                
+                document.getElementById('navMenu').classList.remove('active');
+                
+                this.showToast('Admin Panel opened', 'info');
+            });
+            
+            // CLOSE ADMIN PANEL
+            document.getElementById('close-admin').addEventListener('click', () => {
+                const adminPanel = document.getElementById('adminPanel');
+                const closeAdminBtn = document.getElementById('close-admin');
+                
+                adminPanel.style.display = 'none';
+                closeAdminBtn.style.display = 'none';
+                
+                document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+                document.querySelector('nav a[href="#home"]').classList.add('active');
+                
+                this.showToast('Admin Panel closed', 'info');
+            });
+            
+            // OPEN QR SYSTEM
+            document.getElementById('openQRFormMenu').addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const qrSection = document.getElementById('qr-system-section');
+                const closeQrBtn = document.getElementById('close-qr');
+                const qrPreview = document.getElementById('qr-preview-section');
+                
+                qrSection.style.display = 'block';
+                closeQrBtn.style.display = 'inline-flex';
+                
+                qrSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+                e.currentTarget.classList.add('active');
+                
+                document.getElementById('navMenu').classList.remove('active');
+                
+                this.loadQRData();
+                this.showToast('QR System opened', 'info');
+            });
+            
+            // CLOSE QR SYSTEM
+            document.getElementById('close-qr').addEventListener('click', () => {
+                const qrSection = document.getElementById('qr-system-section');
+                const closeQrBtn = document.getElementById('close-qr');
+                const qrPreview = document.getElementById('qr-preview-section');
+                
+                qrSection.style.display = 'none';
+                closeQrBtn.style.display = 'none';
+                qrPreview.style.display = 'none';
+                
+                document.querySelectorAll('nav a').forEach(link => link.classList.remove('active'));
+                document.querySelector('nav a[href="#home"]').classList.add('active');
+                
+                this.showToast('QR System closed', 'info');
+            });
+            
+            // Refresh content
+            document.getElementById('refresh-content').addEventListener('click', () => {
+                this.loadAllContent();
+                this.showToast('Refreshing content...', 'info');
+            });
+            
+            // Content form submission
+            document.getElementById('submit-content').addEventListener('click', () => {
+                this.saveContent();
+            });
+            
+            // Clear content form
+            document.getElementById('clear-form').addEventListener('click', () => {
+                document.getElementById('content-title').value = '';
+                document.getElementById('content-text').value = '';
+                document.getElementById('content-category').value = '';
+                document.getElementById('content-image-url').value = '';
+                document.getElementById('content-video-url').value = '';
+                document.getElementById('image-preview').innerHTML = '';
+                document.getElementById('video-preview').innerHTML = '';
+                this.showToast('Form cleared', 'info');
+            });
+            
+            // QR form submission
+            document.getElementById('qr-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.generateQRCode();
+            });
+            
+            // Clear QR form
+            document.getElementById('clear-qr-form').addEventListener('click', () => {
+                document.getElementById('qr-form').reset();
+                document.getElementById('tree-image-preview').innerHTML = '';
+                document.getElementById('tree-video-preview').innerHTML = '';
+                this.showToast('QR form cleared', 'info');
+            });
+            
+            // Print QR
+            document.getElementById('print-qr').addEventListener('click', () => {
+                const qrPreview = document.getElementById('qr-preview-section');
+                if (qrPreview.style.display === 'block') {
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write('<html><head><title>Print QR Code</title><style>body { font-family: Arial, sans-serif; padding: 20px; } .qr-print-container { text-align: center; } .qr-print-container img { max-width: 300px; height: auto; margin: 20px 0; } .qr-data { text-align: left; margin-top: 20px; }</style></head><body><div class="qr-print-container"><h2>Tree QR Code</h2><img src="' + document.getElementById('qr-code-img').src + '" alt="QR Code">' + document.getElementById('qr-data-display').innerHTML + '</div></body></html>');
+                    printWindow.document.close();
+                    printWindow.focus();
+                    setTimeout(() => {
+                        printWindow.print();
+                        printWindow.close();
+                    }, 250);
+                } else {
+                    this.showToast('No QR code to print', 'warning');
+                }
+            });
+            
+            // Save QR
+            document.getElementById('save-qr').addEventListener('click', () => {
+                const qrImg = document.getElementById('qr-code-img');
+                if (qrImg.src) {
+                    const link = document.createElement('a');
+                    link.href = qrImg.src;
+                    link.download = 'tree-qr-code.png';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    this.showToast('QR code saved', 'success');
+                }
+            });
+            
+            // Generate another QR
+            document.getElementById('generate-another').addEventListener('click', () => {
+                document.getElementById('qr-preview-section').style.display = 'none';
+                document.getElementById('qr-form').reset();
+                document.getElementById('tree-image-preview').innerHTML = '';
+                document.getElementById('tree-video-preview').innerHTML = '';
+                window.scrollTo({ top: document.getElementById('qr-system-section').offsetTop, behavior: 'smooth' });
+            });
+            
+            // Search functionality
+            ['cases', 'posts', 'blogs', 'announcements', 'qr'].forEach(type => {
+                const input = document.getElementById(type + '-search');
+                if (input) {
+                    input.addEventListener('input', (e) => {
+                        this.searchContent(type, e.target.value);
+                    });
+                }
+            });
+            
+            // Filter buttons for cases
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.filterCases(e.target.dataset.filter);
+                });
+            });
+            
+            // Smooth scroll for navigation
+            document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    if (this.getAttribute('href') === '#') return;
+                    
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    
+                    if (targetId === '#home') {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else {
+                        const target = document.querySelector(targetId);
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                    
+                    document.getElementById('navMenu').classList.remove('active');
+                });
+            });
+            
+            // Close modals
+            document.querySelectorAll('.close-image-modal, .close-video-modal, .close-content-modal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('image-modal').style.display = 'none';
+                    document.getElementById('video-modal').style.display = 'none';
+                    document.getElementById('content-modal').style.display = 'none';
+                });
+            });
+            
+            // Close modals on outside click
+            window.addEventListener('click', (e) => {
+                if (e.target.id === 'image-modal') {
+                    document.getElementById('image-modal').style.display = 'none';
+                }
+                if (e.target.id === 'video-modal') {
+                    document.getElementById('video-modal').style.display = 'none';
+                }
+                if (e.target.id === 'content-modal') {
+                    document.getElementById('content-modal').style.display = 'none';
+                }
+            });
+            
+            // File upload previews
+            this.setupFileUploadPreviews();
+        },
+        
+        // Setup file upload previews
+        setupFileUploadPreviews() {
+            // Content image upload
+            document.getElementById('content-image-upload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        document.getElementById('image-preview').innerHTML = `
+                            <img src="${e.target.result}" style="max-width: 200px; max-height: 150px; border-radius: 8px;">
+                            <p style="margin-top: 5px; font-size: 0.9rem;">${file.name}</p>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Content video upload
+            document.getElementById('content-video-upload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    document.getElementById('video-preview').innerHTML = `
+                        <div style="background: #f8f9fa; padding: 10px; border-radius: 8px;">
+                            <i class="fas fa-video" style="font-size: 2rem; color: #666;"></i>
+                            <p style="margin-top: 5px; font-size: 0.9rem;">${file.name}</p>
+                        </div>
+                    `;
+                }
+            });
+            
+            // Tree image upload
+            document.getElementById('tree-image-upload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        document.getElementById('tree-image-preview').innerHTML = `
+                            <img src="${e.target.result}" style="max-width: 200px; max-height: 150px; border-radius: 8px;">
+                            <p style="margin-top: 5px; font-size: 0.9rem;">${file.name}</p>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Tree video upload
+            document.getElementById('tree-video-upload').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    document.getElementById('tree-video-preview').innerHTML = `
+                        <div style="background: #f8f9fa; padding: 10px; border-radius: 8px;">
+                            <i class="fas fa-video" style="font-size: 2rem; color: #666;"></i>
+                            <p style="margin-top: 5px; font-size: 0.9rem;">${file.name}</p>
+                        </div>
+                    `;
+                }
+            });
+        },
+        
+        // Show loading
+        showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        },
+        
+        // Hide loading
+        hideLoading() {
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }, 500);
+        },
+        
+        // Show toast notification
+        showToast(message, type = 'info', duration = 3000) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            </div>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        },
+        
+        // Load all content from Python backend
+        async loadAllContent() {
+            this.showLoading();
+            
+            try {
+                const content = await this.apiCall('/content');
+                this.content = content || [];
+                this.displayAllContent();
+                this.updateStats();
+                this.showToast('Content loaded successfully', 'success');
+            } catch (error) {
+                console.error('Error loading content:', error);
+                this.loadDemoContent();
+            } finally {
+                this.hideLoading();
+            }
+        },
+        
+        // Load saved profile image
+        async loadSavedProfileImage() {
+            try {
+                const profile = await this.apiCall('/profile');
+                if (profile && profile.profileImage) {
+                    this.profileImage = profile.profileImage;
+                    document.getElementById('profile-image').src = profile.profileImage;
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                // Use default
+                this.profileImage = 'https://drive.google.com/uc?export=download&id=1F3kOJLQjVEU3Ba3HZ1FsIswi4HCVP04Q';
+                document.getElementById('profile-image').src = this.profileImage;
+            }
+        },
+        
+        // Handle profile image upload
+        async handleProfileImageUpload(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    this.showToast('Image size should be less than 5MB', 'error');
+                    return;
+                }
+                
+                this.showLoading();
+                
+                try {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const result = await this.apiCall('/profile', 'POST', {
+                                imageData: e.target.result,
+                                fileName: file.name
+                            });
+                            
+                            if (result.success) {
+                                this.profileImage = result.profileImage;
+                                document.getElementById('profile-image').src = result.profileImage;
+                                this.showToast('Profile image updated successfully!', 'success');
+                            }
+                        } catch (error) {
+                            this.showToast('Error updating profile: ' + error.message, 'error');
+                        } finally {
+                            this.hideLoading();
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                    
+                } catch (error) {
+                    this.showToast('Error uploading image: ' + error.message, 'error');
+                    this.hideLoading();
+                }
+            }
+        },
+        
+        // Load demo content (fallback)
+        loadDemoContent() {
+            this.content = [
+                {
+                    id: 'case-1',
+                    type: 'case',
+                    title: 'Landmark PIL on Road Safety',
+                    text: 'Successfully argued a Public Interest Litigation that led to stricter enforcement of road safety regulations across the country. The Supreme Court delivered a historic judgment emphasizing zero tolerance for traffic violations.',
+                    date: new Date().toISOString(),
+                    displayDate: this.formatDate(new Date().toISOString()),
+                    media: [{
+                        type: 'image',
+                        url: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+                    }],
+                    category: 'PIL'
+                },
+                {
+                    id: 'case-2',
+                    type: 'case',
+                    title: 'Environmental Protection for Yamuna',
+                    text: 'Fought for cleaning and preservation of Yamuna river. The court directed authorities to formulate a comprehensive action plan.',
+                    date: new Date().toISOString(),
+                    displayDate: this.formatDate(new Date().toISOString()),
+                    media: [{
+                        type: 'image',
+                        url: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+                    }],
+                    category: 'Environment'
+                },
+                {
+                    id: 'post-1',
+                    type: 'post',
+                    title: 'Understanding Right to Information',
+                    text: 'RTI Act 2005 has empowered citizens to seek information from public authorities. Here is a comprehensive guide on how to file RTI applications and appeal process.',
+                    date: new Date().toISOString(),
+                    displayDate: this.formatDate(new Date().toISOString()),
+                    media: [{
+                        type: 'image',
+                        url: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80'
+                    }],
+                    category: 'RTI'
+                }
+            ];
+            
+            this.displayAllContent();
+            this.updateStats();
+            this.hideLoading();
+            this.showToast('Loaded demo content', 'warning');
+        },
+        
+        // Display all content
+        displayAllContent() {
+            const contentTypes = {
+                'cases': 'case',
+                'posts': 'post', 
+                'blogs': 'blog',
+                'announcements': 'announcement'
+            };
+            
+            Object.entries(contentTypes).forEach(([containerId, contentType]) => {
+                const container = document.getElementById(containerId + '-container');
+                if (container) {
+                    container.innerHTML = '';
+                    
+                    const filteredContent = this.content.filter(item => item.type === contentType);
+                    
+                    if (filteredContent.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-${contentType === 'case' ? 'gavel' : contentType === 'post' ? 'newspaper' : contentType === 'blog' ? 'blog' : 'bullhorn'}"></i>
+                                <h3>No ${contentType}s Available</h3>
+                                <p>Add your first ${contentType} using the admin panel.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    filteredContent.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    
+                    filteredContent.forEach(item => {
+                        container.appendChild(this.createContentCard(item));
+                    });
+                }
+            });
+        },
+        
+        // Create content card
+        createContentCard(item) {
+            const card = document.createElement('div');
+            card.className = 'content-card';
+            card.dataset.id = item.id;
+            card.dataset.type = item.type;
+            card.dataset.category = (item.category || '').toLowerCase();
+            
+            const categoryColors = {
+                'pil': '#dc3545',
+                'environment': '#28a745',
+                'rti': '#17a2b8',
+                'legal': '#6c757d',
+                'general': '#6c757d',
+                'default': '#1a3a5f'
+            };
+            
+            const categoryColor = categoryColors[item.category ? item.category.toLowerCase() : ''] || categoryColors.default;
+            
+            let mediaHTML = '';
+            if (item.media && item.media.length > 0) {
+                const firstMedia = item.media[0];
+                if (firstMedia.type === 'image' && firstMedia.url) {
+                    let imageUrl = firstMedia.url;
+                    
+                    mediaHTML = `
+                        <div class="card-media">
+                            <img src="${imageUrl}" 
+                                 alt="${this.escapeHTML(item.title)}" 
+                                 class="card-image" 
+                                 loading="lazy"
+                                 onclick="app.openImageModal('${firstMedia.url}')"
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'400\' height=\'200\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'200\' y=\'100\' font-family=\'Arial\' font-size=\'16\' fill=\'%23666\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EEmpty Image%3C/text%3E%3C/svg%3E'; this.style.objectFit='contain'">
+                        </div>
+                    `;
+                } else if (firstMedia.type === 'video' && firstMedia.url) {
+                    let videoUrl = firstMedia.url;
+                    
+                    mediaHTML = `
+                        <div class="card-media">
+                            <button class="video-play-btn" onclick="app.openVideoModal('${videoUrl}', '${this.escapeHTML(item.title)}')">
+                                <i class="fas fa-play"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+            
+            const displayText = item.text || '';
+            const truncatedText = displayText.length > 500 ? 
+                displayText.substring(0, 500) + '...' : 
+                displayText;
+            
+            card.innerHTML = `
+                ${mediaHTML}
+                <div class="card-header">
+                    <span class="card-category" style="background: ${categoryColor}">${item.category || item.type.toUpperCase()}</span>
+                    <div class="card-date"><i class="far fa-calendar"></i> ${item.displayDate || this.formatDate(item.date)}</div>
+                </div>
+                <div class="card-body">
+                    <h3 class="card-title">${this.escapeHTML(item.title)}</h3>
+                    <p class="card-text">${this.escapeHTML(truncatedText)}</p>
+                    ${displayText.length > 500 ? `
+                        <button class="read-more-btn" onclick="app.showFullContent('${item.id}')">
+                            Read More <i class="fas fa-arrow-right"></i>
+                        </button>
+                    ` : ''}
+                </div>
+                <div class="card-footer">
+                    <button class="admin-btn delete-item-btn" onclick="app.deleteContent('${item.id}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        },
+        
+        // Show full content in modal
+        showFullContent(contentId) {
+            const item = this.content.find(c => c.id === contentId);
+            if (item) {
+                let mediaHTML = '';
+                if (item.media && item.media.length > 0) {
+                    item.media.forEach(media => {
+                        if (media.type === 'image' && media.url) {
+                            mediaHTML += `
+                                <div style="margin: 20px 0; text-align: center;">
+                                    <img src="${media.url}" 
+                                         alt="${this.escapeHTML(item.title)}" 
+                                         style="max-width: 100%; max-height: 400px; border-radius: 8px; cursor: pointer;"
+                                         onclick="app.openImageModal('${media.url}')"
+                                         onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'400\' height=\'200\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'200\' y=\'100\' font-family=\'Arial\' font-size=\'16\' fill=\'%23666\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EEmpty Image%3C/text%3E%3C/svg%3E'; this.style.objectFit='contain'">
+                                </div>
+                            `;
+                        } else if (media.type === 'video' && media.url) {
+                            mediaHTML += `
+                                <div style="margin: 20px 0; text-align: center;">
+                                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
+                                        <video controls style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+                                            <source src="${media.url}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
+                }
+                
+                document.getElementById('content-modal-body').innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        <span style="background: #1a3a5f; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase;">${item.category || item.type.toUpperCase()}</span>
+                        <span style="color: #666; font-size: 0.85rem; margin-left: 10px;"><i class="far fa-calendar"></i> ${item.displayDate || this.formatDate(item.date)}</span>
+                    </div>
+                    <h2 style="color: #1a3a5f; margin-bottom: 20px; font-family: 'Playfair Display', serif;">${this.escapeHTML(item.title)}</h2>
+                    ${mediaHTML}
+                    <div style="white-space: pre-wrap; line-height: 1.8; color: #555; font-size: 1.05rem;">
+                        ${this.escapeHTML(item.text)}
+                    </div>
+                `;
+                
+                document.getElementById('content-modal').style.display = 'flex';
+            }
+        },
+        
+        // Save content
+        async saveContent() {
+            const type = document.getElementById('content-type').value;
+            const title = document.getElementById('content-title').value.trim();
+            const text = document.getElementById('content-text').value.trim();
+            const category = document.getElementById('content-category').value.trim();
+            const imageUrl = document.getElementById('content-image-url').value.trim();
+            const videoUrl = document.getElementById('content-video-url').value.trim();
+            
+            if (!title || !text) {
+                this.showToast('Please fill in both title and content fields.', 'error');
+                return;
+            }
+            
+            const contentItem = {
+                type: type,
+                title: title,
+                text: text,
+                category: category || 'General',
+                imageUrl: imageUrl || '',
+                videoUrl: videoUrl || ''
+            };
+            
+            const files = [];
+            const imageFile = document.getElementById('content-image-upload').files[0];
+            const videoFile = document.getElementById('content-video-upload').files[0];
+            
+            if (imageFile) {
+                files.push({
+                    name: imageFile.name,
+                    type: imageFile.type,
+                    data: await this.fileToBase64(imageFile)
+                });
+            }
+            
+            if (videoFile) {
+                files.push({
+                    name: videoFile.name,
+                    type: videoFile.type,
+                    data: await this.fileToBase64(videoFile)
+                });
+            }
+            
+            this.showLoading();
+            
+            try {
+                const result = await this.apiCall('/content', 'POST', {
+                    data: contentItem,
+                    files: files
+                });
+                
+                if (result.success) {
+                    this.showToast('Content saved successfully!', 'success');
+                    
+                    const media = [];
+                    if (result.imageUrl) {
+                        media.push({ type: 'image', url: result.imageUrl, thumbnail: result.imageUrl });
+                    }
+                    if (result.videoUrl) {
+                        media.push({ type: 'video', url: result.videoUrl, thumbnail: '' });
+                    }
+                    
+                    const newContent = {
+                        ...contentItem,
+                        id: result.contentId,
+                        date: result.timestamp,
+                        displayDate: result.displayDate,
+                        media: media
+                    };
+                    
+                    this.content.push(newContent);
+                    this.displayContentCard(newContent);
+                    this.updateStats();
+                    this.clearContentForm();
+                }
+            } catch (error) {
+                this.showToast('Error: ' + error.message, 'error');
+            } finally {
+                this.hideLoading();
+            }
+        },
+        
+        // Delete content
+        async deleteContent(contentId) {
+            if (!confirm('Are you sure you want to delete this item?')) return;
+            
+            this.showLoading();
+            
+            try {
+                await this.apiCall(`/content/${contentId}`, 'DELETE');
+                
+                this.content = this.content.filter(item => item.id !== contentId);
+                this.updateStats();
+                document.querySelector(`.content-card[data-id="${contentId}"]`)?.remove();
+                this.showToast('Content deleted successfully!', 'success');
+            } catch (error) {
+                this.showToast('Error: ' + error.message, 'error');
+            } finally {
+                this.hideLoading();
+            }
+        },
+        
+        // Convert file to base64
+        fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        },
+        
+        // Clear content form
+        clearContentForm() {
+            document.getElementById('content-title').value = '';
+            document.getElementById('content-text').value = '';
+            document.getElementById('content-category').value = '';
+            document.getElementById('content-image-url').value = '';
+            document.getElementById('content-video-url').value = '';
+            document.getElementById('content-image-upload').value = '';
+            document.getElementById('content-video-upload').value = '';
+            document.getElementById('image-preview').innerHTML = '';
+            document.getElementById('video-preview').innerHTML = '';
+        },
+        
+        // Display single content card
+        displayContentCard(item) {
+            const container = document.getElementById(item.type + 's-container');
+            if (container) {
+                const emptyState = container.querySelector('.empty-state');
+                if (emptyState) {
+                    emptyState.remove();
+                }
+                
+                container.prepend(this.createContentCard(item));
+            }
+        },
+        
+        // Generate QR code
+        async generateQRCode() {
+            const qrData = {
+                treeId: document.getElementById('tree-id').value.trim(),
+                treeName: document.getElementById('tree-name').value.trim(),
+                scientificName: document.getElementById('scientific-name').value.trim() || '',
+                plantedDate: document.getElementById('planted-date').value,
+                location: document.getElementById('location').value.trim(),
+                coordinates: document.getElementById('coordinates').value.trim() || '',
+                plantedBy: document.getElementById('planted-by').value.trim(),
+                maintenanceBy: document.getElementById('maintenance-by').value.trim() || '',
+                treeAge: document.getElementById('tree-age').value || '',
+                treeHeight: document.getElementById('tree-height').value || '',
+                description: document.getElementById('tree-description').value.trim(),
+                healthStatus: document.getElementById('tree-health').value,
+                lastMaintenance: document.getElementById('last-maintenance').value || null,
+                nextMaintenance: document.getElementById('next-maintenance').value || null,
+                wateringSchedule: document.getElementById('watering-schedule').value.trim()
+            };
+            
+            if (!qrData.treeId || !qrData.treeName || !qrData.plantedDate || !qrData.location || !qrData.plantedBy) {
+                this.showToast('Please fill in all required fields (marked with *)', 'error');
+                return;
+            }
+            
+            this.showLoading();
+            
+            try {
+                const files = [];
+                
+                const treeImageFile = document.getElementById('tree-image-upload').files[0];
+                const treeVideoFile = document.getElementById('tree-video-upload').files[0];
+                
+                if (treeImageFile) {
+                    files.push({
+                        name: 'treeImage',
+                        data: await this.fileToBase64(treeImageFile),
+                        type: treeImageFile.type
+                    });
+                }
+                
+                if (treeVideoFile) {
+                    files.push({
+                        name: 'treeVideo',
+                        data: await this.fileToBase64(treeVideoFile),
+                        type: treeVideoFile.type
+                    });
+                }
+                
+                const result = await this.apiCall('/qr', 'POST', {
+                    data: qrData,
+                    files: files
+                });
+                
+                if (result.success) {
+                    document.getElementById('qr-code-img').src = result.qrCodeUrl;
+                    
+                    let qrDataHTML = `
+                        <div class="qr-data-row">
+                            <div class="qr-data-label">QR ID:</div>
+                            <div class="qr-data-value"><strong>${result.qrId}</strong></div>
+                        </div>
+                        <div class="qr-data-row">
+                            <div class="qr-data-label">Tree ID:</div>
+                            <div class="qr-data-value">${qrData.treeId}</div>
+                        </div>
+                        <div class="qr-data-row">
+                            <div class="qr-data-label">Tree Name:</div>
+                            <div class="qr-data-value">${qrData.treeName}</div>
+                        </div>
+                        <div class="qr-data-row">
+                            <div class="qr-data-label">Planted Date:</div>
+                            <div class="qr-data-value">${result.displayPlantedDate || this.formatDate(qrData.plantedDate)}</div>
+                        </div>
+                        <div class="qr-data-row">
+                            <div class="qr-data-label">Location:</div>
+                            <div class="qr-data-value">${qrData.location}</div>
+                        </div>
+                        <div class="qr-data-row">
+                            <div class="qr-data-label">Planted By:</div>
+                            <div class="qr-data-value">${qrData.plantedBy}</div>
+                        </div>
+                    `;
+                    
+                    let mediaPreviewHTML = '';
+                    if (result.treeImageUrl) {
+                        mediaPreviewHTML += `
+                            <div style="margin-top: 15px;">
+                                <strong>Tree Image:</strong>
+                                <img src="${result.treeImageUrl}" 
+                                     style="max-width: 200px; max-height: 150px; border-radius: 8px; margin-top: 8px; display: block; cursor: pointer; border: 1px solid #ddd;" 
+                                     onclick="app.openImageModal('${result.treeImageUrl}')"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'150\' viewBox=\'0 0 200 150\'%3E%3Crect width=\'200\' height=\'150\' fill=\'%23f8f9fa\'/%3E%3Ctext x=\'100\' y=\'75\' font-family=\'Arial\' font-size=\'14\' fill=\'%23666\' text-anchor=\'middle\' dominant-baseline=\'middle\'%3EImage Unavailable%3C/text%3E%3C/svg%3E';">
+                            </div>
+                        `;
+                    }
+                    
+                    if (result.treeVideoUrl) {
+                        mediaPreviewHTML += `
+                            <div style="margin-top: 15px;">
+                                <strong>Tree Video:</strong>
+                                <div style="margin-top: 8px;">
+                                    <video controls style="max-width: 200px; max-height: 150px; border-radius: 8px; border: 1px solid #ddd;">
+                                        <source src="${result.treeVideoUrl}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    document.getElementById('qr-data-display').innerHTML = qrDataHTML;
+                    document.getElementById('qr-media-preview').innerHTML = mediaPreviewHTML;
+                    
+                    document.getElementById('qr-preview-section').style.display = 'block';
+                    
+                    const qrItem = {
+                        id: result.qrId,
+                        ...qrData,
+                        qrCodeUrl: result.qrCodeUrl,
+                        treeImageUrl: result.treeImageUrl || '',
+                        treeVideoUrl: result.treeVideoUrl || '',
+                        createdDate: new Date().toISOString(),
+                        displayCreatedDate: this.formatDate(new Date().toISOString())
+                    };
+                    
+                    this.qrData.unshift(qrItem);
+                    this.displayQRHistory();
+                    this.updateStats();
+                    
+                    this.showToast('Tree QR Code generated successfully!', 'success');
+                    
+                    setTimeout(() => {
+                        document.getElementById('qr-preview-section').scrollIntoView({ behavior: 'smooth' });
+                    }, 100);
+                }
+                
+            } catch (error) {
+                this.showToast('Error generating QR code: ' + error.message, 'error');
+            } finally {
+                this.hideLoading();
+            }
+        },
+        
+        // Load QR data
+        async loadQRData() {
+            try {
+                const qrData = await this.apiCall('/qr');
+                this.qrData = qrData || [];
+                this.displayQRHistory();
+            } catch (error) {
+                console.error('Error loading QR data:', error);
+            }
+        },
+        
+        // Display QR history
+        displayQRHistory() {
+            const container = document.getElementById('qr-history-container');
+            if (!container) return;
+            
+            if (this.qrData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-qrcode"></i>
+                        <h3>No Tree QR Codes Generated Yet</h3>
+                        <p>Generate your first tree QR code using the form above.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let tableHTML = `
+                <div class="table-responsive">
+                    <table class="qr-table">
+                        <thead>
+                            <tr>
+                                <th>QR Code</th>
+                                <th>Tree Details</th>
+                                <th>Location</th>
+                                <th>Planted Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+            
+            this.qrData.forEach(item => {
+                tableHTML += `
+                    <tr>
+                        <td><img src="${item.qrCodeUrl}" alt="QR Code" class="qr-small" loading="lazy"></td>
+                        <td>
+                            <strong>${item.treeId}</strong><br>
+                            <small>${item.treeName}</small><br>
+                            <span class="card-category" style="font-size: 0.7rem; padding: 2px 8px; margin-top: 4px; display: inline-block;">${item.healthStatus || 'Good'}</span>
+                            ${item.treeImageUrl ? '<br><small style="color: #666;"><i class="fas fa-image"></i> Has Image</small>' : ''}
+                            ${item.treeVideoUrl ? '<br><small style="color: #666;"><i class="fas fa-video"></i> Has Video</small>' : ''}
+                        </td>
+                        <td>${item.location}</td>
+                        <td>${item.displayPlantedDate || this.formatDate(item.plantedDate)}</td>
+                        <td>
+                            <button class="admin-btn" onclick="app.viewQRDetails('${item.id}')" title="View">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="admin-btn delete-item-btn" onclick="app.deleteQRItem('${item.id}')" title="Delete">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += '</tbody></table></div>';
+            container.innerHTML = tableHTML;
+        },
+        
+        // View QR details
+        viewQRDetails(qrId) {
+            const item = this.qrData.find(qr => qr.id === qrId);
+            if (item) {
+                document.getElementById('qr-code-img').src = item.qrCodeUrl;
+                
+                let qrDataHTML = `
+                    <div class="qr-data-row">
+                        <div class="qr-data-label">QR ID:</div>
+                        <div class="qr-data-value"><strong>${item.id}</strong></div>
+                    </div>
+                    <div class="qr-data-row">
+                        <div class="qr-data-label">Tree ID:</div>
+                        <div class="qr-data-value">${item.treeId}</div>
+                    </div>
+                    <div class="qr-data-row">
+                        <div class="qr-data-label">Tree Name:</div>
+                        <div class="qr-data-value">${item.treeName}</div>
+                    </div>
+                    <div class="qr-data-row">
+                        <div class="qr-data-label">Scientific Name:</div>
+                        <div class="qr-data-value">${item.scientificName || 'N/A'}</div>
+                    </div>
+                    <div class="qr-data-row">
+                        <div class="qr-data-label">Planted Date:</div>
+                        <div class="qr-data-value">${item.displayPlantedDate || this.formatDate(item.plantedDate)}</div>
+                    </div>
+                    <div class="qr-data-row">
+                        <div class="qr-data-label">Location:</div>
+                        <div class="qr-data-value">${item.location}</div>
+                    </div>
+                    <div class="qr-data-row">
+                        <div class="qr-data-label">Planted By:</div>
+                        <div class="qr-data-value">${item.plantedBy}</div>
+                    </div>
+                    <div class="qr-data-row">
+                        <div class="qr-data-label">Health Status:</div>
+                        <div class="qr-data-value">${item.healthStatus || 'Good'}</div>
+                    </div>
+                `;
+                
+                if (item.description) {
+                    qrDataHTML += `
+                        <div class="qr-data-row">
+                            <div class="qr-data-label">Description:</div>
+                            <div class="qr-data-value">${item.description}</div>
+                        </div>
+                    `;
+                }
+                
+                let mediaPreviewHTML = '';
+                if (item.treeImageUrl) {
+                    mediaPreviewHTML += `
+                        <div style="margin-top: 10px;">
+                            <strong>Tree Image:</strong>
+                            <img src="${item.treeImageUrl}" 
+                                 style="max-width: 200px; max-height: 150px; border-radius: 8px; margin-top: 5px; display: block; cursor: pointer;"
+                                 onclick="app.openImageModal('${item.treeImageUrl}')">
+                        </div>
+                    `;
+                }
+                
+                if (item.treeVideoUrl) {
+                    mediaPreviewHTML += `
+                        <div style="margin-top: 10px;">
+                            <strong>Tree Video:</strong>
+                            <div style="margin-top: 5px;">
+                                <video controls style="max-width: 200px; max-height: 150px; border-radius: 8px;">
+                                    <source src="${item.treeVideoUrl}" type="video/mp4">
+                                </video>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                document.getElementById('qr-data-display').innerHTML = qrDataHTML;
+                document.getElementById('qr-media-preview').innerHTML = mediaPreviewHTML;
+                
+                document.getElementById('qr-preview-section').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('qr-preview-section').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+        },
+        
+        // Delete QR item
+        async deleteQRItem(qrId) {
+            if (!confirm('Are you sure you want to delete this tree QR entry?')) return;
+            
+            this.showLoading();
+            
+            try {
+                await this.apiCall(`/qr/${qrId}`, 'DELETE');
+                
+                this.qrData = this.qrData.filter(qr => qr.id !== qrId);
+                this.displayQRHistory();
+                this.updateStats();
+                this.showToast('Tree QR entry deleted', 'success');
+            } catch (error) {
+                this.showToast('Error deleting QR entry: ' + error.message, 'error');
+            } finally {
+                this.hideLoading();
+            }
+        },
+        
+        // Update stats
+        async updateStats() {
+            try {
+                const stats = await this.apiCall('/stats');
+                
+                document.getElementById('cases-count').textContent = stats.cases || 0;
+                document.getElementById('posts-count').textContent = stats.posts || 0;
+                document.getElementById('blogs-count').textContent = stats.blogs || 0;
+                document.getElementById('announcements-count').textContent = stats.announcements || 0;
+                document.getElementById('qr-count').textContent = stats.qr || this.qrData.length || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                // Fallback to local counts
+                document.getElementById('cases-count').textContent = this.content.filter(item => item.type === 'case').length;
+                document.getElementById('posts-count').textContent = this.content.filter(item => item.type === 'post').length;
+                document.getElementById('blogs-count').textContent = this.content.filter(item => item.type === 'blog').length;
+                document.getElementById('announcements-count').textContent = this.content.filter(item => item.type === 'announcement').length;
+                document.getElementById('qr-count').textContent = this.qrData.length;
+            }
+        },
+        
+        // Search content
+        searchContent(type, query) {
+            const container = document.getElementById(type + '-container');
+            if (!container) return;
+            
+            const cards = container.querySelectorAll('.content-card');
+            const normalizedQuery = query.toLowerCase().trim();
+            
+            if (!normalizedQuery) {
+                cards.forEach(card => card.style.display = 'block');
+                return;
+            }
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title')?.textContent.toLowerCase() || '';
+                const text = card.querySelector('.card-text')?.textContent.toLowerCase() || '';
+                const category = card.dataset.category.toLowerCase();
+                
+                if (title.includes(normalizedQuery) || text.includes(normalizedQuery) || category.includes(normalizedQuery)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        },
+        
+        // Filter cases
+        filterCases(filter) {
+            const cards = document.querySelectorAll('#cases-container .content-card');
+            
+            cards.forEach(card => {
+                if (filter === 'all' || card.dataset.category.toLowerCase().includes(filter)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        },
+        
+        // Open image modal
+        openImageModal(imageSrc) {
+            const modal = document.getElementById('image-modal');
+            const modalImage = document.getElementById('modal-image');
+            
+            modalImage.src = imageSrc;
+            modal.style.display = 'flex';
+            
+            modal.onclick = (e) => {
+                if (e.target === modal || e.target.closest('.close-image-modal')) {
+                    modal.style.display = 'none';
+                }
+            };
+            
+            const closeModal = (e) => {
+                if (e.key === 'Escape') {
+                    modal.style.display = 'none';
+                    document.removeEventListener('keydown', closeModal);
+                }
+            };
+            
+            document.addEventListener('keydown', closeModal);
+        },
+        
+        // Open video modal
+        openVideoModal(videoSrc, title) {
+            const modal = document.getElementById('video-modal');
+            const modalVideo = document.getElementById('modal-video');
+            const videoInfo = document.getElementById('video-info');
+            
+            modalVideo.src = videoSrc;
+            modalVideo.load();
+            
+            videoInfo.innerHTML = `<h4 style="color: #1a3a5f; margin: 0;">${this.escapeHTML(title)}</h4>`;
+            modal.style.display = 'flex';
+            
+            setTimeout(() => {
+                modalVideo.play().catch(e => {
+                    console.log('Autoplay prevented:', e);
+                });
+            }, 100);
+            
+            modal.onclick = (e) => {
+                if (e.target === modal || e.target.closest('.close-video-modal')) {
+                    modal.style.display = 'none';
+                    modalVideo.pause();
+                    modalVideo.currentTime = 0;
+                    modalVideo.src = '';
+                }
+            };
+            
+            const closeModal = (e) => {
+                if (e.key === 'Escape') {
+                    modal.style.display = 'none';
+                    modalVideo.pause();
+                    modalVideo.currentTime = 0;
+                    modalVideo.src = '';
+                    document.removeEventListener('keydown', closeModal);
+                }
+            };
+            
+            document.addEventListener('keydown', closeModal);
+        },
+        
+        // Utility functions
+        formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-IN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (e) {
+                return 'Recent';
+            }
+        },
+        
+        formatDateSimple(dateString) {
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('en-IN', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+            } catch (e) {
+                return dateString || 'N/A';
+            }
+        },
+        
+        escapeHTML(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    };
+    
+    // Initialize app when page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        app.init();
+    });
+    
+    window.app = app;
+</script>
+</body>
+</html>
