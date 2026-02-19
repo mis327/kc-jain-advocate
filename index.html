@@ -1710,25 +1710,18 @@
         <p style="color: var(--white); font-size: 0.9rem; opacity: 0.8;">Legacy of Justice • Excellence • Integrity</p>
     </div>
 
-    <!-- Login Modal - NOW WITH VISIBLE CREDENTIALS -->
+    <!-- Login Modal - NO PRE-FILLED CREDENTIALS -->
     <div id="loginModal" style="display: none;">
         <div class="modal-card">
             <h2><i class="fas fa-gavel"></i> Admin Access</h2>
             
-            <!-- VISIBLE CREDENTIALS SECTION - FIXED: Now showing credentials -->
-            <div style="background: rgba(201, 169, 89, 0.1); border-left: 4px solid var(--secondary); padding: 15px; margin-bottom: 25px; border-radius: var(--border-radius-md);">
-                <p style="margin-bottom: 5px; color: var(--primary);"><i class="fas fa-info-circle" style="color: var(--secondary);"></i> <strong>Demo Credentials:</strong></p>
-                <p style="margin-bottom: 3px;"><strong>Email:</strong> <span style="color: var(--secondary);">kcjain@gmail.com</span></p>
-                <p><strong>Password:</strong> <span style="color: var(--secondary);">admin123</span></p>
-            </div>
-            
             <div class="form-group">
                 <label><i class="fas fa-envelope"></i> Email</label>
-                <input type="email" id="admin-email" class="form-control" placeholder="Enter your email" value="kcjain@gmail.com">
+                <input type="email" id="admin-email" class="form-control" placeholder="Enter your email">
             </div>
             <div class="form-group">
                 <label><i class="fas fa-lock"></i> Password</label>
-                <input type="password" id="admin-password" class="form-control" placeholder="Enter admin password" value="admin123">
+                <input type="password" id="admin-password" class="form-control" placeholder="Enter admin password">
             </div>
             <button id="login-btn" class="btn btn-primary">
                 <i class="fas fa-sign-in-alt"></i> Login to Admin Panel
@@ -2167,7 +2160,7 @@
             </div>
             <div class="footer-section">
                 <h3>Chambers</h3>
-                <p><i class="fas fa-clock"></i> Mon - Sat: 10:00 AM - 6:00 PM</p>
+                <p><i class="fas fa-clock"></i> Mon - Sat: 10:00 AM - 7:00 PM</p>
                 <p><i class="fas fa-clock"></i> Sunday: By Appointment</p>
                 <p><i class="fas fa-certificate"></i> Supreme Court of India</p>
             </div>
@@ -2210,32 +2203,32 @@
     </div>
 
     <script>
-        // FIXED: Complete App with VISIBLE login credentials and PROPER video handling
+        // Complete App with server integration, no demo data
         let app = {
             content: [],
             qrData: [],
             isAdminLoggedIn: false,
             editingContentId: null,
             profileImagePath: '',
-            apiBaseUrl: window.location.origin, // Use current origin for API calls
+            sessionToken: null,
+            apiBaseUrl: window.location.origin,
 
             async init() {
                 this.setupScrollProgress();
                 this.setupEventListeners();
                 this.setupFileUploadPreviews();
-                this.loadDemoContent();
                 this.hideLoading();
                 this.checkSharedContent();
-                this.updateStats();
+                
+                // Load real data from server
+                await this.loadContentFromServer();
+                await this.loadQRFromServer();
                 
                 // Set default date for QR form
                 const today = new Date().toISOString().split('T')[0];
                 if (document.getElementById('planted-date')) {
                     document.getElementById('planted-date').value = today;
                 }
-
-                // FIXED: Show login credentials on page load
-                console.log('Login credentials: kcjain@gmail.com / admin123');
             },
 
             setupScrollProgress() {
@@ -2283,7 +2276,7 @@
                     }
                 });
 
-                // Admin login - Now with VISIBLE credentials
+                // Admin login
                 document.getElementById('openAdminMenu').addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -2310,24 +2303,37 @@
                     document.getElementById('navMenu').classList.remove('active');
                 });
 
-                document.getElementById('login-btn').addEventListener('click', () => {
+                document.getElementById('login-btn').addEventListener('click', async () => {
                     const email = document.getElementById('admin-email').value.trim();
                     const password = document.getElementById('admin-password').value;
                     
-                    // FIXED: Simple check with visible credentials
-                    if (email === 'kcjain@gmail.com' && password === 'admin123') {
-                        this.isAdminLoggedIn = true;
-                        document.getElementById('loginModal').style.display = 'none';
-                        document.getElementById('admin-photo-btn').classList.add('visible');
-                        this.showToast('Welcome back, KC Jain!', 'success');
+                    try {
+                        const response = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password })
+                        });
                         
-                        this.displayAllContent();
-                        this.displayQRHistory();
+                        const result = await response.json();
                         
-                        // Show admin section after login
-                        this.showAdminSection();
-                    } else {
-                        this.showToast('Invalid credentials. Try: kcjain@gmail.com / admin123', 'error');
+                        if (result.success) {
+                            this.isAdminLoggedIn = true;
+                            this.sessionToken = result.token;
+                            document.getElementById('loginModal').style.display = 'none';
+                            document.getElementById('admin-photo-btn').classList.add('visible');
+                            this.showToast('Welcome back, KC Jain!', 'success');
+                            
+                            // Load content from server
+                            await this.loadContentFromServer();
+                            await this.loadQRFromServer();
+                            
+                            this.showAdminSection();
+                        } else {
+                            this.showToast('Invalid credentials', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        this.showToast('Login failed', 'error');
                     }
                 });
 
@@ -2364,9 +2370,10 @@
                     document.getElementById('qr-system-section').classList.remove('visible');
                 });
 
-                document.getElementById('refresh-content').addEventListener('click', () => {
-                    this.loadDemoContent();
-                    this.showToast('Content refreshed', 'info');
+                document.getElementById('refresh-content').addEventListener('click', async () => {
+                    await this.loadContentFromServer();
+                    await this.loadQRFromServer();
+                    this.showToast('Content refreshed from server', 'success');
                 });
 
                 document.getElementById('submit-content').addEventListener('click', () => {
@@ -2461,7 +2468,6 @@
                         document.getElementById('video-modal').style.display = 'none';
                         document.getElementById('content-modal').style.display = 'none';
                         
-                        // Stop video playback when closing modal
                         const video = document.getElementById('modal-video');
                         if (video) {
                             video.pause();
@@ -2474,7 +2480,6 @@
                     if (e.key === 'Escape') {
                         this.closeContentModal();
                         
-                        // Also close video modal
                         document.getElementById('video-modal').style.display = 'none';
                         const video = document.getElementById('modal-video');
                         if (video) {
@@ -2497,7 +2502,57 @@
             showQRSection() {
                 document.getElementById('qr-system-section').classList.add('visible');
                 document.getElementById('qr-system-section').scrollIntoView({ behavior: 'smooth' });
-                this.loadQRData();
+            },
+
+            async loadContentFromServer() {
+                try {
+                    const response = await fetch('/api/content');
+                    const data = await response.json();
+                    
+                    if (data.content) {
+                        this.content = data.content.map(item => ({
+                            id: item.id,
+                            type: item.type,
+                            title: item.title,
+                            text: item.text,
+                            category: item.category,
+                            date: item.created_date,
+                            displayDate: this.formatDate(item.created_date),
+                            media: item.media || []
+                        }));
+                        
+                        this.displayAllContent();
+                        this.updateStats();
+                    }
+                } catch (error) {
+                    console.error('Error loading content:', error);
+                    this.showToast('Failed to load content from server', 'error');
+                }
+            },
+
+            async loadQRFromServer() {
+                try {
+                    const response = await fetch('/api/qr');
+                    const data = await response.json();
+                    
+                    if (data.qrData) {
+                        this.qrData = data.qrData.map(item => ({
+                            id: item.id,
+                            treeId: item.tree_id,
+                            treeName: item.tree_name,
+                            location: item.location,
+                            displayDate: this.formatDate(item.planted_date),
+                            qrCodeUrl: item.qr_code_url,
+                            media: item.treeImages || [],
+                            videoData: item.tree_video_url
+                        }));
+                        
+                        this.displayQRHistory();
+                        this.updateStats();
+                    }
+                } catch (error) {
+                    console.error('Error loading QR data:', error);
+                }
             },
 
             setupFileUploadPreviews() {
@@ -2528,7 +2583,6 @@
                     }
                 });
 
-                // FIXED: Video preview for content - now stores actual video data
                 document.getElementById('content-video-upload').addEventListener('change', (e) => {
                     const file = e.target.files[0];
                     const previewContainer = document.getElementById('video-preview');
@@ -2538,7 +2592,6 @@
                         const previewDiv = document.createElement('div');
                         previewDiv.className = 'video-preview-item';
                         
-                        // Store file data in a data attribute for later use
                         const reader = new FileReader();
                         reader.onload = (fileData) => {
                             previewDiv.setAttribute('data-video-data', fileData.target.result);
@@ -2585,7 +2638,6 @@
                     }
                 });
 
-                // Video preview for tree - FIXED: Store video data properly
                 document.getElementById('tree-video-upload').addEventListener('change', (e) => {
                     const file = e.target.files[0];
                     const previewContainer = document.getElementById('tree-video-preview');
@@ -2595,7 +2647,6 @@
                         const previewDiv = document.createElement('div');
                         previewDiv.className = 'video-preview-item';
                         
-                        // Store file data
                         const reader = new FileReader();
                         reader.onload = (fileData) => {
                             previewDiv.setAttribute('data-video-data', fileData.target.result);
@@ -2627,13 +2678,14 @@
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         document.getElementById('profile-image').src = e.target.result;
-                        this.showToast('Profile photo updated successfully', 'success');
+                        this.showToast('Profile photo updated locally', 'success');
+                        // TODO: Add API call to save profile photo to server
                     };
                     reader.readAsDataURL(file);
                 }
             },
 
-            saveContent() {
+            async saveContent() {
                 const type = document.getElementById('content-type').value;
                 const title = document.getElementById('content-title').value.trim();
                 const editorContent = document.getElementById('content-editor').innerHTML.trim();
@@ -2644,127 +2696,80 @@
                     return;
                 }
 
-                const media = [];
+                this.showToast('Saving content...', 'info');
+
+                const files = [];
                 
                 // Collect images
                 const imagePreviews = document.querySelectorAll('#images-preview .image-preview-item img');
-                imagePreviews.forEach(img => {
-                    media.push({
-                        type: 'image',
-                        url: img.src,
-                        isDataUrl: img.src.startsWith('data:')
-                    });
-                });
+                for (const img of imagePreviews) {
+                    if (img.src.startsWith('data:')) {
+                        files.push({
+                            name: `image_${Date.now()}.jpg`,
+                            type: 'image',
+                            data: img.src
+                        });
+                    }
+                }
 
-                // FIXED: Collect video data properly
+                // Collect video
                 const videoPreview = document.querySelector('#video-preview .video-preview-item');
                 if (videoPreview) {
                     const videoData = videoPreview.getAttribute('data-video-data');
                     const videoName = videoPreview.getAttribute('data-video-name') || 'video.mp4';
                     
                     if (videoData) {
-                        // Use the actual video data URL
-                        media.push({
+                        files.push({
+                            name: videoName,
                             type: 'video',
-                            url: videoData,
-                            isDataUrl: true,
-                            fileName: videoName
+                            data: videoData
                         });
+                    }
+                }
+
+                const contentData = {
+                    id: this.editingContentId || `content-${Date.now()}`,
+                    type: type,
+                    title: title,
+                    text: editorContent,
+                    category: category,
+                    author: 'KC Jain',
+                    featured: 0,
+                    language: 'en'
+                };
+
+                try {
+                    const response = await fetch('/api/content', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.sessionToken || ''}`
+                        },
+                        body: JSON.stringify({
+                            data: contentData,
+                            files: files
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showToast('Content saved successfully!', 'success');
+                        
+                        await this.loadContentFromServer();
+                        
+                        this.clearContentForm();
+                        
+                        if (!this.editingContentId) {
+                            document.getElementById('qr-system-section').classList.remove('visible');
+                        }
                     } else {
-                        // Fallback - just a placeholder
-                        media.push({
-                            type: 'video',
-                            url: 'video-preview-placeholder',
-                            isPlaceholder: true
-                        });
+                        this.showToast('Error saving: ' + result.error, 'error');
                     }
+                } catch (error) {
+                    console.error('Save error:', error);
+                    this.showToast('Failed to save content', 'error');
                 }
-
-                if (this.editingContentId) {
-                    const index = this.content.findIndex(c => c.id === this.editingContentId);
-                    if (index !== -1) {
-                        this.content[index] = {
-                            ...this.content[index],
-                            type: type,
-                            title: title,
-                            text: editorContent,
-                            category: category,
-                            media: media.length > 0 ? media : this.content[index].media,
-                            editedDate: new Date().toISOString(),
-                            displayDate: this.formatDate(new Date())
-                        };
-                        this.showToast('Content updated successfully!', 'success');
-                    }
-                    
-                    this.editingContentId = null;
-                    document.getElementById('submit-content').innerHTML = '<i class="fas fa-save"></i> Save Content';
-                    document.getElementById('submit-content').classList.remove('btn-warning');
-                } else {
-                    const newContent = {
-                        id: 'content-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
-                        type: type,
-                        title: title,
-                        text: editorContent,
-                        category: category,
-                        date: new Date().toISOString(),
-                        displayDate: this.formatDate(new Date()),
-                        media: media
-                    };
-                    
-                    this.content.push(newContent);
-                    this.showToast('Content saved successfully!', 'success');
-                }
-
-                this.displayAllContent();
-                this.updateStats();
-                this.clearContentForm();
-            },
-
-            loadDemoContent() {
-                this.content = [
-                    {
-                        id: 'case-1',
-                        type: 'case',
-                        title: 'Yamuna River Conservation: Landmark Environmental Judgment',
-                        text: '<strong>Successfully argued for comprehensive measures to clean and preserve the Yamuna river.</strong> The Supreme Court directed formation of a high-powered committee and allocated substantial funds for river rejuvenation. This landmark judgment has become a benchmark for environmental conservation cases across the country, establishing crucial precedents for river pollution control and environmental protection.',
-                        date: new Date().toISOString(),
-                        displayDate: this.formatDate(new Date()),
-                        category: 'Environment',
-                        media: [{ type: 'image', url: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'400\' height=\'200\' fill=\'%230a1a2f\'/%3E%3Ctext x=\'200\' y=\'100\' font-family=\'Inter\' font-size=\'20\' fill=\'%23c9a959\' text-anchor=\'middle\'%3EYamuna Conservation%3C/text%3E%3C/svg%3E' }]
-                    },
-                    {
-                        id: 'case-2',
-                        type: 'case',
-                        title: 'Digital Privacy as Fundamental Right',
-                        text: '<span style="color: #c9a959"><strong>Played a key role in establishing digital privacy as a fundamental right under Article 21.</strong></span> The judgment has become a cornerstone of India\'s data protection framework and has influenced privacy legislation worldwide, setting new standards for digital rights and personal data protection.',
-                        date: new Date().toISOString(),
-                        displayDate: this.formatDate(new Date()),
-                        category: 'Constitutional',
-                        media: [{ type: 'image', url: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'400\' height=\'200\' fill=\'%230a1a2f\'/%3E%3Ctext x=\'200\' y=\'100\' font-family=\'Inter\' font-size=\'20\' fill=\'%23c9a959\' text-anchor=\'middle\'%3EDigital Privacy%3C/text%3E%3C/svg%3E' }]
-                    },
-                    {
-                        id: 'post-1',
-                        type: 'post',
-                        title: 'Understanding RTI Act: A Comprehensive Guide',
-                        text: 'The Right to Information Act 2005 has empowered citizens to seek information from public authorities. This comprehensive guide explains how to file RTI applications, the appeal process, and landmark judgments that have strengthened this crucial legislation for transparency and accountability.',
-                        date: new Date().toISOString(),
-                        displayDate: this.formatDate(new Date()),
-                        category: 'RTI',
-                        media: [{ type: 'image', url: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'400\' height=\'200\' fill=\'%230a1a2f\'/%3E%3Ctext x=\'200\' y=\'100\' font-family=\'Inter\' font-size=\'20\' fill=\'%23c9a959\' text-anchor=\'middle\'%3ERTI Guide%3C/text%3E%3C/svg%3E' }]
-                    },
-                    {
-                        id: 'blog-1',
-                        type: 'blog',
-                        title: 'Evolution of Environmental Jurisprudence in India',
-                        text: 'From the Stockholm Conference to the National Green Tribunal, this article traces the development of environmental law in India and the role of the judiciary in shaping environmental policy. An analysis of key judgments and their impact on environmental protection.',
-                        date: new Date().toISOString(),
-                        displayDate: this.formatDate(new Date()),
-                        category: 'Environment',
-                        media: [{ type: 'image', url: 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'400\' height=\'200\' fill=\'%230a1a2f\'/%3E%3Ctext x=\'200\' y=\'100\' font-family=\'Inter\' font-size=\'20\' fill=\'%23c9a959\' text-anchor=\'middle\'%3EEnvironmental Law%3C/text%3E%3C/svg%3E' }]
-                    }
-                ];
-
-                this.displayAllContent();
             },
 
             displayAllContent() {
@@ -2817,8 +2822,7 @@
                             </div>
                         `;
                     } else if (firstMedia.type === 'video') {
-                        // FIXED: Check if it's a data URL or placeholder
-                        const videoUrl = firstMedia.isDataUrl ? firstMedia.url : (firstMedia.url === 'video-preview-placeholder' ? '#' : firstMedia.url);
+                        const videoUrl = firstMedia.url;
                         
                         mediaHTML = `
                             <div class="card-media">
@@ -2829,8 +2833,6 @@
                         `;
                     }
                 }
-
-                const shareLink = this.getShareableLink(item.id);
 
                 card.innerHTML = `
                     ${mediaHTML}
@@ -2906,19 +2908,12 @@
                             if (media.type === 'image') {
                                 mediaHTML += `<img src="${media.url}" style="max-width: 100%; margin: 20px 0; border-radius: var(--border-radius-lg); cursor: pointer; box-shadow: var(--shadow-lg);" onclick="app.openImageModal('${media.url}')">`;
                             } else if (media.type === 'video') {
-                                const videoUrl = media.isDataUrl ? media.url : (media.url === 'video-preview-placeholder' ? '#' : media.url);
+                                const videoUrl = media.url;
                                 if (videoUrl && videoUrl !== '#') {
                                     mediaHTML += `
                                         <video controls style="max-width: 100%; margin: 20px 0; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-lg);">
                                             <source src="${videoUrl}" type="video/mp4">
                                         </video>
-                                    `;
-                                } else {
-                                    mediaHTML += `
-                                        <div style="background: var(--primary); padding: 40px; text-align: center; margin: 20px 0; border-radius: var(--border-radius-lg);">
-                                            <i class="fas fa-video" style="font-size: 4rem; color: var(--secondary);"></i>
-                                            <p style="color: white; margin-top: 15px;">Video Preview Available</p>
-                                        </div>
                                     `;
                                 }
                             }
@@ -2930,7 +2925,6 @@
                         <div style="color: var(--text-light); margin-bottom: 30px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; padding-bottom: 20px; border-bottom: 2px dashed rgba(201, 169, 89, 0.3);">
                             <span class="card-category" style="font-size: 0.9rem;">${item.category || item.type}</span>
                             <span><i class="far fa-calendar-alt"></i> ${item.displayDate}</span>
-                            <span><i class="far fa-clock"></i> ${new Date(item.date).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
                         </div>
                         ${mediaHTML}
                         <div style="line-height: 1.9; color: var(--text-dark); font-size: 1.1rem; margin-top: 20px;">${item.text}</div>
@@ -2971,12 +2965,6 @@
                                 const previewDiv = document.createElement('div');
                                 previewDiv.className = 'video-preview-item';
                                 
-                                // Store video data if it exists
-                                if (media.isDataUrl) {
-                                    previewDiv.setAttribute('data-video-data', media.url);
-                                    previewDiv.setAttribute('data-video-name', media.fileName || 'video.mp4');
-                                }
-                                
                                 previewDiv.innerHTML = `
                                     <i class="fas fa-video"></i>
                                     <span class="video-filename">Video Preview</span>
@@ -2996,17 +2984,33 @@
                 }
             },
 
-            deleteContent(contentId) {
+            async deleteContent(contentId) {
                 if (!this.isAdminLoggedIn) {
                     this.showToast('Admin login required', 'warning');
                     return;
                 }
 
                 if (confirm('Are you sure you want to delete this item?')) {
-                    this.content = this.content.filter(item => item.id !== contentId);
-                    this.displayAllContent();
-                    this.updateStats();
-                    this.showToast('Content deleted successfully', 'success');
+                    try {
+                        const response = await fetch(`/api/content/${contentId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${this.sessionToken || ''}`
+                            }
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            await this.loadContentFromServer();
+                            this.showToast('Content deleted successfully', 'success');
+                        } else {
+                            this.showToast('Error deleting content', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Delete error:', error);
+                        this.showToast('Failed to delete content', 'error');
+                    }
                 }
             },
 
@@ -3021,7 +3025,7 @@
                 document.getElementById('submit-content').classList.remove('btn-warning');
             },
 
-            generateQRCode() {
+            async generateQRCode() {
                 const treeId = document.getElementById('tree-id').value.trim();
                 const treeName = document.getElementById('tree-name').value.trim();
                 const plantedDate = document.getElementById('planted-date').value;
@@ -3037,36 +3041,64 @@
                     return;
                 }
 
-                // Create QR code data URL with all tree information
-                const qrData = JSON.stringify({
-                    id: treeId,
-                    name: treeName,
-                    scientific: scientificName,
-                    planted: plantedDate,
-                    location: location,
-                    plantedBy: plantedBy,
-                    health: treeHealth,
-                    height: treeHeight,
-                    description: description,
-                    timestamp: new Date().toISOString()
+                this.showToast('Generating QR code...', 'info');
+
+                const files = [];
+                
+                document.querySelectorAll('#tree-images-preview .image-preview-item img').forEach(img => {
+                    if (img.src.startsWith('data:')) {
+                        files.push({
+                            name: `tree_image_${Date.now()}.jpg`,
+                            type: 'image',
+                            data: img.src
+                        });
+                    }
                 });
 
-                // Generate QR code
-                QRCode.toDataURL(qrData, { 
-                    width: 400,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#ffffff'
+                const treeVideoPreview = document.querySelector('#tree-video-preview .video-preview-item');
+                if (treeVideoPreview) {
+                    const videoData = treeVideoPreview.getAttribute('data-video-data');
+                    const videoName = treeVideoPreview.getAttribute('data-video-name') || 'tree_video.mp4';
+                    
+                    if (videoData) {
+                        files.push({
+                            name: videoName,
+                            type: 'video',
+                            data: videoData
+                        });
                     }
-                }, (err, url) => {
-                    if (err) {
-                        console.error('QR generation error:', err);
-                        this.showToast('Error generating QR code', 'error');
-                    } else {
-                        document.getElementById('qr-code-img').src = url;
+                }
+
+                const qrData = {
+                    treeId: treeId,
+                    treeName: treeName,
+                    scientificName: scientificName,
+                    plantedDate: plantedDate,
+                    location: location,
+                    plantedBy: plantedBy,
+                    healthStatus: treeHealth,
+                    treeHeight: treeHeight,
+                    description: description
+                };
+
+                try {
+                    const response = await fetch('/api/qr', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.sessionToken || ''}`
+                        },
+                        body: JSON.stringify({
+                            data: qrData,
+                            files: files
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        document.getElementById('qr-code-img').src = result.qrCodeUrl;
                         
-                        // Display tree information
                         let qrDataHTML = `
                             <div class="qr-data-row"><strong>Tree ID:</strong> ${treeId}</div>
                             <div class="qr-data-row"><strong>Tree Name:</strong> ${treeName}</div>
@@ -3081,43 +3113,33 @@
 
                         document.getElementById('qr-data-display').innerHTML = qrDataHTML;
                         
-                        // Save to history
-                        const media = [];
-                        document.querySelectorAll('#tree-images-preview .image-preview-item img').forEach(img => {
-                            media.push({
-                                type: 'image',
-                                url: img.src
+                        let mediaHTML = '';
+                        if (result.treeImages && result.treeImages.length > 0) {
+                            mediaHTML += '<div style="margin-top: 20px;"><strong>Tree Images:</strong><div class="images-grid">';
+                            result.treeImages.forEach(img => {
+                                mediaHTML += `
+                                    <div class="image-preview-item" style="cursor: pointer;" onclick="app.openImageModal('${img.url}')">
+                                        <img src="${img.url}">
+                                    </div>
+                                `;
                             });
-                        });
-
-                        // Collect video data if available
-                        const treeVideoPreview = document.querySelector('#tree-video-preview .video-preview-item');
-                        let videoData = null;
-                        if (treeVideoPreview) {
-                            videoData = treeVideoPreview.getAttribute('data-video-data');
+                            mediaHTML += '</div></div>';
                         }
-
-                        const qrItem = {
-                            id: 'QR-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
-                            treeId: treeId,
-                            treeName: treeName,
-                            scientificName: scientificName,
-                            plantedDate: plantedDate,
-                            location: location,
-                            plantedBy: plantedBy,
-                            treeHealth: treeHealth,
-                            treeHeight: treeHeight,
-                            description: description,
-                            media: media,
-                            videoData: videoData,
-                            displayDate: this.formatDate(plantedDate),
-                            createdDate: new Date().toISOString(),
-                            qrCodeUrl: url
-                        };
                         
-                        this.qrData.unshift(qrItem);
-                        this.displayQRHistory();
-                        this.updateStats();
+                        if (result.treeVideoUrl) {
+                            mediaHTML += `
+                                <div style="margin-top: 20px;">
+                                    <strong>Tree Video:</strong>
+                                    <video controls style="max-width: 100%; margin-top: 10px; border-radius: var(--border-radius-lg);">
+                                        <source src="${result.treeVideoUrl}" type="video/mp4">
+                                    </video>
+                                </div>
+                            `;
+                        }
+                        
+                        document.getElementById('qr-media-preview').innerHTML = mediaHTML;
+                        
+                        await this.loadQRFromServer();
                         
                         document.getElementById('qr-preview-section').classList.add('visible');
                         this.showToast('QR Code generated successfully!', 'success');
@@ -3125,12 +3147,13 @@
                         setTimeout(() => {
                             document.getElementById('qr-preview-section').scrollIntoView({ behavior: 'smooth' });
                         }, 100);
+                    } else {
+                        this.showToast('Error: ' + result.error, 'error');
                     }
-                });
-            },
-
-            loadQRData() {
-                this.displayQRHistory();
+                } catch (error) {
+                    console.error('QR generation error:', error);
+                    this.showToast('Failed to generate QR code', 'error');
+                }
             },
 
             displayQRHistory() {
@@ -3182,16 +3205,10 @@
                     let qrDataHTML = `
                         <div class="qr-data-row"><strong>Tree ID:</strong> ${item.treeId}</div>
                         <div class="qr-data-row"><strong>Tree Name:</strong> ${item.treeName}</div>
-                        ${item.scientificName ? `<div class="qr-data-row"><strong>Scientific:</strong> ${item.scientificName}</div>` : ''}
-                        <div class="qr-data-row"><strong>Planted:</strong> ${item.displayDate}</div>
                         <div class="qr-data-row"><strong>Location:</strong> ${item.location}</div>
-                        <div class="qr-data-row"><strong>Planted By:</strong> ${item.plantedBy}</div>
-                        ${item.treeHealth ? `<div class="qr-data-row"><strong>Health:</strong> ${item.treeHealth}</div>` : ''}
-                        ${item.treeHeight ? `<div class="qr-data-row"><strong>Height:</strong> ${item.treeHeight} ft</div>` : ''}
-                        ${item.description ? `<div class="qr-data-row"><strong>Description:</strong> ${item.description}</div>` : ''}
+                        <div class="qr-data-row"><strong>Planted:</strong> ${item.displayDate}</div>
                     `;
 
-                    // Add media preview
                     let mediaHTML = '';
                     if (item.media && item.media.length > 0) {
                         mediaHTML += '<div style="margin-top: 20px;"><strong>Tree Images:</strong><div class="images-grid">';
@@ -3225,17 +3242,33 @@
                 }
             },
 
-            deleteQRItem(qrId) {
+            async deleteQRItem(qrId) {
                 if (!this.isAdminLoggedIn) {
                     this.showToast('Admin login required', 'warning');
                     return;
                 }
 
                 if (confirm('Delete this QR entry?')) {
-                    this.qrData = this.qrData.filter(item => item.id !== qrId);
-                    this.displayQRHistory();
-                    this.updateStats();
-                    this.showToast('QR entry deleted', 'success');
+                    try {
+                        const response = await fetch(`/api/qr/${qrId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${this.sessionToken || ''}`
+                            }
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            await this.loadQRFromServer();
+                            this.showToast('QR entry deleted', 'success');
+                        } else {
+                            this.showToast('Error deleting QR entry', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Delete error:', error);
+                        this.showToast('Failed to delete QR entry', 'error');
+                    }
                 }
             },
 
@@ -3335,21 +3368,18 @@
                 modal.style.display = 'flex';
             },
 
-            // FIXED: openVideoModal with proper handling
             openVideoModal(src, contentId) {
                 const modal = document.getElementById('video-modal');
                 const video = document.getElementById('modal-video');
                 
-                // Check if src is valid and not a placeholder
                 if (src && src !== '#' && src !== 'video-preview-placeholder') {
                     video.src = src;
                 } else {
-                    // Try to find video data from content
                     if (contentId) {
                         const item = this.content.find(c => c.id === contentId);
                         if (item && item.media) {
                             const videoMedia = item.media.find(m => m.type === 'video');
-                            if (videoMedia && videoMedia.isDataUrl) {
+                            if (videoMedia && videoMedia.url) {
                                 video.src = videoMedia.url;
                             }
                         }
@@ -3358,14 +3388,13 @@
                 
                 modal.style.display = 'flex';
                 
-                // Try to play
                 video.play().catch(e => {
                     console.log('Autoplay prevented');
-                    // Show play button or message
                 });
             },
 
             formatDate(date) {
+                if (!date) return 'Unknown date';
                 return new Date(date).toLocaleDateString('en-IN', {
                     year: 'numeric',
                     month: 'long',

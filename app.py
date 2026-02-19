@@ -17,6 +17,7 @@ import shutil
 import logging
 from logging.handlers import RotatingFileHandler
 import time
+import traceback
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -61,294 +62,301 @@ app.logger.info('KC Jain Advocate Website startup')
 # ==================== DATABASE INITIALIZATION ====================
 def init_db():
     """Initialize SQLite database with all required tables"""
-    conn = sqlite3.connect(DATABASE)
-    cursor = conn.cursor()
-    
-    # Content table with improved schema
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS content (
-            id TEXT PRIMARY KEY,
-            type TEXT NOT NULL,
-            title TEXT NOT NULL,
-            text TEXT,
-            category TEXT,
-            image_urls TEXT,  -- Store multiple image URLs as JSON
-            video_url TEXT,
-            created_date TIMESTAMP,
-            updated_date TIMESTAMP,
-            status TEXT DEFAULT 'Active',
-            media_type TEXT,
-            file_count INTEGER DEFAULT 0,
-            style TEXT DEFAULT 'default',
-            priority INTEGER DEFAULT 0,
-            tags TEXT,
-            views INTEGER DEFAULT 0,
-            likes INTEGER DEFAULT 0,
-            shares INTEGER DEFAULT 0,
-            author TEXT DEFAULT 'KC Jain',
-            featured BOOLEAN DEFAULT 0,
-            language TEXT DEFAULT 'en',
-            seo_title TEXT,
-            seo_description TEXT,
-            seo_keywords TEXT
-        )
-    ''')
-    
-    # QR Data table with improved schema
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS qr_data (
-            id TEXT PRIMARY KEY,
-            tree_id TEXT NOT NULL,
-            tree_name TEXT NOT NULL,
-            scientific_name TEXT,
-            planted_date TEXT,
-            location TEXT,
-            coordinates TEXT,
-            planted_by TEXT,
-            maintenance_by TEXT,
-            tree_age TEXT,
-            tree_height TEXT,
-            description TEXT,
-            health_status TEXT DEFAULT 'Good',
-            last_maintenance TEXT,
-            next_maintenance TEXT,
-            watering_schedule TEXT,
-            qr_code_url TEXT,
-            tree_image_urls TEXT,  -- Store multiple image URLs as JSON
-            tree_video_url TEXT,
-            created_date TIMESTAMP,
-            updated_date TIMESTAMP,
-            status TEXT DEFAULT 'Active',
-            qr_style TEXT DEFAULT 'default',
-            qr_scan_count INTEGER DEFAULT 0,
-            qr_download_count INTEGER DEFAULT 0,
-            qr_print_count INTEGER DEFAULT 0,
-            tree_age_years INTEGER,
-            tree_age_months INTEGER,
-            girth_size TEXT,
-            canopy_size TEXT,
-            soil_type TEXT,
-            watering_frequency TEXT,
-            fertilizer_schedule TEXT,
-            pest_control TEXT,
-            special_notes TEXT
-        )
-    ''')
-    
-    # Profile config table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS profile_config (
-            key TEXT PRIMARY KEY,
-            value TEXT,
-            thumbnail TEXT,
-            updated_at TIMESTAMP,
-            metadata TEXT,
-            version INTEGER DEFAULT 1,
-            created_at TIMESTAMP
-        )
-    ''')
-    
-    # Admin users table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS admin_users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            email TEXT UNIQUE NOT NULL,
-            password_hash TEXT NOT NULL,
-            name TEXT,
-            role TEXT DEFAULT 'admin',
-            created_date TIMESTAMP,
-            last_login TIMESTAMP,
-            last_ip TEXT,
-            login_count INTEGER DEFAULT 0,
-            status TEXT DEFAULT 'Active',
-            profile_picture TEXT,
-            permissions TEXT,
-            two_factor_enabled BOOLEAN DEFAULT 0,
-            two_factor_secret TEXT
-        )
-    ''')
-    
-    # Settings table - FIX: Removed created_at column to match existing schema
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS settings (
-            key TEXT PRIMARY KEY,
-            value TEXT,
-            updated_at TIMESTAMP,
-            description TEXT,
-            type TEXT DEFAULT 'string',
-            group_name TEXT DEFAULT 'general'
-        )
-    ''')
-    
-    # Sessions table for managing user sessions
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS sessions (
-            id TEXT PRIMARY KEY,
-            user_id INTEGER,
-            token TEXT,
-            ip_address TEXT,
-            user_agent TEXT,
-            created_at TIMESTAMP,
-            expires_at TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES admin_users (id)
-        )
-    ''')
-    
-    # Activity log table
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS activity_log (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id INTEGER,
-            action TEXT,
-            entity_type TEXT,
-            entity_id TEXT,
-            details TEXT,
-            ip_address TEXT,
-            user_agent TEXT,
-            created_at TIMESTAMP,
-            FOREIGN KEY (user_id) REFERENCES admin_users (id)
-        )
-    ''')
-    
-    conn.commit()
-    
-    # Check and add missing columns to existing tables
     try:
-        # Check if created_at exists in settings table
-        cursor.execute("PRAGMA table_info(settings)")
-        columns = [column[1] for column in cursor.fetchall()]
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
         
-        # Add missing columns if needed
-        if 'created_at' not in columns:
-            cursor.execute("ALTER TABLE settings ADD COLUMN created_at TIMESTAMP")
-            app.logger.info("Added created_at column to settings table")
+        # Content table with improved schema
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS content (
+                id TEXT PRIMARY KEY,
+                type TEXT NOT NULL,
+                title TEXT NOT NULL,
+                text TEXT,
+                category TEXT,
+                image_urls TEXT,  -- Store multiple image URLs as JSON
+                video_url TEXT,
+                created_date TIMESTAMP,
+                updated_date TIMESTAMP,
+                status TEXT DEFAULT 'Active',
+                media_type TEXT,
+                file_count INTEGER DEFAULT 0,
+                style TEXT DEFAULT 'default',
+                priority INTEGER DEFAULT 0,
+                tags TEXT,
+                views INTEGER DEFAULT 0,
+                likes INTEGER DEFAULT 0,
+                shares INTEGER DEFAULT 0,
+                author TEXT DEFAULT 'KC Jain',
+                featured BOOLEAN DEFAULT 0,
+                language TEXT DEFAULT 'en',
+                seo_title TEXT,
+                seo_description TEXT,
+                seo_keywords TEXT
+            )
+        ''')
         
-        # Add group_name if missing
-        if 'group_name' not in columns:
-            cursor.execute("ALTER TABLE settings ADD COLUMN group_name TEXT DEFAULT 'general'")
-            app.logger.info("Added group_name column to settings table")
+        # QR Data table with improved schema
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS qr_data (
+                id TEXT PRIMARY KEY,
+                tree_id TEXT NOT NULL,
+                tree_name TEXT NOT NULL,
+                scientific_name TEXT,
+                planted_date TEXT,
+                location TEXT,
+                coordinates TEXT,
+                planted_by TEXT,
+                maintenance_by TEXT,
+                tree_age TEXT,
+                tree_height TEXT,
+                description TEXT,
+                health_status TEXT DEFAULT 'Good',
+                last_maintenance TEXT,
+                next_maintenance TEXT,
+                watering_schedule TEXT,
+                qr_code_url TEXT,
+                tree_image_urls TEXT,  -- Store multiple image URLs as JSON
+                tree_video_url TEXT,
+                created_date TIMESTAMP,
+                updated_date TIMESTAMP,
+                status TEXT DEFAULT 'Active',
+                qr_style TEXT DEFAULT 'default',
+                qr_scan_count INTEGER DEFAULT 0,
+                qr_download_count INTEGER DEFAULT 0,
+                qr_print_count INTEGER DEFAULT 0,
+                tree_age_years INTEGER,
+                tree_age_months INTEGER,
+                girth_size TEXT,
+                canopy_size TEXT,
+                soil_type TEXT,
+                watering_frequency TEXT,
+                fertilizer_schedule TEXT,
+                pest_control TEXT,
+                special_notes TEXT
+            )
+        ''')
         
-        # Add type if missing
-        if 'type' not in columns:
-            cursor.execute("ALTER TABLE settings ADD COLUMN type TEXT DEFAULT 'string'")
-            app.logger.info("Added type column to settings table")
+        # Profile config table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS profile_config (
+                key TEXT PRIMARY KEY,
+                value TEXT,
+                thumbnail TEXT,
+                updated_at TIMESTAMP,
+                metadata TEXT,
+                version INTEGER DEFAULT 1,
+                created_at TIMESTAMP
+            )
+        ''')
         
-        # Add description if missing
-        if 'description' not in columns:
-            cursor.execute("ALTER TABLE settings ADD COLUMN description TEXT")
-            app.logger.info("Added description column to settings table")
+        # Admin users table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS admin_users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT NOT NULL,
+                name TEXT,
+                role TEXT DEFAULT 'admin',
+                created_date TIMESTAMP,
+                last_login TIMESTAMP,
+                last_ip TEXT,
+                login_count INTEGER DEFAULT 0,
+                status TEXT DEFAULT 'Active',
+                profile_picture TEXT,
+                permissions TEXT,
+                two_factor_enabled BOOLEAN DEFAULT 0,
+                two_factor_secret TEXT
+            )
+        ''')
+        
+        # Settings table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS settings (
+                key TEXT PRIMARY KEY,
+                value TEXT,
+                updated_at TIMESTAMP,
+                description TEXT,
+                type TEXT DEFAULT 'string',
+                group_name TEXT DEFAULT 'general'
+            )
+        ''')
+        
+        # Sessions table for managing user sessions
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS sessions (
+                id TEXT PRIMARY KEY,
+                user_id INTEGER,
+                token TEXT,
+                ip_address TEXT,
+                user_agent TEXT,
+                created_at TIMESTAMP,
+                expires_at TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES admin_users (id)
+            )
+        ''')
+        
+        # Activity log table
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS activity_log (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER,
+                action TEXT,
+                entity_type TEXT,
+                entity_id TEXT,
+                details TEXT,
+                ip_address TEXT,
+                user_agent TEXT,
+                created_at TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES admin_users (id)
+            )
+        ''')
+        
+        conn.commit()
+        
+        # Check and add missing columns to existing tables
+        try:
+            # Check if created_at exists in settings table
+            cursor.execute("PRAGMA table_info(settings)")
+            columns = [column[1] for column in cursor.fetchall()]
             
-    except Exception as e:
-        app.logger.warning(f"Error altering settings table: {e}")
-    
-    conn.commit()
-    
-    # Insert default admin user if not exists (password: admin123)
-    cursor.execute("SELECT * FROM admin_users WHERE email = 'kcjain@gmail.com'")
-    if not cursor.fetchone():
-        password_hash = hashlib.sha256('admin123'.encode()).hexdigest()
-        cursor.execute('''
-            INSERT INTO admin_users (email, password_hash, name, role, created_date, status, permissions)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            'kcjain@gmail.com', 
-            password_hash, 
-            'KC Jain', 
-            'super_admin', 
-            datetime.now().isoformat(), 
-            'Active',
-            json.dumps(['all'])
-        ))
-    
-    cursor.execute("SELECT * FROM admin_users WHERE email = 'shivamsharmaanna@gmail.com'")
-    if not cursor.fetchone():
-        password_hash = hashlib.sha256('admin123'.encode()).hexdigest()
-        cursor.execute('''
-            INSERT INTO admin_users (email, password_hash, name, role, created_date, status, permissions)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            'shivamsharmaanna@gmail.com', 
-            password_hash, 
-            'Shivam Sharma', 
-            'admin', 
-            datetime.now().isoformat(), 
-            'Active',
-            json.dumps(['content', 'qr', 'profile'])
-        ))
-    
-    # Check if default profile image exists
-    cursor.execute("SELECT * FROM profile_config WHERE key = 'profile-image'")
-    if not cursor.fetchone():
-        # Create a default profile image placeholder
-        default_profile_path = os.path.join(UPLOAD_FOLDER, 'profile', 'default-profile.jpg')
-        os.makedirs(os.path.dirname(default_profile_path), exist_ok=True)
+            # Add missing columns if needed
+            if 'created_at' not in columns:
+                cursor.execute("ALTER TABLE settings ADD COLUMN created_at TIMESTAMP")
+                app.logger.info("Added created_at column to settings table")
+            
+            # Add group_name if missing
+            if 'group_name' not in columns:
+                cursor.execute("ALTER TABLE settings ADD COLUMN group_name TEXT DEFAULT 'general'")
+                app.logger.info("Added group_name column to settings table")
+            
+            # Add type if missing
+            if 'type' not in columns:
+                cursor.execute("ALTER TABLE settings ADD COLUMN type TEXT DEFAULT 'string'")
+                app.logger.info("Added type column to settings table")
+            
+            # Add description if missing
+            if 'description' not in columns:
+                cursor.execute("ALTER TABLE settings ADD COLUMN description TEXT")
+                app.logger.info("Added description column to settings table")
+                
+        except Exception as e:
+            app.logger.warning(f"Error altering settings table: {e}")
         
-        # Create a simple default profile image if it doesn't exist
-        if not os.path.exists(default_profile_path):
-            try:
-                # Create a simple colored placeholder image
-                img = Image.new('RGB', (400, 400), color='#0a1929')
-                draw = ImageDraw.Draw(img)
-                
-                # Try to use a font, fallback to default if not available
-                try:
-                    font = ImageFont.truetype("arial.ttf", 48)
-                except:
-                    font = ImageFont.load_default()
-                
-                # Draw text
-                draw.text((200, 150), "KC", fill='#c9a959', anchor='mm', font=font)
-                draw.text((200, 220), "JAIN", fill='#c9a959', anchor='mm', font=font)
-                draw.text((200, 300), "Supreme Court", fill='#ffffff', anchor='mm', font=ImageFont.load_default())
-                
-                img.save(default_profile_path, quality=95)
-                app.logger.info("Default profile image created successfully")
-            except Exception as e:
-                app.logger.error(f"Error creating default profile image: {e}")
+        conn.commit()
         
-        cursor.execute('''
-            INSERT INTO profile_config (key, value, thumbnail, updated_at, metadata, created_at, version)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (
-            'profile-image',
-            '/uploads/profile/default-profile.jpg',
-            '/uploads/profile/default-profile.jpg',
-            datetime.now().isoformat(),
-            json.dumps({'name': 'Default Profile', 'type': 'default', 'created': True}),
-            datetime.now().isoformat(),
-            1
-        ))
-    
-    # Insert default settings - FIX: Removed created_at from INSERT
-    default_settings = [
-        ('site_title', 'KC Jain - Supreme Court Advocate', 'Website title', 'string', 'general'),
-        ('site_description', 'Distinguished Supreme Court practice with a legacy of landmark judgments', 'Website description', 'string', 'general'),
-        ('contact_email', 'kcjain@gmail.com', 'Primary contact email', 'string', 'contact'),
-        ('contact_phone', '+91 94122 63072', 'Contact phone number', 'string', 'contact'),
-        ('address', 'Room No. 7, Supreme Court Complex, New Delhi - 110001', 'Office address', 'text', 'contact'),
-        ('working_hours', 'Mon - Sat: 10:00 AM - 6:00 PM', 'Working hours', 'string', 'general'),
-        ('enable_qr_system', 'true', 'Enable QR code system', 'boolean', 'features'),
-        ('enable_comments', 'false', 'Enable comments on content', 'boolean', 'features'),
-        ('maintenance_mode', 'false', 'Maintenance mode status', 'boolean', 'system'),
-        ('analytics_id', '', 'Google Analytics ID', 'string', 'analytics'),
-        ('facebook_url', '#', 'Facebook page URL', 'string', 'social'),
-        ('twitter_url', '#', 'Twitter profile URL', 'string', 'social'),
-        ('linkedin_url', '#', 'LinkedIn profile URL', 'string', 'social'),
-        ('instagram_url', '#', 'Instagram profile URL', 'string', 'social')
-    ]
-    
-    now = datetime.now().isoformat()
-    for key, value, description, type_val, group in default_settings:
-        cursor.execute("SELECT * FROM settings WHERE key = ?", (key,))
+        # Insert default admin user if not exists (password: admin123)
+        cursor.execute("SELECT * FROM admin_users WHERE email = 'kcjain@gmail.com'")
         if not cursor.fetchone():
+            password_hash = hashlib.sha256('admin123'.encode()).hexdigest()
             cursor.execute('''
-                INSERT INTO settings (key, value, updated_at, description, type, group_name)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (key, value, now, description, type_val, group))
-    
-    conn.commit()
-    conn.close()
-    app.logger.info("Database initialized successfully")
+                INSERT INTO admin_users (email, password_hash, name, role, created_date, status, permissions)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                'kcjain@gmail.com', 
+                password_hash, 
+                'KC Jain', 
+                'super_admin', 
+                datetime.now().isoformat(), 
+                'Active',
+                json.dumps(['all'])
+            ))
+            app.logger.info("Default admin user created")
+        
+        cursor.execute("SELECT * FROM admin_users WHERE email = 'shivamsharmaanna@gmail.com'")
+        if not cursor.fetchone():
+            password_hash = hashlib.sha256('admin123'.encode()).hexdigest()
+            cursor.execute('''
+                INSERT INTO admin_users (email, password_hash, name, role, created_date, status, permissions)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                'shivamsharmaanna@gmail.com', 
+                password_hash, 
+                'Shivam Sharma', 
+                'admin', 
+                datetime.now().isoformat(), 
+                'Active',
+                json.dumps(['content', 'qr', 'profile'])
+            ))
+            app.logger.info("Second admin user created")
+        
+        # Check if default profile image exists
+        cursor.execute("SELECT * FROM profile_config WHERE key = 'profile-image'")
+        if not cursor.fetchone():
+            # Create a default profile image placeholder
+            default_profile_path = os.path.join(UPLOAD_FOLDER, 'profile', 'default-profile.jpg')
+            os.makedirs(os.path.dirname(default_profile_path), exist_ok=True)
+            
+            # Create a simple default profile image if it doesn't exist
+            if not os.path.exists(default_profile_path):
+                try:
+                    # Create a simple colored placeholder image
+                    img = Image.new('RGB', (400, 400), color='#0a1929')
+                    draw = ImageDraw.Draw(img)
+                    
+                    # Try to use a font, fallback to default if not available
+                    try:
+                        font = ImageFont.truetype("arial.ttf", 48)
+                    except:
+                        font = ImageFont.load_default()
+                    
+                    # Draw text
+                    draw.text((200, 150), "KC", fill='#c9a959', anchor='mm', font=font)
+                    draw.text((200, 220), "JAIN", fill='#c9a959', anchor='mm', font=font)
+                    draw.text((200, 300), "Supreme Court", fill='#ffffff', anchor='mm', font=ImageFont.load_default())
+                    
+                    img.save(default_profile_path, quality=95)
+                    app.logger.info("Default profile image created successfully")
+                except Exception as e:
+                    app.logger.error(f"Error creating default profile image: {e}")
+            
+            cursor.execute('''
+                INSERT INTO profile_config (key, value, thumbnail, updated_at, metadata, created_at, version)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (
+                'profile-image',
+                '/uploads/profile/default-profile.jpg',
+                '/uploads/profile/default-profile.jpg',
+                datetime.now().isoformat(),
+                json.dumps({'name': 'Default Profile', 'type': 'default', 'created': True}),
+                datetime.now().isoformat(),
+                1
+            ))
+        
+        # Insert default settings
+        default_settings = [
+            ('site_title', 'KC Jain - Supreme Court Advocate', 'Website title', 'string', 'general'),
+            ('site_description', 'Distinguished Supreme Court practice with a legacy of landmark judgments', 'Website description', 'string', 'general'),
+            ('contact_email', 'kcjain@gmail.com', 'Primary contact email', 'string', 'contact'),
+            ('contact_phone', '+91 94122 63072', 'Contact phone number', 'string', 'contact'),
+            ('address', 'Room No. 7, Supreme Court Complex, New Delhi - 110001', 'Office address', 'text', 'contact'),
+            ('working_hours', 'Mon - Sat: 10:00 AM - 6:00 PM', 'Working hours', 'string', 'general'),
+            ('enable_qr_system', 'true', 'Enable QR code system', 'boolean', 'features'),
+            ('enable_comments', 'false', 'Enable comments on content', 'boolean', 'features'),
+            ('maintenance_mode', 'false', 'Maintenance mode status', 'boolean', 'system'),
+            ('analytics_id', '', 'Google Analytics ID', 'string', 'analytics'),
+            ('facebook_url', '#', 'Facebook page URL', 'string', 'social'),
+            ('twitter_url', '#', 'Twitter profile URL', 'string', 'social'),
+            ('linkedin_url', '#', 'LinkedIn profile URL', 'string', 'social'),
+            ('instagram_url', '#', 'Instagram profile URL', 'string', 'social')
+        ]
+        
+        now = datetime.now().isoformat()
+        for key, value, description, type_val, group in default_settings:
+            cursor.execute("SELECT * FROM settings WHERE key = ?", (key,))
+            if not cursor.fetchone():
+                cursor.execute('''
+                    INSERT INTO settings (key, value, updated_at, description, type, group_name)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                ''', (key, value, now, description, type_val, group))
+        
+        conn.commit()
+        conn.close()
+        app.logger.info("Database initialized successfully")
+        
+    except Exception as e:
+        app.logger.error(f"Database initialization error: {e}")
+        app.logger.error(traceback.format_exc())
 
 # Initialize database on startup
 init_db()
@@ -721,15 +729,23 @@ def drive_proxy(file_id):
     return redirect(f'https://drive.google.com/file/d/{file_id}/preview')
 
 # ============ AUTH ENDPOINTS ============
-@app.route('/api/auth/login', methods=['POST'])
+@app.route('/api/auth/login', methods=['POST', 'OPTIONS'])
 def login():
     """Admin login endpoint"""
+    if request.method == 'OPTIONS':
+        return '', 200
+        
     try:
         data = request.json
+        if not data:
+            return jsonify({'success': False, 'error': 'No data provided'}), 400
+            
         email = data.get('email', '').lower().strip()
         password = data.get('password', '')
         ip_address = request.remote_addr
         user_agent = request.headers.get('User-Agent')
+        
+        app.logger.info(f"Login attempt: {email}")
         
         if verify_admin(email, password):
             # Get user details
@@ -789,6 +805,7 @@ def login():
             
     except Exception as e:
         app.logger.error(f"Login error: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/auth/logout', methods=['POST'])
@@ -961,6 +978,7 @@ def get_all_content():
         
     except Exception as e:
         app.logger.error(f"Error getting content: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/content/<content_id>', methods=['GET'])
@@ -1039,16 +1057,22 @@ def save_content():
         
         # Get admin info from token
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
         admin_info = None
         if token:
             conn = sqlite3.connect(DATABASE)
             cursor = conn.cursor()
-            cursor.execute('SELECT user_id FROM sessions WHERE token = ?', (token,))
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
             session = cursor.fetchone()
             if session:
                 cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
                 admin_info = cursor.fetchone()
             conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
         
         content_id = content_data.get('id') or f"content-{uuid.uuid4().hex[:12]}"
         now = datetime.now().isoformat()
@@ -1152,6 +1176,7 @@ def save_content():
         
     except Exception as e:
         app.logger.error(f"Error saving content: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/content/<content_id>', methods=['PUT'])
@@ -1164,16 +1189,22 @@ def update_content(content_id):
         
         # Get admin info from token
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
         admin_info = None
         if token:
             conn = sqlite3.connect(DATABASE)
             cursor = conn.cursor()
-            cursor.execute('SELECT user_id FROM sessions WHERE token = ?', (token,))
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
             session = cursor.fetchone()
             if session:
                 cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
                 admin_info = cursor.fetchone()
             conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
         
         now = datetime.now().isoformat()
         
@@ -1299,6 +1330,7 @@ def update_content(content_id):
         
     except Exception as e:
         app.logger.error(f"Error updating content {content_id}: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/content/<content_id>', methods=['DELETE'])
@@ -1307,16 +1339,22 @@ def delete_content(content_id):
     try:
         # Get admin info from token
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
         admin_info = None
         if token:
             conn = sqlite3.connect(DATABASE)
             cursor = conn.cursor()
-            cursor.execute('SELECT user_id FROM sessions WHERE token = ?', (token,))
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
             session = cursor.fetchone()
             if session:
                 cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
                 admin_info = cursor.fetchone()
             conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
         
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
@@ -1344,6 +1382,7 @@ def delete_content(content_id):
         
     except Exception as e:
         app.logger.error(f"Error deleting content {content_id}: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # ============ QR CODE ENDPOINTS ============
@@ -1433,6 +1472,7 @@ def get_all_qr():
         
     except Exception as e:
         app.logger.error(f"Error getting QR data: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/qr/<qr_id>', methods=['GET'])
@@ -1504,16 +1544,22 @@ def generate_qr():
         
         # Get admin info from token
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
         admin_info = None
         if token:
             conn = sqlite3.connect(DATABASE)
             cursor = conn.cursor()
-            cursor.execute('SELECT user_id FROM sessions WHERE token = ?', (token,))
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
             session = cursor.fetchone()
             if session:
                 cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
                 admin_info = cursor.fetchone()
             conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
         
         qr_id = f"TREE-{uuid.uuid4().hex[:8].upper()}"
         now = datetime.now().isoformat()
@@ -1704,6 +1750,7 @@ def generate_qr():
         
     except Exception as e:
         app.logger.error(f"Error generating QR: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/qr/<qr_id>', methods=['PUT'])
@@ -1716,16 +1763,22 @@ def update_qr(qr_id):
         
         # Get admin info from token
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
         admin_info = None
         if token:
             conn = sqlite3.connect(DATABASE)
             cursor = conn.cursor()
-            cursor.execute('SELECT user_id FROM sessions WHERE token = ?', (token,))
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
             session = cursor.fetchone()
             if session:
                 cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
                 admin_info = cursor.fetchone()
             conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
         
         now = datetime.now().isoformat()
         
@@ -1849,6 +1902,7 @@ def update_qr(qr_id):
         
     except Exception as e:
         app.logger.error(f"Error updating QR {qr_id}: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/qr/<qr_id>', methods=['DELETE'])
@@ -1857,16 +1911,22 @@ def delete_qr(qr_id):
     try:
         # Get admin info from token
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
         admin_info = None
         if token:
             conn = sqlite3.connect(DATABASE)
             cursor = conn.cursor()
-            cursor.execute('SELECT user_id FROM sessions WHERE token = ?', (token,))
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
             session = cursor.fetchone()
             if session:
                 cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
                 admin_info = cursor.fetchone()
             conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
         
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
@@ -1894,6 +1954,7 @@ def delete_qr(qr_id):
         
     except Exception as e:
         app.logger.error(f"Error deleting QR {qr_id}: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/qr/scan/<qr_id>', methods=['POST'])
@@ -2031,16 +2092,22 @@ def update_profile():
         
         # Get admin info from token
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
         admin_info = None
         if token:
             conn = sqlite3.connect(DATABASE)
             cursor = conn.cursor()
-            cursor.execute('SELECT user_id FROM sessions WHERE token = ?', (token,))
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
             session = cursor.fetchone()
             if session:
                 cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
                 admin_info = cursor.fetchone()
             conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
         
         # Save file with profile subfolder to keep it separate
         saved_file = save_base64_file(image_data, filename, subfolder='profile')
@@ -2116,6 +2183,7 @@ def update_profile():
             
     except Exception as e:
         app.logger.error(f"Error updating profile: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # ============ STATISTICS ENDPOINT ============
@@ -2234,16 +2302,22 @@ def update_settings():
         
         # Get admin info from token
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
         admin_info = None
         if token:
             conn = sqlite3.connect(DATABASE)
             cursor = conn.cursor()
-            cursor.execute('SELECT user_id FROM sessions WHERE token = ?', (token,))
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
             session = cursor.fetchone()
             if session:
                 cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
                 admin_info = cursor.fetchone()
             conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
         
         if not key:
             return jsonify({'success': False, 'error': 'Key is required'}), 400
@@ -2298,6 +2372,7 @@ def update_settings():
         
     except Exception as e:
         app.logger.error(f"Error updating settings: {e}")
+        app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 # ============ ACTIVITY LOG ENDPOINTS ============
@@ -2312,7 +2387,7 @@ def get_activity():
         
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
-        cursor.execute('SELECT user_id FROM sessions WHERE token = ?', (token,))
+        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
         session = cursor.fetchone()
         
         if not session:
