@@ -2467,6 +2467,159 @@ def ping():
         ]
     })
 
+    # ============ PROFILE IMAGE ENDPOINTS ============
+@app.route('/api/profile/upload', methods=['POST'])
+def upload_profile_image():
+    """Upload profile image"""
+    try:
+        # Get admin info from token
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND CAST(expires_at AS REAL) > ?', 
+                      (token, time.time()))
+        session = cursor.fetchone()
+        
+        if not session:
+            conn.close()
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
+        
+        # Get the image data from request
+        data = request.json
+        image_data = data.get('imageData', '')
+        
+        if not image_data:
+            return jsonify({'success': False, 'error': 'No image data provided'}), 400
+        
+        # Process the image
+        if ',' in image_data:
+            image_data = image_data.split(',')[1]
+        
+        # Decode image
+        image_bytes = base64.b64decode(image_data)
+        
+        # Generate unique filename
+        filename = f"profile_{uuid.uuid4().hex}.jpg"
+        file_path = os.path.join(UPLOAD_FOLDER, 'profile', filename)
+        
+        # Save image
+        with open(file_path, 'wb') as f:
+            f.write(image_bytes)
+        
+        # Optimize image
+        try:
+            img = Image.open(file_path)
+            # Resize if too large
+            if max(img.size) > 800:
+                img.thumbnail((800, 800), Image.Resampling.LANCZOS)
+            # Convert to RGB if necessary
+            if img.mode in ('RGBA', 'LA', 'P'):
+                rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+                rgb_img.paste(img, mask=img.split()[-1] if img.mode == 'RGBA' else None)
+                img = rgb_img
+            img.save(file_path, optimize=True, quality=85)
+        except Exception as e:
+            app.logger.error(f"Error optimizing image: {e}")
+        
+        # Create thumbnail
+        thumbnail_filename = f"thumb_{filename}"
+        thumbnail_path = os.path.join(UPLOAD_FOLDER, 'profile', thumbnail_filename)
+        try:
+            img = Image.open(file_path)
+            img.thumbnail((300, 300), Image.Resampling.LANCZOS)
+            img.save(thumbnail_path, optimize=True, quality=85)
+        except Exception as e:
+            app.logger.error(f"Error creating thumbnail: {e}")
+            thumbnail_path = file_path
+            thumbnail_filename = filename
+        
+        # Update database
+        profile_url = f'/uploads/profile/{filename}'
+        thumbnail_url = f'/uploads/profile/{thumbnail_filename}'
+        
+        # Check if profile config exists
+        cursor.execute("SELECT * FROM profile_config WHERE key = 'profile-image'")
+        existing = cursor.fetchone()
+        
+        if existing:
+            # Delete old image files if they exist
+            try:
+                old_value = existing[1]  # value column
+                if old_value and '/uploads/profile/' in old_value:
+                    old_filename = old_value.replace('/uploads/profile/', '')
+                    old_path = os.path.join(UPLOAD_FOLDER, 'profile', old_filename)
+                    if os.path.exists(old_path) and 'default-profile' not in old_path:
+                        os.remove(old_path)
+                    
+                    # Also delete old thumbnail
+                    old_thumb = existing[2]  # thumbnail column
+                    if old_thumb and '/uploads/profile/' in old_thumb:
+                        old_thumb_filename = old_thumb.replace('/uploads/profile/', '')
+                        old_thumb_path = os.path.join(UPLOAD_FOLDER, 'profile', old_thumb_filename)
+                        if os.path.exists(old_thumb_path) and 'default-profile' not in old_thumb_path:
+                            os.remove(old_thumb_path)
+            except Exception as e:
+                app.logger.error(f"Error deleting old profile: {e}")
+            
+            # Update existing record
+            cursor.execute('''
+                UPDATE profile_config 
+                SET value = ?, thumbnail = ?, updated_at = ?
+                WHERE key = 'profile-image'
+            ''', (profile_url, thumbnail_url, datetime.now().isoformat()))
+        else:
+            # Insert new record
+            cursor.execute('''
+                INSERT INTO profile_config (key, value, thumbnail, updated_at)
+                VALUES (?, ?, ?, ?)
+            ''', ('profile-image', profile_url, thumbnail_url, datetime.now().isoformat()))
+        
+        conn.commit()
+        conn.close()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Profile image uploaded successfully',
+            'profileImage': profile_url,
+            'thumbnailUrl': thumbnail_url
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error uploading profile image: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/profile', methods=['GET'])
+def get_profile():
+    """Get profile image"""
+    try:
+        conn = sqlite3.connect(DATABASE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT * FROM profile_config WHERE key = 'profile-image'")
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row:
+            return jsonify({
+                'profileImage': row['value'],
+                'thumbnailUrl': row['thumbnail'] or row['value']
+            })
+        else:
+            # Return default profile
+            return jsonify({
+                'profileImage': '/uploads/profile/default-profile.jpg',
+                'thumbnailUrl': '/uploads/profile/default-profile.jpg'
+            })
+            
+    except Exception as e:
+        app.logger.error(f"Error getting profile: {e}")
+        return jsonify({'error': str(e)}), 500
+
 # ============ ERROR HANDLERS ============
 @app.errorhandler(404)
 def not_found_error(error):

@@ -2214,22 +2214,23 @@
             apiBaseUrl: window.location.origin,
 
             async init() {
-                this.setupScrollProgress();
-                this.setupEventListeners();
-                this.setupFileUploadPreviews();
-                this.hideLoading();
-                this.checkSharedContent();
-                
-                // Load real data from server
-                await this.loadContentFromServer();
-                await this.loadQRFromServer();
-                
-                // Set default date for QR form
-                const today = new Date().toISOString().split('T')[0];
-                if (document.getElementById('planted-date')) {
-                    document.getElementById('planted-date').value = today;
-                }
-            },
+    this.setupScrollProgress();
+    this.setupEventListeners();
+    this.setupFileUploadPreviews();
+    this.hideLoading();
+    this.checkSharedContent();
+    
+    // Load real data from server
+    await this.loadContentFromServer();
+    await this.loadQRFromServer();
+    await this.loadProfileImage();  // Add this line
+    
+    // Set default date for QR form
+    const today = new Date().toISOString().split('T')[0];
+    if (document.getElementById('planted-date')) {
+        document.getElementById('planted-date').value = today;
+    }
+},
 
             setupScrollProgress() {
                 window.addEventListener('scroll', () => {
@@ -2667,23 +2668,53 @@
                 });
             },
 
-            handleProfileImageUpload(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    if (file.size > 5 * 1024 * 1024) {
-                        this.showToast('Image size should be less than 5MB', 'error');
-                        return;
-                    }
-                    
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        document.getElementById('profile-image').src = e.target.result;
-                        this.showToast('Profile photo updated locally', 'success');
-                        // TODO: Add API call to save profile photo to server
-                    };
-                    reader.readAsDataURL(file);
+            async handleProfileImageUpload(e) {
+    const file = e.target.files[0];
+    if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+            this.showToast('Image size should be less than 5MB', 'error');
+            return;
+        }
+        
+        this.showToast('Uploading profile image...', 'info');
+        
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const imageData = e.target.result;
+            
+            // Show preview immediately (optimistic update)
+            document.getElementById('profile-image').src = imageData;
+            
+            try {
+                // Upload to server
+                const response = await fetch('/api/profile/upload', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.sessionToken || ''}`
+                    },
+                    body: JSON.stringify({
+                        imageData: imageData
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    this.showToast('Profile photo updated successfully!', 'success');
+                    // Update with server URL (though it should be the same)
+                    document.getElementById('profile-image').src = result.profileImage;
+                } else {
+                    this.showToast('Failed to upload: ' + (result.error || 'Unknown error'), 'error');
                 }
-            },
+            } catch (error) {
+                console.error('Upload error:', error);
+                this.showToast('Failed to upload profile image', 'error');
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+},
 
             async saveContent() {
                 const type = document.getElementById('content-type').value;
@@ -3155,6 +3186,19 @@
                     this.showToast('Failed to generate QR code', 'error');
                 }
             },
+            async loadProfileImage() {
+    try {
+        const response = await fetch('/api/profile');
+        const data = await response.json();
+        
+        if (data.profileImage) {
+            document.getElementById('profile-image').src = data.profileImage;
+            this.profileImagePath = data.profileImage;
+        }
+    } catch (error) {
+        console.error('Error loading profile image:', error);
+    }
+},
 
             displayQRHistory() {
                 const container = document.getElementById('qr-history-container');
