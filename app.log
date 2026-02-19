@@ -52,3 +52,8 @@
 2026-02-18 22:34:15,258 WARNING: 404 error: /.well-known/appspecific/com.chrome.devtools.json [in d:\kc-jain-advocate\app.py:2398]
 2026-02-18 22:34:56,886 WARNING: 404 error: /favicon.ico [in d:\kc-jain-advocate\app.py:2398]
 2026-02-18 22:38:48,530 WARNING: 404 error: /.well-known/appspecific/com.chrome.devtools.json [in d:\kc-jain-advocate\app.py:2398]
+2026-02-19 11:14:27,130 INFO: KC Jain Advocate Website startup [in d:\kc-jain-advocate\app.py:59]
+2026-02-19 11:14:27,142 INFO: Database initialized successfully [in d:\kc-jain-advocate\app.py:351]
+2026-02-19 11:14:28,109 INFO: KC Jain Advocate Website startup [in d:\kc-jain-advocate\app.py:59]
+2026-02-19 11:14:28,112 INFO: Database initialized successfully [in d:\kc-jain-advocate\app.py:351]
+2026-02-19 11:14:30,107 WARNING: 404 error: /favicon.ico [in d:\kc-jain-advocate\app.py:2398]
