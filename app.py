@@ -2467,7 +2467,7 @@ def ping():
         ]
     })
 
-    # ============ PROFILE IMAGE ENDPOINTS ============
+# ============ PROFILE IMAGE UPLOAD ENDPOINT ============
 @app.route('/api/profile/upload', methods=['POST'])
 def upload_profile_image():
     """Upload profile image"""
@@ -2479,7 +2479,7 @@ def upload_profile_image():
             
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
-        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND CAST(expires_at AS REAL) > ?', 
+        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', 
                       (token, time.time()))
         session = cursor.fetchone()
         
@@ -2503,7 +2503,7 @@ def upload_profile_image():
         
         # Generate unique filename
         filename = f"profile_{uuid.uuid4().hex}.jpg"
-        file_path = os.path.join(UPLOAD_FOLDER, 'profile', filename)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'profile', filename)
         
         # Save image
         with open(file_path, 'wb') as f:
@@ -2526,7 +2526,7 @@ def upload_profile_image():
         
         # Create thumbnail
         thumbnail_filename = f"thumb_{filename}"
-        thumbnail_path = os.path.join(UPLOAD_FOLDER, 'profile', thumbnail_filename)
+        thumbnail_path = os.path.join(app.config['UPLOAD_FOLDER'], 'profile', thumbnail_filename)
         try:
             img = Image.open(file_path)
             img.thumbnail((300, 300), Image.Resampling.LANCZOS)
@@ -2550,7 +2550,7 @@ def upload_profile_image():
                 old_value = existing[1]  # value column
                 if old_value and '/uploads/profile/' in old_value:
                     old_filename = old_value.replace('/uploads/profile/', '')
-                    old_path = os.path.join(UPLOAD_FOLDER, 'profile', old_filename)
+                    old_path = os.path.join(app.config['UPLOAD_FOLDER'], 'profile', old_filename)
                     if os.path.exists(old_path) and 'default-profile' not in old_path:
                         os.remove(old_path)
                     
@@ -2558,7 +2558,7 @@ def upload_profile_image():
                     old_thumb = existing[2]  # thumbnail column
                     if old_thumb and '/uploads/profile/' in old_thumb:
                         old_thumb_filename = old_thumb.replace('/uploads/profile/', '')
-                        old_thumb_path = os.path.join(UPLOAD_FOLDER, 'profile', old_thumb_filename)
+                        old_thumb_path = os.path.join(app.config['UPLOAD_FOLDER'], 'profile', old_thumb_filename)
                         if os.path.exists(old_thumb_path) and 'default-profile' not in old_thumb_path:
                             os.remove(old_thumb_path)
             except Exception as e:
@@ -2591,34 +2591,6 @@ def upload_profile_image():
         app.logger.error(f"Error uploading profile image: {e}")
         app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/api/profile', methods=['GET'])
-def get_profile():
-    """Get profile image"""
-    try:
-        conn = sqlite3.connect(DATABASE)
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        
-        cursor.execute("SELECT * FROM profile_config WHERE key = 'profile-image'")
-        row = cursor.fetchone()
-        conn.close()
-        
-        if row:
-            return jsonify({
-                'profileImage': row['value'],
-                'thumbnailUrl': row['thumbnail'] or row['value']
-            })
-        else:
-            # Return default profile
-            return jsonify({
-                'profileImage': '/uploads/profile/default-profile.jpg',
-                'thumbnailUrl': '/uploads/profile/default-profile.jpg'
-            })
-            
-    except Exception as e:
-        app.logger.error(f"Error getting profile: {e}")
-        return jsonify({'error': str(e)}), 500
 
 # ============ ERROR HANDLERS ============
 @app.errorhandler(404)

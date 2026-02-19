@@ -10,8 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     
     <style>
-        /* [All your existing CSS remains exactly the same - no changes needed] */
-        /* Keep all your existing CSS styles exactly as they are */
+        /* [Your existing CSS remains exactly the same - no changes] */
         * {
             margin: 0;
             padding: 0;
@@ -1769,7 +1768,7 @@
     <section class="hero-section" id="home">
         <div class="hero-content">
             <div class="profile-image-wrapper">
-                <img id="profile-image" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%230a1a2f'/%3E%3Ctext x='200' y='180' font-family='Inter' font-size='48' fill='%23c9a959' text-anchor='middle'%3EKC%3C/text%3E%3Ctext x='200' y='240' font-family='Inter' font-size='48' fill='%23c9a959' text-anchor='middle'%3EJAIN%3C/text%3E%3Ctext x='200' y='300' font-family='Inter' font-size='20' fill='%23ffffff' text-anchor='middle'%3ESupreme Court%3C/text%3E%3C/svg%3E" alt="KC Jain - Supreme Court Advocate">
+                <img id="profile-image" src="/uploads/profile/default-profile.jpg" alt="KC Jain - Supreme Court Advocate">
                 <button id="admin-photo-btn">
                     <i class="fas fa-camera"></i> Update Photo
                 </button>
@@ -2203,7 +2202,7 @@
     </div>
 
     <script>
-        // Complete App with server integration, no demo data
+        // Complete Enhanced App with all features matching the backend
         let app = {
             content: [],
             qrData: [],
@@ -2214,23 +2213,27 @@
             apiBaseUrl: window.location.origin,
 
             async init() {
-    this.setupScrollProgress();
-    this.setupEventListeners();
-    this.setupFileUploadPreviews();
-    this.hideLoading();
-    this.checkSharedContent();
-    
-    // Load real data from server
-    await this.loadContentFromServer();
-    await this.loadQRFromServer();
-    await this.loadProfileImage();  // Add this line
-    
-    // Set default date for QR form
-    const today = new Date().toISOString().split('T')[0];
-    if (document.getElementById('planted-date')) {
-        document.getElementById('planted-date').value = today;
-    }
-},
+                this.setupScrollProgress();
+                this.setupEventListeners();
+                this.setupFileUploadPreviews();
+                this.hideLoading();
+                this.checkSharedContent();
+                
+                // Load all data from server
+                await this.loadContentFromServer();
+                await this.loadQRFromServer();
+                await this.loadProfileImage();
+                await this.loadStats();
+                
+                // Set default date for QR form
+                const today = new Date().toISOString().split('T')[0];
+                if (document.getElementById('planted-date')) {
+                    document.getElementById('planted-date').value = today;
+                }
+                
+                // Check if user was previously logged in (session storage)
+                this.checkSavedSession();
+            },
 
             setupScrollProgress() {
                 window.addEventListener('scroll', () => {
@@ -2263,6 +2266,37 @@
                     toast.classList.remove('show');
                     setTimeout(() => toast.remove(), 300);
                 }, 3500);
+            },
+
+            checkSavedSession() {
+                const savedToken = sessionStorage.getItem('adminToken');
+                const savedEmail = sessionStorage.getItem('adminEmail');
+                if (savedToken && savedEmail) {
+                    this.verifyToken(savedToken);
+                }
+            },
+
+            async verifyToken(token) {
+                try {
+                    const response = await fetch('/api/auth/verify', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.valid) {
+                        this.isAdminLoggedIn = true;
+                        this.sessionToken = token;
+                        document.getElementById('admin-photo-btn').classList.add('visible');
+                        this.showToast(`Welcome back, ${result.name}!`, 'success');
+                    }
+                } catch (error) {
+                    console.error('Token verification failed:', error);
+                    sessionStorage.removeItem('adminToken');
+                    sessionStorage.removeItem('adminEmail');
+                }
             },
 
             setupEventListeners() {
@@ -2308,6 +2342,11 @@
                     const email = document.getElementById('admin-email').value.trim();
                     const password = document.getElementById('admin-password').value;
                     
+                    if (!email || !password) {
+                        this.showToast('Please enter email and password', 'warning');
+                        return;
+                    }
+                    
                     try {
                         const response = await fetch('/api/auth/login', {
                             method: 'POST',
@@ -2320,9 +2359,14 @@
                         if (result.success) {
                             this.isAdminLoggedIn = true;
                             this.sessionToken = result.token;
+                            
+                            // Save session
+                            sessionStorage.setItem('adminToken', result.token);
+                            sessionStorage.setItem('adminEmail', result.email);
+                            
                             document.getElementById('loginModal').style.display = 'none';
                             document.getElementById('admin-photo-btn').classList.add('visible');
-                            this.showToast('Welcome back, KC Jain!', 'success');
+                            this.showToast(`Welcome back, ${result.name}!`, 'success');
                             
                             // Load content from server
                             await this.loadContentFromServer();
@@ -2330,11 +2374,11 @@
                             
                             this.showAdminSection();
                         } else {
-                            this.showToast('Invalid credentials', 'error');
+                            this.showToast('Invalid email or password', 'error');
                         }
                     } catch (error) {
                         console.error('Login error:', error);
-                        this.showToast('Login failed', 'error');
+                        this.showToast('Login failed. Check server connection.', 'error');
                     }
                 });
 
@@ -2374,6 +2418,7 @@
                 document.getElementById('refresh-content').addEventListener('click', async () => {
                     await this.loadContentFromServer();
                     await this.loadQRFromServer();
+                    await this.loadStats();
                     this.showToast('Content refreshed from server', 'success');
                 });
 
@@ -2508,6 +2553,9 @@
             async loadContentFromServer() {
                 try {
                     const response = await fetch('/api/content');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     const data = await response.json();
                     
                     if (data.content) {
@@ -2516,7 +2564,7 @@
                             type: item.type,
                             title: item.title,
                             text: item.text,
-                            category: item.category,
+                            category: item.category || 'General',
                             date: item.created_date,
                             displayDate: this.formatDate(item.created_date),
                             media: item.media || []
@@ -2534,6 +2582,9 @@
             async loadQRFromServer() {
                 try {
                     const response = await fetch('/api/qr');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     const data = await response.json();
                     
                     if (data.qrData) {
@@ -2542,10 +2593,16 @@
                             treeId: item.tree_id,
                             treeName: item.tree_name,
                             location: item.location,
+                            plantedDate: item.planted_date,
                             displayDate: this.formatDate(item.planted_date),
                             qrCodeUrl: item.qr_code_url,
                             media: item.treeImages || [],
-                            videoData: item.tree_video_url
+                            videoData: item.tree_video_url,
+                            healthStatus: item.health_status,
+                            treeHeight: item.tree_height,
+                            description: item.description,
+                            scientificName: item.scientific_name,
+                            plantedBy: item.planted_by
                         }));
                         
                         this.displayQRHistory();
@@ -2553,6 +2610,43 @@
                     }
                 } catch (error) {
                     console.error('Error loading QR data:', error);
+                }
+            },
+
+            async loadProfileImage() {
+                try {
+                    const response = await fetch('/api/profile');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    
+                    if (data.profileImage) {
+                        document.getElementById('profile-image').src = data.profileImage;
+                        this.profileImagePath = data.profileImage;
+                    }
+                } catch (error) {
+                    console.error('Error loading profile image:', error);
+                    // Fallback to default
+                    document.getElementById('profile-image').src = '/uploads/profile/default-profile.jpg';
+                }
+            },
+
+            async loadStats() {
+                try {
+                    const response = await fetch('/api/stats');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.json();
+                    
+                    document.getElementById('cases-count').textContent = data.cases || 0;
+                    document.getElementById('posts-count').textContent = data.posts || 0;
+                    document.getElementById('blogs-count').textContent = data.blogs || 0;
+                    document.getElementById('announcements-count').textContent = data.announcements || 0;
+                    document.getElementById('qr-count').textContent = data.qr || 0;
+                } catch (error) {
+                    console.error('Error loading stats:', error);
                 }
             },
 
@@ -2669,52 +2763,57 @@
             },
 
             async handleProfileImageUpload(e) {
-    const file = e.target.files[0];
-    if (file) {
-        if (file.size > 5 * 1024 * 1024) {
-            this.showToast('Image size should be less than 5MB', 'error');
-            return;
-        }
-        
-        this.showToast('Uploading profile image...', 'info');
-        
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const imageData = e.target.result;
-            
-            // Show preview immediately (optimistic update)
-            document.getElementById('profile-image').src = imageData;
-            
-            try {
-                // Upload to server
-                const response = await fetch('/api/profile/upload', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${this.sessionToken || ''}`
-                    },
-                    body: JSON.stringify({
-                        imageData: imageData
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    this.showToast('Profile photo updated successfully!', 'success');
-                    // Update with server URL (though it should be the same)
-                    document.getElementById('profile-image').src = result.profileImage;
-                } else {
-                    this.showToast('Failed to upload: ' + (result.error || 'Unknown error'), 'error');
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        this.showToast('Image size should be less than 5MB', 'error');
+                        return;
+                    }
+                    
+                    this.showToast('Uploading profile image...', 'info');
+                    
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const imageData = e.target.result;
+                        
+                        // Show preview immediately (optimistic update)
+                        document.getElementById('profile-image').src = imageData;
+                        
+                        try {
+                            // Upload to server
+                            const response = await fetch('/api/profile/upload', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${this.sessionToken || ''}`
+                                },
+                                body: JSON.stringify({
+                                    imageData: imageData
+                                })
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                this.showToast('Profile photo updated successfully!', 'success');
+                                // Update with server URL
+                                document.getElementById('profile-image').src = result.profileImage;
+                                this.profileImagePath = result.profileImage;
+                            } else {
+                                this.showToast('Failed to upload: ' + (result.error || 'Unknown error'), 'error');
+                                // Revert preview
+                                await this.loadProfileImage();
+                            }
+                        } catch (error) {
+                            console.error('Upload error:', error);
+                            this.showToast('Failed to upload profile image', 'error');
+                            // Revert preview
+                            await this.loadProfileImage();
+                        }
+                    };
+                    reader.readAsDataURL(file);
                 }
-            } catch (error) {
-                console.error('Upload error:', error);
-                this.showToast('Failed to upload profile image', 'error');
-            }
-        };
-        reader.readAsDataURL(file);
-    }
-},
+            },
 
             async saveContent() {
                 const type = document.getElementById('content-type').value;
@@ -2759,7 +2858,7 @@
                 }
 
                 const contentData = {
-                    id: this.editingContentId || `content-${Date.now()}`,
+                    id: this.editingContentId,
                     type: type,
                     title: title,
                     text: editorContent,
@@ -2770,8 +2869,11 @@
                 };
 
                 try {
-                    const response = await fetch('/api/content', {
-                        method: 'POST',
+                    const url = this.editingContentId ? `/api/content/${this.editingContentId}` : '/api/content';
+                    const method = this.editingContentId ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method: method,
                         headers: {
                             'Content-Type': 'application/json',
                             'Authorization': `Bearer ${this.sessionToken || ''}`
@@ -2785,9 +2887,10 @@
                     const result = await response.json();
 
                     if (result.success) {
-                        this.showToast('Content saved successfully!', 'success');
+                        this.showToast(this.editingContentId ? 'Content updated successfully!' : 'Content saved successfully!', 'success');
                         
                         await this.loadContentFromServer();
+                        await this.loadStats();
                         
                         this.clearContentForm();
                         
@@ -2795,7 +2898,7 @@
                             document.getElementById('qr-system-section').classList.remove('visible');
                         }
                     } else {
-                        this.showToast('Error saving: ' + result.error, 'error');
+                        this.showToast('Error saving: ' + (result.error || 'Unknown error'), 'error');
                     }
                 } catch (error) {
                     console.error('Save error:', error);
@@ -3034,6 +3137,7 @@
 
                         if (result.success) {
                             await this.loadContentFromServer();
+                            await this.loadStats();
                             this.showToast('Content deleted successfully', 'success');
                         } else {
                             this.showToast('Error deleting content', 'error');
@@ -3171,6 +3275,7 @@
                         document.getElementById('qr-media-preview').innerHTML = mediaHTML;
                         
                         await this.loadQRFromServer();
+                        await this.loadStats();
                         
                         document.getElementById('qr-preview-section').classList.add('visible');
                         this.showToast('QR Code generated successfully!', 'success');
@@ -3179,26 +3284,13 @@
                             document.getElementById('qr-preview-section').scrollIntoView({ behavior: 'smooth' });
                         }, 100);
                     } else {
-                        this.showToast('Error: ' + result.error, 'error');
+                        this.showToast('Error: ' + (result.error || 'Unknown error'), 'error');
                     }
                 } catch (error) {
                     console.error('QR generation error:', error);
                     this.showToast('Failed to generate QR code', 'error');
                 }
             },
-            async loadProfileImage() {
-    try {
-        const response = await fetch('/api/profile');
-        const data = await response.json();
-        
-        if (data.profileImage) {
-            document.getElementById('profile-image').src = data.profileImage;
-            this.profileImagePath = data.profileImage;
-        }
-    } catch (error) {
-        console.error('Error loading profile image:', error);
-    }
-},
 
             displayQRHistory() {
                 const container = document.getElementById('qr-history-container');
@@ -3251,6 +3343,11 @@
                         <div class="qr-data-row"><strong>Tree Name:</strong> ${item.treeName}</div>
                         <div class="qr-data-row"><strong>Location:</strong> ${item.location}</div>
                         <div class="qr-data-row"><strong>Planted:</strong> ${item.displayDate}</div>
+                        ${item.healthStatus ? `<div class="qr-data-row"><strong>Health:</strong> ${item.healthStatus}</div>` : ''}
+                        ${item.treeHeight ? `<div class="qr-data-row"><strong>Height:</strong> ${item.treeHeight} ft</div>` : ''}
+                        ${item.scientificName ? `<div class="qr-data-row"><strong>Scientific:</strong> ${item.scientificName}</div>` : ''}
+                        ${item.plantedBy ? `<div class="qr-data-row"><strong>Planted By:</strong> ${item.plantedBy}</div>` : ''}
+                        ${item.description ? `<div class="qr-data-row"><strong>Description:</strong> ${item.description.substring(0, 100)}${item.description.length > 100 ? '...' : ''}</div>` : ''}
                     `;
 
                     let mediaHTML = '';
@@ -3305,6 +3402,7 @@
 
                         if (result.success) {
                             await this.loadQRFromServer();
+                            await this.loadStats();
                             this.showToast('QR entry deleted', 'success');
                         } else {
                             this.showToast('Error deleting QR entry', 'error');
@@ -3451,8 +3549,29 @@
                 const div = document.createElement('div');
                 div.textContent = text;
                 return div.innerHTML;
+            },
+
+            // Logout function
+            logout() {
+                if (this.isAdminLoggedIn) {
+                    fetch('/api/auth/logout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: this.sessionToken })
+                    }).finally(() => {
+                        this.isAdminLoggedIn = false;
+                        this.sessionToken = null;
+                        sessionStorage.removeItem('adminToken');
+                        sessionStorage.removeItem('adminEmail');
+                        document.getElementById('admin-photo-btn').classList.remove('visible');
+                        this.showToast('Logged out successfully', 'info');
+                    });
+                }
             }
         };
+
+        // Add logout button to admin panel (optional)
+        // You can add this to your HTML if you want a logout button
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', () => app.init());
