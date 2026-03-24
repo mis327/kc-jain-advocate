@@ -3,3 +3,5 @@ Flask-CORS==5.0.0
 qrcode[pil]==7.4.2
 Pillow==11.1.0
 gunicorn==23.0.0
+python-dotenv==1.0.0
+werkzeug==2.3.7

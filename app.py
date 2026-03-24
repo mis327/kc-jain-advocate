@@ -18,6 +18,9 @@ import logging
 from logging.handlers import RotatingFileHandler
 import time
 import traceback
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -48,6 +51,7 @@ os.makedirs(os.path.join(UPLOAD_FOLDER, 'documents'), exist_ok=True)
 os.makedirs(os.path.join(UPLOAD_FOLDER, 'thumbnails'), exist_ok=True)
 os.makedirs(os.path.join(UPLOAD_FOLDER, 'profile'), exist_ok=True)
 os.makedirs(os.path.join(UPLOAD_FOLDER, 'temp'), exist_ok=True)
+os.makedirs(os.path.join(UPLOAD_FOLDER, 'newspapers'), exist_ok=True)  # Added for newspapers
 
 # Setup logging
 log_handler = RotatingFileHandler('app.log', maxBytes=10485760, backupCount=10)
@@ -134,6 +138,70 @@ def init_db():
                 fertilizer_schedule TEXT,
                 pest_control TEXT,
                 special_notes TEXT
+            )
+        ''')
+        
+        # Newspapers table - ADDED
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS newspapers (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                date TEXT NOT NULL,
+                title TEXT,
+                caption TEXT,
+                image_url TEXT,
+                created_date TIMESTAMP,
+                updated_date TIMESTAMP,
+                status TEXT DEFAULT 'Active',
+                views INTEGER DEFAULT 0
+            )
+        ''')
+        
+        # Books table - ADDED
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS books (
+                id TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                url TEXT NOT NULL,
+                author TEXT,
+                description TEXT,
+                category TEXT,
+                created_date TIMESTAMP,
+                updated_date TIMESTAMP,
+                status TEXT DEFAULT 'Active',
+                views INTEGER DEFAULT 0
+            )
+        ''')
+        
+        # Appointments table - ADDED
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS appointments (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                phone TEXT NOT NULL,
+                date TEXT NOT NULL,
+                time TEXT,
+                type TEXT,
+                matter TEXT NOT NULL,
+                created_date TIMESTAMP,
+                status TEXT DEFAULT 'Pending',
+                notes TEXT
+            )
+        ''')
+        
+        # Requests table - ADDED
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS requests (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                email TEXT NOT NULL,
+                phone TEXT,
+                subject TEXT NOT NULL,
+                message TEXT NOT NULL,
+                created_date TIMESTAMP,
+                status TEXT DEFAULT 'Pending',
+                response TEXT
             )
         ''')
         
@@ -437,6 +505,8 @@ def save_base64_file(base64_data, filename, subfolder=''):
         # Determine subfolder based on file type and purpose
         if 'profile' in filename.lower() or subfolder == 'profile':
             save_path = os.path.join('profile', unique_name)
+        elif 'newspaper' in filename.lower() or subfolder == 'newspapers':
+            save_path = os.path.join('newspapers', unique_name)
         elif file_type == 'image':
             save_path = os.path.join('images', unique_name)
         elif file_type == 'video':
@@ -1385,6 +1455,934 @@ def delete_content(content_id):
         app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@app.route('/api/newspapers', methods=['GET'])
+def get_all_newspapers():
+    """Get all newspaper cuttings"""
+    try:
+        conn = sqlite3.connect(DATABASE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        limit = request.args.get('limit', 100)
+        offset = request.args.get('offset', 0)
+        
+        query = "SELECT * FROM newspapers WHERE status = 'Active' ORDER BY date DESC LIMIT ? OFFSET ?"
+        cursor.execute(query, (limit, offset))
+        
+        rows = cursor.fetchall()
+        newspapers = []
+        
+        for row in rows:
+            item = dict(row)
+            item['displayDate'] = format_date(item['date'])
+            # Ensure image URL is valid - check if file exists
+            if not item['image_url'] or item['image_url'] == 'undefined' or item['image_url'] == 'null':
+                item['image_url'] = '/uploads/newspapers/default-newspaper.jpg'
+            else:
+                # Check if the file actually exists
+                file_path = item['image_url'].replace('/uploads/', '')
+                full_path = os.path.join(app.config['UPLOAD_FOLDER'], file_path)
+                if not os.path.exists(full_path):
+                    app.logger.warning(f"Newspaper image not found: {full_path}, using default")
+                    item['image_url'] = '/uploads/newspapers/default-newspaper.jpg'
+            
+            newspapers.append(item)
+        
+        cursor.execute("SELECT COUNT(*) FROM newspapers WHERE status = 'Active'")
+        total = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        return jsonify({
+            'newspapers': newspapers,
+            'total': total
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error getting newspapers: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/api/newspapers/<newspaper_id>', methods=['GET'])
+def get_newspaper(newspaper_id):
+    """Get single newspaper cutting"""
+    try:
+        conn = sqlite3.connect(DATABASE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT * FROM newspapers WHERE id = ? AND status = "Active"', (newspaper_id,))
+        row = cursor.fetchone()
+        
+        if not row:
+            return jsonify({'error': 'Newspaper not found'}), 404
+        
+        # Increment view count
+        cursor.execute('UPDATE newspapers SET views = views + 1 WHERE id = ?', (newspaper_id,))
+        conn.commit()
+        
+        item = dict(row)
+        item['displayDate'] = format_date(item['date'])
+        
+        conn.close()
+        
+        return jsonify(item)
+        
+    except Exception as e:
+        app.logger.error(f"Error getting newspaper {newspaper_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/newspapers', methods=['POST'])
+def save_newspaper():
+    """Save new newspaper cutting"""
+    try:
+        data = request.json
+        newspaper_data = data.get('data', {})
+        files = data.get('files', [])
+        
+        # Get admin info from token
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
+        admin_info = None
+        if token:
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+            session = cursor.fetchone()
+            if session:
+                cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
+                admin_info = cursor.fetchone()
+            conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
+        
+        newspaper_id = newspaper_data.get('id') or f"news-{uuid.uuid4().hex[:12]}"
+        now = datetime.now().isoformat()
+        
+        image_url = None
+        
+        # Process uploaded files
+        for file_data in files:
+            filename = file_data.get('name', 'newspaper.jpg')
+            base64_data = file_data.get('data', '')
+            
+            saved_file = save_base64_file(base64_data, filename, 'newspapers')
+            if saved_file and saved_file.get('type') == 'image':
+                image_url = saved_file['url']
+                break
+        
+        if not image_url:
+            return jsonify({'success': False, 'error': 'Newspaper image is required'}), 400
+        
+        # Save to database
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT OR REPLACE INTO newspapers (id, name, date, title, caption, image_url, created_date, updated_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            newspaper_id,
+            newspaper_data.get('name', ''),
+            newspaper_data.get('date', now),
+            newspaper_data.get('title', ''),
+            newspaper_data.get('caption', ''),
+            image_url,
+            now,
+            now
+        ))
+        
+        conn.commit()
+        conn.close()
+        
+        # Log activity
+        if admin_info:
+            log_activity(
+                user_id=admin_info[0],
+                action='create',
+                entity_type='newspaper',
+                entity_id=newspaper_id,
+                details={'name': newspaper_data.get('name'), 'date': newspaper_data.get('date')}
+            )
+        
+        app.logger.info(f"Newspaper saved: {newspaper_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Newspaper cutting saved successfully',
+            'newspaperId': newspaper_id,
+            'imageUrl': image_url,
+            'timestamp': now,
+            'displayDate': format_date(newspaper_data.get('date', now))
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error saving newspaper: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/newspapers/<newspaper_id>', methods=['PUT'])
+def update_newspaper(newspaper_id):
+    """Update existing newspaper cutting"""
+    try:
+        data = request.json
+        newspaper_data = data.get('data', {})
+        files = data.get('files', [])
+        
+        # Get admin info from token
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
+        admin_info = None
+        if token:
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+            session = cursor.fetchone()
+            if session:
+                cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
+                admin_info = cursor.fetchone()
+            conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
+        
+        now = datetime.now().isoformat()
+        
+        # Get existing newspaper
+        conn = sqlite3.connect(DATABASE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT * FROM newspapers WHERE id = ?', (newspaper_id,))
+        existing = cursor.fetchone()
+        
+        if not existing:
+            return jsonify({'success': False, 'error': 'Newspaper not found'}), 404
+        
+        image_url = existing['image_url']
+        
+        # Process new uploaded files
+        for file_data in files:
+            filename = file_data.get('name', 'newspaper.jpg')
+            base64_data = file_data.get('data', '')
+            
+            saved_file = save_base64_file(base64_data, filename, 'newspapers')
+            if saved_file and saved_file.get('type') == 'image':
+                # Delete old image if it exists and is not the same as new
+                if image_url and '/uploads/' in image_url and not image_url.startswith('data:'):
+                    old_path = image_url.replace('/uploads/', '')
+                    full_old_path = os.path.join(app.config['UPLOAD_FOLDER'], old_path)
+                    if os.path.exists(full_old_path):
+                        try:
+                            os.remove(full_old_path)
+                            app.logger.info(f"Deleted old newspaper image: {full_old_path}")
+                        except Exception as e:
+                            app.logger.error(f"Error deleting old image: {e}")
+                image_url = saved_file['url']
+                break
+        
+        # If no new image, use existing
+        if not image_url and newspaper_data.get('existingImageUrl'):
+            image_url = newspaper_data.get('existingImageUrl')
+        
+        cursor.execute('''
+            UPDATE newspapers SET
+                name = ?,
+                date = ?,
+                title = ?,
+                caption = ?,
+                image_url = ?,
+                updated_date = ?
+            WHERE id = ?
+        ''', (
+            newspaper_data.get('name', existing['name']),
+            newspaper_data.get('date', existing['date']),
+            newspaper_data.get('title', existing['title']),
+            newspaper_data.get('caption', existing['caption']),
+            image_url,
+            now,
+            newspaper_id
+        ))
+        
+        conn.commit()
+        conn.close()
+        
+        # Log activity
+        if admin_info:
+            log_activity(
+                user_id=admin_info[0],
+                action='update',
+                entity_type='newspaper',
+                entity_id=newspaper_id,
+                details={'name': newspaper_data.get('name')}
+            )
+        
+        app.logger.info(f"Newspaper updated: {newspaper_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Newspaper cutting updated successfully',
+            'newspaperId': newspaper_id,
+            'imageUrl': image_url,
+            'timestamp': now
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error updating newspaper {newspaper_id}: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@app.route('/api/newspapers/<newspaper_id>', methods=['DELETE'])
+def delete_newspaper(newspaper_id):
+    """Delete newspaper cutting (soft delete)"""
+    try:
+        # Get admin info from token
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
+        admin_info = None
+        if token:
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+            session = cursor.fetchone()
+            if session:
+                cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
+                admin_info = cursor.fetchone()
+            conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        
+        cursor.execute('UPDATE newspapers SET status = "Inactive" WHERE id = ?', (newspaper_id,))
+        conn.commit()
+        conn.close()
+        
+        # Log activity
+        if admin_info:
+            log_activity(
+                user_id=admin_info[0],
+                action='delete',
+                entity_type='newspaper',
+                entity_id=newspaper_id
+            )
+        
+        app.logger.info(f"Newspaper deleted: {newspaper_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Newspaper cutting deleted successfully',
+            'newspaperId': newspaper_id
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error deleting newspaper {newspaper_id}: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ============ BOOKS ENDPOINTS ============
+@app.route('/api/books', methods=['GET'])
+def get_all_books():
+    """Get all books and resources"""
+    try:
+        conn = sqlite3.connect(DATABASE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        # Get filter parameters
+        category = request.args.get('category')
+        limit = request.args.get('limit', 100)
+        offset = request.args.get('offset', 0)
+        
+        query = "SELECT * FROM books WHERE status = 'Active'"
+        params = []
+        
+        if category:
+            query += " AND category = ?"
+            params.append(category)
+        
+        query += " ORDER BY created_date DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+        
+        cursor.execute(query, params)
+        
+        rows = cursor.fetchall()
+        books = [dict(row) for row in rows]
+        
+        # Get total count
+        cursor.execute("SELECT COUNT(*) FROM books WHERE status = 'Active'")
+        total = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        return jsonify({
+            'books': books,
+            'total': total
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error getting books: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/books/<book_id>', methods=['GET'])
+def get_book(book_id):
+    """Get single book/resource"""
+    try:
+        conn = sqlite3.connect(DATABASE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT * FROM books WHERE id = ? AND status = "Active"', (book_id,))
+        row = cursor.fetchone()
+        
+        if not row:
+            return jsonify({'error': 'Book not found'}), 404
+        
+        # Increment view count
+        cursor.execute('UPDATE books SET views = views + 1 WHERE id = ?', (book_id,))
+        conn.commit()
+        
+        book = dict(row)
+        conn.close()
+        
+        return jsonify(book)
+        
+    except Exception as e:
+        app.logger.error(f"Error getting book {book_id}: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/books', methods=['POST'])
+def save_book():
+    """Save new book/resource"""
+    try:
+        data = request.json
+        
+        # Get admin info from token
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
+        admin_info = None
+        if token:
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+            session = cursor.fetchone()
+            if session:
+                cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
+                admin_info = cursor.fetchone()
+            conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
+        
+        book_id = f"book-{uuid.uuid4().hex[:12]}"
+        now = datetime.now().isoformat()
+        
+        # Save to database
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO books (id, title, url, author, description, category, created_date, updated_date)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            book_id,
+            data.get('title', ''),
+            data.get('url', ''),
+            data.get('author', ''),
+            data.get('description', ''),
+            data.get('category', 'legal'),
+            now,
+            now
+        ))
+        
+        conn.commit()
+        conn.close()
+        
+        # Log activity
+        if admin_info:
+            log_activity(
+                user_id=admin_info[0],
+                action='create',
+                entity_type='book',
+                entity_id=book_id,
+                details={'title': data.get('title'), 'category': data.get('category')}
+            )
+        
+        app.logger.info(f"Book saved: {book_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Book/Resource saved successfully',
+            'bookId': book_id,
+            'timestamp': now
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error saving book: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/books/<book_id>', methods=['PUT'])
+def update_book(book_id):
+    """Update existing book/resource"""
+    try:
+        data = request.json
+        
+        # Get admin info from token
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
+        admin_info = None
+        if token:
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+            session = cursor.fetchone()
+            if session:
+                cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
+                admin_info = cursor.fetchone()
+            conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
+        
+        now = datetime.now().isoformat()
+        
+        # Get existing book
+        conn = sqlite3.connect(DATABASE)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT * FROM books WHERE id = ?', (book_id,))
+        existing = cursor.fetchone()
+        
+        if not existing:
+            return jsonify({'success': False, 'error': 'Book not found'}), 404
+        
+        cursor.execute('''
+            UPDATE books SET
+                title = ?,
+                url = ?,
+                author = ?,
+                description = ?,
+                category = ?,
+                updated_date = ?
+            WHERE id = ?
+        ''', (
+            data.get('title', existing['title']),
+            data.get('url', existing['url']),
+            data.get('author', existing['author']),
+            data.get('description', existing['description']),
+            data.get('category', existing['category']),
+            now,
+            book_id
+        ))
+        
+        conn.commit()
+        conn.close()
+        
+        # Log activity
+        if admin_info:
+            log_activity(
+                user_id=admin_info[0],
+                action='update',
+                entity_type='book',
+                entity_id=book_id,
+                details={'title': data.get('title')}
+            )
+        
+        app.logger.info(f"Book updated: {book_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Book/Resource updated successfully',
+            'bookId': book_id,
+            'timestamp': now
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error updating book {book_id}: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/books/<book_id>', methods=['DELETE'])
+def delete_book(book_id):
+    """Delete book/resource (soft delete)"""
+    try:
+        # Get admin info from token
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
+        admin_info = None
+        if token:
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+            session = cursor.fetchone()
+            if session:
+                cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
+                admin_info = cursor.fetchone()
+            conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        
+        cursor.execute('UPDATE books SET status = "Inactive" WHERE id = ?', (book_id,))
+        conn.commit()
+        conn.close()
+        
+        # Log activity
+        if admin_info:
+            log_activity(
+                user_id=admin_info[0],
+                action='delete',
+                entity_type='book',
+                entity_id=book_id
+            )
+        
+        app.logger.info(f"Book deleted: {book_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Book/Resource deleted successfully',
+            'bookId': book_id
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error deleting book {book_id}: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ============ APPOINTMENT ENDPOINTS ============
+@app.route('/api/appointments', methods=['GET'])
+def get_all_appointments():
+    """Get all appointments (admin only)"""
+    try:
+        # Check admin auth
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+        session = cursor.fetchone()
+        
+        if not session:
+            return jsonify({'error': 'Invalid token'}), 401
+        
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        status = request.args.get('status')
+        limit = request.args.get('limit', 100)
+        offset = request.args.get('offset', 0)
+        
+        query = "SELECT * FROM appointments"
+        params = []
+        
+        if status:
+            query += " WHERE status = ?"
+            params.append(status)
+        
+        query += " ORDER BY created_date DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+        
+        cursor.execute(query, params)
+        
+        rows = cursor.fetchall()
+        appointments = []
+        
+        for row in rows:
+            item = dict(row)
+            item['displayDate'] = format_date(item['date'])
+            item['displayCreated'] = format_date(item['created_date'])
+            appointments.append(item)
+        
+        # Get total count
+        if status:
+            cursor.execute("SELECT COUNT(*) FROM appointments WHERE status = ?", (status,))
+        else:
+            cursor.execute("SELECT COUNT(*) FROM appointments")
+        total = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        return jsonify({
+            'appointments': appointments,
+            'total': total
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error getting appointments: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/appointments', methods=['POST'])
+def create_appointment():
+    """Create new appointment request"""
+    try:
+        data = request.json
+        appointment_id = f"app-{uuid.uuid4().hex[:12]}"
+        now = datetime.now().isoformat()
+        
+        # Validate required fields
+        required_fields = ['name', 'email', 'phone', 'date', 'matter']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'error': f'{field} is required'}), 400
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO appointments (id, name, email, phone, date, time, type, matter, created_date, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            appointment_id,
+            data.get('name', ''),
+            data.get('email', ''),
+            data.get('phone', ''),
+            data.get('date', ''),
+            data.get('time', ''),
+            data.get('type', 'in-person'),
+            data.get('matter', ''),
+            now,
+            'Pending'
+        ))
+        
+        conn.commit()
+        conn.close()
+        
+        app.logger.info(f"Appointment created: {appointment_id} - {data.get('name')}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Appointment request submitted successfully. We will contact you soon.',
+            'appointmentId': appointment_id,
+            'timestamp': now
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error creating appointment: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/appointments/<appointment_id>', methods=['PUT'])
+def update_appointment(appointment_id):
+    """Update appointment status (admin only)"""
+    try:
+        # Check admin auth
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+        session = cursor.fetchone()
+        
+        if not session:
+            conn.close()
+            return jsonify({'success': False, 'error': 'Invalid token'}), 401
+        
+        data = request.json
+        status = data.get('status')
+        notes = data.get('notes')
+        
+        if status:
+            cursor.execute('UPDATE appointments SET status = ?, notes = ? WHERE id = ?', 
+                         (status, notes, appointment_id))
+        else:
+            cursor.execute('UPDATE appointments SET notes = ? WHERE id = ?', (notes, appointment_id))
+        
+        conn.commit()
+        conn.close()
+        
+        app.logger.info(f"Appointment updated: {appointment_id} - Status: {status}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Appointment updated successfully',
+            'appointmentId': appointment_id
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error updating appointment {appointment_id}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# ============ REQUEST ENDPOINTS ============
+@app.route('/api/requests', methods=['GET'])
+def get_all_requests():
+    """Get all general requests (admin only)"""
+    try:
+        # Check admin auth
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+        session = cursor.fetchone()
+        
+        if not session:
+            return jsonify({'error': 'Invalid token'}), 401
+        
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        status = request.args.get('status')
+        limit = request.args.get('limit', 100)
+        offset = request.args.get('offset', 0)
+        
+        query = "SELECT * FROM requests"
+        params = []
+        
+        if status:
+            query += " WHERE status = ?"
+            params.append(status)
+        
+        query += " ORDER BY created_date DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+        
+        cursor.execute(query, params)
+        
+        rows = cursor.fetchall()
+        requests = []
+        
+        for row in rows:
+            item = dict(row)
+            item['displayCreated'] = format_date(item['created_date'])
+            requests.append(item)
+        
+        # Get total count
+        if status:
+            cursor.execute("SELECT COUNT(*) FROM requests WHERE status = ?", (status,))
+        else:
+            cursor.execute("SELECT COUNT(*) FROM requests")
+        total = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        return jsonify({
+            'requests': requests,
+            'total': total
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error getting requests: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/requests', methods=['POST'])
+def create_request():
+    """Create new general request"""
+    try:
+        data = request.json
+        request_id = f"req-{uuid.uuid4().hex[:12]}"
+        now = datetime.now().isoformat()
+        
+        # Validate required fields
+        required_fields = ['name', 'email', 'subject', 'message']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'error': f'{field} is required'}), 400
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        
+        cursor.execute('''
+            INSERT INTO requests (id, name, email, phone, subject, message, created_date, status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            request_id,
+            data.get('name', ''),
+            data.get('email', ''),
+            data.get('phone', ''),
+            data.get('subject', ''),
+            data.get('message', ''),
+            now,
+            'Pending'
+        ))
+        
+        conn.commit()
+        conn.close()
+        
+        app.logger.info(f"Request created: {request_id} - {data.get('subject')}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Your message has been sent successfully. We will get back to you soon.',
+            'requestId': request_id,
+            'timestamp': now
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error creating request: {e}")
+        app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/requests/<request_id>', methods=['PUT'])
+def update_request(request_id):
+    """Update request status with response (admin only)"""
+    try:
+        # Check admin auth
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+        session = cursor.fetchone()
+        
+        if not session:
+            conn.close()
+            return jsonify({'success': False, 'error': 'Invalid token'}), 401
+        
+        data = request.json
+        status = data.get('status')
+        response = data.get('response')
+        
+        if status:
+            cursor.execute('UPDATE requests SET status = ?, response = ? WHERE id = ?', 
+                         (status, response, request_id))
+        else:
+            cursor.execute('UPDATE requests SET response = ? WHERE id = ?', (response, request_id))
+        
+        conn.commit()
+        conn.close()
+        
+        app.logger.info(f"Request updated: {request_id} - Status: {status}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Request updated successfully',
+            'requestId': request_id
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error updating request {request_id}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 # ============ QR CODE ENDPOINTS ============
 @app.route('/api/qr', methods=['GET'])
 def get_all_qr():
@@ -2206,6 +3204,9 @@ def get_stats():
         cursor.execute("SELECT COUNT(*) FROM content WHERE type = 'announcement' AND status = 'Active'")
         announcements = cursor.fetchone()[0]
         
+        cursor.execute("SELECT COUNT(*) FROM newspapers WHERE status = 'Active'")
+        newspapers = cursor.fetchone()[0]
+        
         cursor.execute("SELECT COUNT(*) FROM qr_data WHERE status = 'Active'")
         qr_codes = cursor.fetchone()[0]
         
@@ -2225,6 +3226,14 @@ def get_stats():
         cursor.execute("SELECT SUM(qr_print_count) FROM qr_data WHERE status = 'Active'")
         total_prints = cursor.fetchone()[0] or 0
         
+        # Get pending appointments
+        cursor.execute("SELECT COUNT(*) FROM appointments WHERE status = 'Pending'")
+        pending_appointments = cursor.fetchone()[0] or 0
+        
+        # Get pending requests
+        cursor.execute("SELECT COUNT(*) FROM requests WHERE status = 'Pending'")
+        pending_requests = cursor.fetchone()[0] or 0
+        
         # Get content by category
         cursor.execute("SELECT category, COUNT(*) FROM content WHERE status = 'Active' GROUP BY category")
         categories = cursor.fetchall()
@@ -2240,13 +3249,16 @@ def get_stats():
             'posts': posts,
             'blogs': blogs,
             'announcements': announcements,
+            'newspapers': newspapers,
             'qr': qr_codes,
             'totalContent': cases + posts + blogs + announcements,
             'totalViews': total_views,
             'totalQrScans': total_qr_scans,
             'totalDownloads': total_downloads,
             'totalPrints': total_prints,
-            'categories': [{'category': cat[0], 'count': cat[1]} for cat in categories],
+            'pendingAppointments': pending_appointments,
+            'pendingRequests': pending_requests,
+            'categories': [{'category': cat[0], 'count': cat[1]} for cat in categories if cat[0]],
             'healthStats': [{'status': stat[0], 'count': stat[1]} for stat in health_stats],
             'updated': datetime.now().isoformat(),
             'displayUpdated': format_date(datetime.now().isoformat())
@@ -2434,7 +3446,7 @@ def ping():
     return jsonify({
         'status': 'OK',
         'message': 'KC Jain Advocate Website API',
-        'version': '4.4.0-python',
+        'version': '4.5.0-python',
         'timestamp': datetime.now().isoformat(),
         'displayDate': format_date(datetime.now().isoformat()),
         'timezone': 'Asia/Kolkata',
@@ -2463,7 +3475,11 @@ def ping():
             'Styled QR Codes',
             'Category Filtering',
             'Health Status Tracking',
-            'Pagination Support'
+            'Pagination Support',
+            'Newspaper Management',
+            'Book/Resource Management',
+            'Appointment Management',
+            'Request Management'
         ]
     })
 
@@ -2591,6 +3607,7 @@ def upload_profile_image():
         app.logger.error(f"Error uploading profile image: {e}")
         app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
+    
 
 # ============ ERROR HANDLERS ============
 @app.errorhandler(404)
@@ -2611,7 +3628,7 @@ def too_large_error(error):
 # ============ MAIN ============
 if __name__ == '__main__':
     print("=" * 70)
-    print(" KC Jain Advocate Website - Python Backend v4.4")
+    print(" KC Jain Advocate Website - Python Backend v4.5")
     print("=" * 70)
     print(f" Database: {DATABASE}")
     print(f" Upload folder: {UPLOAD_FOLDER}")
@@ -2622,12 +3639,22 @@ if __name__ == '__main__':
     print(" Features:")
     print("  ✓ Content Management (Cases, Posts, Blogs, Announcements)")
     print("  ✓ QR Code Generation for Trees")
+    print("  ✓ Newspaper Cuttings Management")
+    print("  ✓ Books & Resources Management")
+    print("  ✓ Appointment Request Management")
+    print("  ✓ General Inquiry Management")
     print("  ✓ Profile Image Management")
     print("  ✓ Admin Authentication")
     print("  ✓ File Upload (Images, Videos, Documents)")
     print("  ✓ Statistics Tracking")
     print("  ✓ Activity Logging")
     print("  ✓ Settings Management")
+    print("=" * 70)
+    print(" Default Admin Credentials:")
+    print("   Email: kcjain@gmail.com")
+    print("   Password: admin123")
+    print("   Email: shivamsharmaanna@gmail.com")
+    print("   Password: admin123")
     print("=" * 70)
     print(" Starting server at http://localhost:5000")
     print(" Press Ctrl+C to stop")

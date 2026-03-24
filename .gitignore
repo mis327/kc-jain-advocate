@@ -1,31 +1,45 @@
 ﻿# Python
 __pycache__/
 *.py[cod]
+*$py.class
 *.so
 .Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Database - IGNORE ALL DATABASE FILES
+# Flask
+instance/
+.webassets-cache
+.env
+
+# Database
 *.db
-*.db-journal
 *.sqlite
 *.sqlite3
 
-# Logs - IGNORE ALL LOGS
-*.log
-app.log
-*.log.*
-
-# Uploads - IGNORE ALL UPLOADS
+# Uploads
 uploads/
 !uploads/.gitkeep
 
-# Environment
-.env
-venv/
-env/
-ENV/
-env.bak/
-venv.bak/
+# Logs
+*.log
+app.log
 
 # IDE
 .vscode/
@@ -33,7 +47,21 @@ venv.bak/
 *.swp
 *.swo
 *~
+.DS_Store
 
 # OS
-.DS_Store
 Thumbs.db
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Node modules (if any)
+node_modules/
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/

@@ -2,15 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover">
     <title>KC Jain - Supreme Court Advocate | Legacy of Justice</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- QR Code Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     
     <style>
-        /* [Your existing CSS remains exactly the same - no changes] */
         * {
             margin: 0;
             padding: 0;
@@ -40,7 +38,6 @@
             --shadow-2xl: 0 25px 50px -12px rgba(0,0,0,0.25);
             --gradient-primary: linear-gradient(135deg, #0a1a2f 0%, #1e3a5f 100%);
             --gradient-gold: linear-gradient(135deg, #c9a959 0%, #d4b778 50%, #b38f3f 100%);
-            --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
             --border-radius-sm: 8px;
             --border-radius-md: 12px;
             --border-radius-lg: 16px;
@@ -220,8 +217,8 @@
             color: var(--white);
             font-size: 1.5rem;
             cursor: pointer;
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background: rgba(255,255,255,0.1);
             transition: all 0.3s ease;
@@ -369,7 +366,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 25px;
             margin-bottom: 60px;
         }
@@ -1091,6 +1088,7 @@
         .qr-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
         }
 
         .qr-table th {
@@ -1118,6 +1116,7 @@
             border: 2px solid var(--secondary);
             object-fit: cover;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .qr-small:hover {
@@ -1445,63 +1444,140 @@
             font-size: 1.1rem;
         }
 
-        #qr-system-section, #admin {
-            display: none;
+        .book-card {
+            background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+            border-radius: var(--border-radius-xl);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--secondary);
+            transition: all 0.3s ease;
         }
 
-        #qr-system-section.visible, #admin.visible {
-            display: block;
-            animation: fadeIn 0.5s ease;
+        .book-card:hover {
+            transform: translateX(10px);
+            box-shadow: var(--shadow-lg);
         }
 
-        /* Login Modal */
-        #loginModal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-card {
-            background: var(--white);
-            max-width: 500px;
-            width: 90%;
-            padding: 50px;
-            border-radius: var(--border-radius-2xl);
-            box-shadow: var(--shadow-2xl);
-            border: 2px solid var(--secondary);
-            position: relative;
-            animation: modalPop 0.3s ease;
-        }
-
-        @keyframes modalPop {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        .modal-card h2 {
-            font-family: 'Playfair Display', serif;
+        .book-title {
+            font-size: 1.3rem;
+            font-weight: 700;
             color: var(--primary);
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 2rem;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
         }
 
-        .modal-card h2 i {
+        .book-title i {
             color: var(--secondary);
         }
 
+        .book-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .book-link:hover {
+            gap: 8px;
+            transform: translateX(5px);
+        }
+
+        .newspaper-card {
+            background: #fef9e6;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .newspaper-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .newspaper-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .newspaper-caption {
+            padding: 15px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .form-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .form-tab {
+            padding: 12px 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .form-tab.active {
+            color: var(--secondary);
+            border-bottom: 2px solid var(--secondary);
+            margin-bottom: -2px;
+        }
+
+        .form-tab:hover {
+            color: var(--secondary);
+        }
+
+        .form-panel {
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        #loginModal .modal-card {
+            background: white;
+            max-width: 450px;
+            width: 90%;
+            margin: auto;
+            padding: 40px;
+            border-radius: var(--border-radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #loginModal .modal-card h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            text-align: center;
+            font-family: 'Playfair Display', serif;
+        }
+
+        #inquiries-container {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        /* Responsive Styles */
         @media (max-width: 1024px) {
             .hero-content {
                 flex-direction: column;
@@ -1539,6 +1615,21 @@
         @media (max-width: 768px) {
             .header-container {
                 flex-wrap: wrap;
+                padding: 15px 20px;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+            
+            .logo-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.6rem;
+            }
+            
+            .logo-tagline {
+                font-size: 0.7rem;
             }
             
             nav {
@@ -1547,6 +1638,9 @@
                 flex-direction: column;
                 gap: 5px;
                 margin-top: 15px;
+                background: rgba(10, 26, 47, 0.98);
+                border-radius: var(--border-radius-lg);
+                padding: 10px;
             }
             
             nav.active {
@@ -1559,23 +1653,54 @@
                 justify-content: center;
             }
             
+            nav a {
+                width: 100%;
+                justify-content: flex-start;
+            }
+            
             .hero-content {
                 padding: 0 20px;
             }
             
+            .hero-section {
+                padding: 40px 0;
+            }
+            
             .profile-motto {
-                font-size: 2.5rem;
+                font-size: 2rem;
+                text-align: center;
             }
             
             .profile-motto span {
-                font-size: 1.2rem;
+                font-size: 1rem;
                 display: inline-block;
                 margin: 5px;
+                padding: 3px 10px;
             }
             
             .profile-image-wrapper img {
-                width: 250px;
-                height: 250px;
+                width: 200px;
+                height: 200px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 0 10px;
+            }
+            
+            .stat-card {
+                padding: 20px 15px;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
+            }
+            
+            .stat-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.8rem;
             }
             
             .section-header {
@@ -1614,6 +1739,8 @@
             
             .admin-btn {
                 flex: 1 1 auto;
+                min-width: calc(33.33% - 8px);
+                justify-content: center;
             }
             
             #content-modal .modal-content {
@@ -1643,48 +1770,33 @@
             
             .footer-container {
                 gap: 40px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .profile-motto {
-                font-size: 2rem;
+                text-align: center;
             }
             
-            .profile-motto span {
-                font-size: 1rem;
+            .footer-links a {
+                justify-content: center;
             }
             
-            .stat-number {
-                font-size: 2.2rem;
+            .social-links {
+                justify-content: center;
             }
             
-            .section-title {
-                font-size: 1.8rem;
+            .contact-info {
+                grid-template-columns: 1fr;
+                gap: 20px;
             }
             
-            .modal-card {
-                padding: 35px 25px;
+            .contact-item {
+                padding: 30px 20px;
             }
             
-            .toast {
-                min-width: auto;
-                width: calc(100vw - 60px);
-                font-size: 0.9rem;
-            }
-            
-            .formatting-toolbar {
-                border-radius: var(--border-radius-lg);
-                padding: 15px;
-            }
-            
-            .formatting-toolbar button {
-                padding: 6px 12px;
-                font-size: 0.8rem;
+            .qr-preview {
+                padding: 30px 20px;
             }
             
             .qr-display {
-                gap: 20px;
+                grid-template-columns: 1fr;
+                gap: 25px;
             }
             
             #qr-code-img {
@@ -1692,8 +1804,171 @@
                 height: 180px;
             }
             
-            .qr-preview {
-                padding: 30px 20px;
+            .table-responsive {
+                overflow-x: auto;
+            }
+            
+            .qr-table {
+                min-width: 600px;
+            }
+            
+            .form-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .form-tab {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+                flex: 1;
+                text-align: center;
+            }
+            
+            .admin-panel {
+                padding: 25px 20px;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .formatting-toolbar {
+                flex-wrap: wrap;
+                gap: 8px;
+                padding: 12px;
+                border-radius: var(--border-radius-lg);
+            }
+            
+            .toast {
+                min-width: auto;
+                width: calc(100vw - 40px);
+                font-size: 0.9rem;
+            }
+            
+            #toastContainer {
+                top: 20px;
+                right: 20px;
+                left: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .stat-card {
+                padding: 15px 12px;
+            }
+            
+            .stat-number {
+                font-size: 1.8rem;
+            }
+            
+            .profile-motto {
+                font-size: 1.5rem;
+            }
+            
+            .profile-motto span {
+                font-size: 0.8rem;
+            }
+            
+            .profile-image-wrapper img {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .card-title {
+                font-size: 1.2rem;
+            }
+            
+            .admin-btn {
+                font-size: 0.75rem;
+                padding: 8px 10px;
+            }
+            
+            .filter-btn {
+                padding: 6px 12px;
+                font-size: 0.75rem;
+            }
+            
+            .form-tab {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+            }
+            
+            .qr-data-row {
+                font-size: 0.9rem;
+            }
+            
+            .qr-data-row strong {
+                width: 100px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+            }
+            
+            .admin-btn {
+                font-size: 0.7rem;
+                padding: 6px 8px;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            button, .btn, nav a, .filter-btn, .admin-btn, .read-more-btn,
+            .video-play-btn, .close-modal, .close-btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            .content-card:hover,
+            .stat-card:hover,
+            .book-card:hover,
+            .newspaper-card:hover {
+                transform: none;
+            }
+            
+            .btn:hover,
+            .admin-btn:hover {
+                transform: none;
+            }
+        }
+
+        @media (max-width: 900px) and (orientation: landscape) {
+            .hero-section {
+                min-height: auto;
+                padding: 30px 0;
+            }
+            
+            .hero-content {
+                flex-direction: row;
+                gap: 30px;
+            }
+            
+            .profile-image-wrapper img {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .profile-motto {
+                font-size: 1.5rem;
+            }
+            
+            nav {
+                max-height: 70vh;
+                overflow-y: auto;
             }
         }
     </style>
@@ -1705,15 +1980,14 @@
     <!-- Loading Overlay -->
     <div id="loadingOverlay">
         <div class="spinner"></div>
-        <p style="color: var(--secondary); font-size: 1.2rem; letter-spacing: 1px;">KC Jain & Associates</p>
-        <p style="color: var(--white); font-size: 0.9rem; opacity: 0.8;">Legacy of Justice • Excellence • Integrity</p>
+        <p style="color: var(--secondary); font-size: 1.2rem; letter-spacing: 1px;">KC Jain</p>
+        <p style="color: var(--white); font-size: 0.9rem; opacity: 0.8;">Supreme Court Advocate • Legacy of Justice • Excellence • Integrity</p>
     </div>
 
-    <!-- Login Modal - NO PRE-FILLED CREDENTIALS -->
+    <!-- Login Modal -->
     <div id="loginModal" style="display: none;">
         <div class="modal-card">
             <h2><i class="fas fa-gavel"></i> Admin Access</h2>
-            
             <div class="form-group">
                 <label><i class="fas fa-envelope"></i> Email</label>
                 <input type="email" id="admin-email" class="form-control" placeholder="Enter your email">
@@ -1757,6 +2031,9 @@
                 <a href="#posts"><i class="fas fa-newspaper"></i> Posts</a>
                 <a href="#blogs"><i class="fas fa-blog"></i> Blogs</a>
                 <a href="#announcements"><i class="fas fa-bullhorn"></i> Announcements</a>
+                <a href="#newspapers"><i class="fas fa-newspaper"></i> News Cuttings</a>
+                <a href="#books"><i class="fas fa-book"></i> Books</a>
+                <a href="#contact-form"><i class="fas fa-calendar-check"></i> Appointments</a>
                 <a href="#admin" id="openAdminMenu"><i class="fas fa-cog"></i> Admin</a>
                 <a href="#qr-system-section" id="openQRFormMenu"><i class="fas fa-qrcode"></i> Tree QR</a>
                 <a href="#contact"><i class="fas fa-envelope"></i> Contact</a>
@@ -1779,7 +2056,7 @@
                     <span>JUSTICE</span> <span>INTEGRITY</span> <span>EXCELLENCE</span>
                 </div>
                 <p>With over three decades of distinguished practice in the Supreme Court of India, KC Jain has established himself as a formidable force in constitutional law, public interest litigation, and environmental jurisprudence. His unwavering commitment to justice has shaped landmark decisions and set precedents that continue to guide the legal fraternity.</p>
-                <a href="#contact" class="btn btn-primary" style="display: inline-flex; width: auto; padding: 15px 40px;">
+                <a href="#contact-form" class="btn btn-primary" style="display: inline-flex; width: auto; padding: 15px 40px;">
                     <i class="fas fa-calendar-check"></i> Schedule Consultation
                 </a>
             </div>
@@ -1811,6 +2088,11 @@
                 <div class="stat-label">Announcements</div>
             </div>
             <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-newspaper"></i></div>
+                <div class="stat-number" id="newspapers-count">0</div>
+                <div class="stat-label">News Cuttings</div>
+            </div>
+            <div class="stat-card">
                 <div class="stat-icon"><i class="fas fa-qrcode"></i></div>
                 <div class="stat-number" id="qr-count">0</div>
                 <div class="stat-label">Tree QR Codes</div>
@@ -1818,7 +2100,7 @@
         </section>
 
         <!-- Admin Panel Section -->
-        <section class="content-section" id="admin">
+        <section class="content-section" id="admin" style="display: none;">
             <div class="section-header">
                 <h2 class="section-title"><i class="fas fa-cog"></i> Admin Panel</h2>
                 <div>
@@ -1832,90 +2114,178 @@
             </div>
 
             <div class="admin-panel visible" id="adminPanel">
-                <div class="form-row">
+                <!-- Admin Tabs -->
+                <div class="form-tabs">
+                    <button class="form-tab active" data-tab="content-tab">Content</button>
+                    <button class="form-tab" data-tab="newspaper-tab">Newspaper Cuttings</button>
+                    <button class="form-tab" data-tab="books-tab">Books/Links</button>
+                    <button class="form-tab" data-tab="inquiries-tab">Inquiries</button>
+                </div>
+
+                <!-- Content Tab -->
+                <div id="content-tab" class="form-panel active">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Content Type *</label>
+                            <select id="content-type" class="form-control">
+                                <option value="case">Case Study</option>
+                                <option value="post">Legal Post</option>
+                                <option value="blog">Blog Article</option>
+                                <option value="announcement">Announcement</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-folder"></i> Category *</label>
+                            <input type="text" id="content-category" class="form-control" placeholder="e.g., PIL, Environment, RTI">
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label><i class="fas fa-tag"></i> Content Type *</label>
-                        <select id="content-type" class="form-control">
-                            <option value="case">Case Study</option>
-                            <option value="post">Legal Post</option>
-                            <option value="blog">Blog Article</option>
-                            <option value="announcement">Announcement</option>
+                        <label><i class="fas fa-heading"></i> Title *</label>
+                        <input type="text" id="content-title" class="form-control" placeholder="Enter title...">
+                    </div>
+
+                    <div class="formatting-toolbar">
+                        <button onclick="document.execCommand('bold', false, null);"><i class="fas fa-bold"></i></button>
+                        <button onclick="document.execCommand('italic', false, null);"><i class="fas fa-italic"></i></button>
+                        <button onclick="document.execCommand('underline', false, null);"><i class="fas fa-underline"></i></button>
+                        <select onchange="document.execCommand('fontName', false, this.value);">
+                            <option value="">Font</option>
+                            <option value="Inter">Inter</option>
+                            <option value="Georgia">Georgia</option>
+                            <option value="Times New Roman">Times</option>
+                        </select>
+                        <input type="color" onchange="document.execCommand('foreColor', false, this.value);" value="#000000" title="Text Color">
+                        <button onclick="document.execCommand('justifyLeft', false, null);"><i class="fas fa-align-left"></i></button>
+                        <button onclick="document.execCommand('justifyCenter', false, null);"><i class="fas fa-align-center"></i></button>
+                        <button onclick="document.execCommand('justifyRight', false, null);"><i class="fas fa-align-right"></i></button>
+                        <button onclick="document.execCommand('insertUnorderedList', false, null);"><i class="fas fa-list-ul"></i></button>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-file-alt"></i> Content *</label>
+                        <div contenteditable="true" id="content-editor" class="form-control" style="min-height: 200px; overflow-y: auto;"></div>
+                        <textarea id="content-text" style="display: none;"></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-images"></i> Multiple Images</label>
+                            <div class="file-upload" onclick="document.getElementById('content-images-upload').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload images</p>
+                                <small>Max 5MB each (JPG, PNG, GIF)</small>
+                                <input type="file" id="content-images-upload" accept="image/*" multiple style="display: none;">
+                            </div>
+                            <div id="images-preview" class="images-grid"></div>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-video"></i> Video</label>
+                            <div class="file-upload" onclick="document.getElementById('content-video-upload').click()">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload video</p>
+                                <small>Max 100MB (MP4, MOV)</small>
+                                <input type="file" id="content-video-upload" accept="video/*" style="display: none;">
+                            </div>
+                            <div id="video-preview" class="images-grid"></div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button id="submit-content" class="btn btn-success">
+                            <i class="fas fa-save"></i> Save Content
+                        </button>
+                        <button id="clear-form" class="btn btn-primary">
+                            <i class="fas fa-broom"></i> Clear Form
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Newspaper Cuttings Tab -->
+                <div id="newspaper-tab" class="form-panel">
+                    <div class="form-group">
+                        <label><i class="fas fa-newspaper"></i> Newspaper Name *</label>
+                        <input type="text" id="newspaper-name" class="form-control" placeholder="e.g., The Times of India, Hindustan Times">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar-alt"></i> Publication Date *</label>
+                        <input type="date" id="newspaper-date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-heading"></i> Headline / Title</label>
+                        <input type="text" id="newspaper-title" class="form-control" placeholder="Article headline...">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-images"></i> Newspaper Image *</label>
+                        <div class="file-upload" onclick="document.getElementById('newspaper-image-upload').click()">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Click to upload newspaper cutting</p>
+                            <small>Max 10MB (JPG, PNG)</small>
+                            <input type="file" id="newspaper-image-upload" accept="image/*" style="display: none;">
+                        </div>
+                        <div id="newspaper-preview" class="images-grid"></div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Caption / Description</label>
+                        <textarea id="newspaper-caption" class="form-control" rows="3" placeholder="Brief description about the news article..."></textarea>
+                    </div>
+                    <div class="btn-group">
+                        <button id="submit-newspaper" class="btn btn-success">
+                            <i class="fas fa-save"></i> Save Newspaper Cutting
+                        </button>
+                        <button id="clear-newspaper-form" class="btn btn-primary">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Books/Links Tab -->
+                <div id="books-tab" class="form-panel">
+                    <div class="form-group">
+                        <label><i class="fas fa-book"></i> Book/Resource Title *</label>
+                        <input type="text" id="book-title" class="form-control" placeholder="Enter book or resource title">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-link"></i> Link URL *</label>
+                        <input type="url" id="book-url" class="form-control" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Author/Publisher</label>
+                        <input type="text" id="book-author" class="form-control" placeholder="Author or publisher name">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Description</label>
+                        <textarea id="book-description" class="form-control" rows="3" placeholder="Brief description of the book/resource..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Category</label>
+                        <select id="book-category" class="form-control">
+                            <option value="legal">Legal Reference</option>
+                            <option value="constitutional">Constitutional Law</option>
+                            <option value="judgments">Landmark Judgments</option>
+                            <option value="articles">Legal Articles</option>
+                            <option value="other">Other Resources</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-folder"></i> Category *</label>
-                        <input type="text" id="content-category" class="form-control" placeholder="e.g., PIL, Environment, RTI">
+                    <div class="btn-group">
+                        <button id="submit-book" class="btn btn-success">
+                            <i class="fas fa-save"></i> Save Book/Link
+                        </button>
+                        <button id="clear-book-form" class="btn btn-primary">
+                            <i class="fas fa-broom"></i> Clear
+                        </button>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label><i class="fas fa-heading"></i> Title *</label>
-                    <input type="text" id="content-title" class="form-control" placeholder="Enter title...">
-                </div>
-
-                <div class="formatting-toolbar">
-                    <button onclick="document.execCommand('bold', false, null); app.showToast('Bold applied', 'success');"><i class="fas fa-bold"></i></button>
-                    <button onclick="document.execCommand('italic', false, null); app.showToast('Italic applied', 'success');"><i class="fas fa-italic"></i></button>
-                    <button onclick="document.execCommand('underline', false, null); app.showToast('Underline applied', 'success');"><i class="fas fa-underline"></i></button>
-                    <select onchange="document.execCommand('fontName', false, this.value); app.showToast('Font changed', 'success');">
-                        <option value="">Font</option>
-                        <option value="Inter">Inter</option>
-                        <option value="Georgia">Georgia</option>
-                        <option value="Times New Roman">Times</option>
-                        <option value="Arial">Arial</option>
-                    </select>
-                    <select onchange="document.execCommand('fontSize', false, this.value); app.showToast('Size changed', 'success');">
-                        <option value="">Size</option>
-                        <option value="3">Small</option>
-                        <option value="4">Normal</option>
-                        <option value="5">Large</option>
-                        <option value="6">X-Large</option>
-                    </select>
-                    <input type="color" onchange="document.execCommand('foreColor', false, this.value); app.showToast('Color applied', 'success');" value="#000000" title="Text Color">
-                    <input type="color" onchange="document.execCommand('hiliteColor', false, this.value); app.showToast('Background applied', 'success');" value="#ffff00" title="Background Color">
-                    <button onclick="document.execCommand('justifyLeft', false, null); app.showToast('Left align', 'success');"><i class="fas fa-align-left"></i></button>
-                    <button onclick="document.execCommand('justifyCenter', false, null); app.showToast('Center align', 'success');"><i class="fas fa-align-center"></i></button>
-                    <button onclick="document.execCommand('justifyRight', false, null); app.showToast('Right align', 'success');"><i class="fas fa-align-right"></i></button>
-                    <button onclick="document.execCommand('insertUnorderedList', false, null); app.showToast('Bullet list', 'success');"><i class="fas fa-list-ul"></i></button>
-                    <button onclick="document.execCommand('insertOrderedList', false, null); app.showToast('Numbered list', 'success');"><i class="fas fa-list-ol"></i></button>
-                </div>
-
-                <div class="form-group">
-                    <label><i class="fas fa-file-alt"></i> Content *</label>
-                    <div contenteditable="true" id="content-editor" class="form-control" style="min-height: 200px; overflow-y: auto;" placeholder="Enter content..."></div>
-                    <textarea id="content-text" style="display: none;"></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label><i class="fas fa-images"></i> Multiple Images</label>
-                        <div class="file-upload" onclick="document.getElementById('content-images-upload').click()">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Click to upload images</p>
-                            <small>Max 5MB each (JPG, PNG, GIF)</small>
-                            <input type="file" id="content-images-upload" accept="image/*" multiple style="display: none;">
-                        </div>
-                        <div id="images-preview" class="images-grid"></div>
+                <!-- Inquiries Tab -->
+                <div id="inquiries-tab" class="form-panel">
+                    <div class="section-header" style="margin-bottom: 20px;">
+                        <h3 class="section-title" style="font-size: 1.5rem;"><i class="fas fa-envelope"></i> General Inquiries</h3>
+                        <button id="refresh-inquiries" class="btn btn-primary" onclick="app.loadGeneralInquiries()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label><i class="fas fa-video"></i> Video</label>
-                        <div class="file-upload" onclick="document.getElementById('content-video-upload').click()">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                            <p>Click to upload video</p>
-                            <small>Max 100MB (MP4, MOV)</small>
-                            <input type="file" id="content-video-upload" accept="video/*" style="display: none;">
-                        </div>
-                        <div id="video-preview" class="images-grid"></div>
-                    </div>
-                </div>
-
-                <div class="btn-group">
-                    <button id="submit-content" class="btn btn-success">
-                        <i class="fas fa-save"></i> Save Content
-                    </button>
-                    <button id="clear-form" class="btn btn-primary">
-                        <i class="fas fa-broom"></i> Clear Form
-                    </button>
+                    <div id="inquiries-container"></div>
                 </div>
             </div>
         </section>
@@ -1963,8 +2333,126 @@
             <div id="announcements-container" class="content-grid"></div>
         </section>
 
+        <!-- Newspaper Cuttings Section -->
+        <section class="content-section" id="newspapers">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-newspaper"></i> Newspaper Cuttings</h2>
+                <input type="text" id="newspapers-search" class="search-box" placeholder="Search newspaper cuttings...">
+            </div>
+            <div id="newspapers-container" class="content-grid"></div>
+        </section>
+
+        <!-- Books Section -->
+        <section class="content-section" id="books">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-book"></i> Recommended Books & Resources</h2>
+                <input type="text" id="books-search" class="search-box" placeholder="Search books...">
+            </div>
+            <div id="books-container"></div>
+        </section>
+
+        <!-- Contact/Appointment Form Section -->
+        <section class="content-section" id="contact-form">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-calendar-check"></i> Consultation Request</h2>
+            </div>
+            
+            <div class="form-tabs">
+                <button class="form-tab active" data-form-tab="appointment">Schedule Consultation</button>
+                <button class="form-tab" data-form-tab="request">General Inquiry</button>
+            </div>
+
+            <!-- Appointment Form -->
+            <div id="appointment-form" class="form-panel active">
+                <form id="appointmentForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Full Name *</label>
+                            <input type="text" id="app-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email *</label>
+                            <input type="email" id="app-email" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Phone Number *</label>
+                            <input type="tel" id="app-phone" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> Preferred Date *</label>
+                            <input type="date" id="app-date" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-clock"></i> Preferred Time</label>
+                            <select id="app-time" class="form-control">
+                                <option value="10:00 AM">10:00 AM</option>
+                                <option value="11:00 AM">11:00 AM</option>
+                                <option value="12:00 PM">12:00 PM</option>
+                                <option value="2:00 PM">2:00 PM</option>
+                                <option value="3:00 PM">3:00 PM</option>
+                                <option value="4:00 PM">4:00 PM</option>
+                                <option value="5:00 PM">5:00 PM</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-gavel"></i> Consultation Type</label>
+                            <select id="app-type" class="form-control">
+                                <option value="in-person">In-Person Meeting</option>
+                                <option value="video">Video Call</option>
+                                <option value="phone">Phone Call</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-file-alt"></i> Brief Description of Matter *</label>
+                        <textarea id="app-matter" class="form-control" rows="4" placeholder="Please provide a brief description of your legal matter..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-calendar-check"></i> Request Consultation
+                    </button>
+                </form>
+            </div>
+
+            <!-- General Inquiry Form -->
+            <div id="request-form" class="form-panel">
+                <form id="generalRequestForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Full Name *</label>
+                            <input type="text" id="req-name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-envelope"></i> Email *</label>
+                            <input type="email" id="req-email" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-phone"></i> Phone Number</label>
+                            <input type="tel" id="req-phone" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-tag"></i> Subject *</label>
+                            <input type="text" id="req-subject" class="form-control" placeholder="Subject of inquiry" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-comment"></i> Message *</label>
+                        <textarea id="req-message" class="form-control" rows="6" placeholder="Please describe your query in detail..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+        </section>
+
         <!-- QR System Section -->
-        <section class="content-section" id="qr-system-section">
+        <section class="content-section" id="qr-system-section" style="display: none;">
             <div class="section-header">
                 <h2 class="section-title"><i class="fas fa-qrcode"></i> Tree QR System</h2>
                 <div>
@@ -2106,10 +2594,9 @@
                 <div class="contact-item">
                     <i class="fas fa-map-marker-alt"></i>
                     <h3>Agra Office</h3>
-                    <p><br>E-103 & 104 Shanta Tower<br>Sanjay Place, Agra 282007</p>
+                    <p>E 14/6 Shop No.3 & 4 Shanta Tower<br>Sanjay Place, Agra 282007</p>
                     <br><h3>Supreme Court Chambers</h3>
-                    <p><br> 48 Lawyers Chamber</p>
-                    <p>New Delhi - 110001</p>
+                    <p>48 Lawyers Chamber<br>New Delhi - 110001</p>
                 </div>
                 <div class="contact-item">
                     <i class="fas fa-phone"></i>
@@ -2129,7 +2616,7 @@
     <footer>
         <div class="footer-container">
             <div class="footer-section">
-                <h3>KC Jain & Associates</h3>
+                <h3>KC Jain</h3>
                 <p>Distinguished Supreme Court practice with a legacy of landmark judgments and unwavering commitment to constitutional values since 1990.</p>
                 <div class="social-links">
                     <a href="#"><i class="fab fa-twitter"></i></a>
@@ -2154,6 +2641,7 @@
                     <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
                     <li><a href="#cases"><i class="fas fa-gavel"></i> Landmark Cases</a></li>
                     <li><a href="#blogs"><i class="fas fa-blog"></i> Legal Insights</a></li>
+                    <li><a href="#books"><i class="fas fa-book"></i> Books</a></li>
                     <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
                 </ul>
             </div>
@@ -2165,7 +2653,7 @@
             </div>
         </div>
         <div class="copyright">
-            <p>&copy; 2026 KC Jain & Associates. All rights reserved. | Designed for justice, built with excellence.</p>
+            <p>&copy; 2026 KC Jain. All rights reserved. | Designed for justice, built with excellence.</p>
         </div>
     </footer>
 
@@ -2189,7 +2677,7 @@
     <div id="content-modal" class="modal" onclick="if(event.target === this) document.getElementById('content-modal').style.display='none'">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-gavel"></i> KC Jain & Associates</h3>
+                <h3><i class="fas fa-gavel"></i> KC Jain</h3>
                 <button class="close-btn" onclick="app.closeContentModal()">×</button>
             </div>
             <div id="content-modal-body"></div>
@@ -2202,52 +2690,55 @@
     </div>
 
     <script>
-        // Complete Enhanced App with all features matching the backend
+        // Complete Enhanced App with all features
         let app = {
             content: [],
             qrData: [],
+            newspapers: [],
+            books: [],
+            generalInquiries: [],
             isAdminLoggedIn: false,
             editingContentId: null,
+            editingNewspaperId: null,
+            editingBookId: null,
+            editingQRId: null,
             profileImagePath: '',
             sessionToken: null,
             apiBaseUrl: window.location.origin,
 
-            async init() {
-                this.setupScrollProgress();
-                this.setupEventListeners();
-                this.setupFileUploadPreviews();
-                this.hideLoading();
-                this.checkSharedContent();
-                
-                // Load all data from server
-                await this.loadContentFromServer();
-                await this.loadQRFromServer();
-                await this.loadProfileImage();
-                await this.loadStats();
-                
-                // Set default date for QR form
-                const today = new Date().toISOString().split('T')[0];
-                if (document.getElementById('planted-date')) {
-                    document.getElementById('planted-date').value = today;
-                }
-                
-                // Check if user was previously logged in (session storage)
-                this.checkSavedSession();
+            // Helper Methods
+            isMobileDevice() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
             },
 
-            setupScrollProgress() {
-                window.addEventListener('scroll', () => {
-                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
-                    document.getElementById('scrollProgress').style.width = scrolled + '%';
+            formatDate(dateString) {
+                if (!dateString) return 'N/A';
+                try {
+                    const date = new Date(dateString);
+                    return date.toLocaleDateString('en-IN', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric'
+                    });
+                } catch {
+                    return dateString;
+                }
+            },
+
+            escapeHTML(str) {
+                if (!str) return '';
+                return str.replace(/[&<>]/g, function(m) {
+                    if (m === '&') return '&amp;';
+                    if (m === '<') return '&lt;';
+                    if (m === '>') return '&gt;';
+                    return m;
                 });
             },
 
-            hideLoading() {
-                setTimeout(() => {
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                }, 1200);
+            stripHTML(html) {
+                const div = document.createElement('div');
+                div.innerHTML = html;
+                return div.textContent || div.innerText || '';
             },
 
             showToast(message, type = 'info') {
@@ -2268,294 +2759,57 @@
                 }, 3500);
             },
 
-            checkSavedSession() {
-                const savedToken = sessionStorage.getItem('adminToken');
-                const savedEmail = sessionStorage.getItem('adminEmail');
-                if (savedToken && savedEmail) {
-                    this.verifyToken(savedToken);
-                }
-            },
-
-            async verifyToken(token) {
-                try {
-                    const response = await fetch('/api/auth/verify', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token })
-                    });
-                    
-                    const result = await response.json();
-                    
-                    if (result.valid) {
-                        this.isAdminLoggedIn = true;
-                        this.sessionToken = token;
-                        document.getElementById('admin-photo-btn').classList.add('visible');
-                        this.showToast(`Welcome back, ${result.name}!`, 'success');
-                    }
-                } catch (error) {
-                    console.error('Token verification failed:', error);
-                    sessionStorage.removeItem('adminToken');
-                    sessionStorage.removeItem('adminEmail');
-                }
-            },
-
-            setupEventListeners() {
-                // Mobile menu
-                document.getElementById('mobileMenuBtn').addEventListener('click', () => {
-                    document.getElementById('navMenu').classList.toggle('active');
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('nav') && !e.target.closest('#mobileMenuBtn')) {
-                        document.getElementById('navMenu').classList.remove('active');
-                    }
-                });
-
-                // Admin login
-                document.getElementById('openAdminMenu').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    if (!this.isAdminLoggedIn) {
-                        document.getElementById('loginModal').style.display = 'flex';
-                    } else {
-                        this.showAdminSection();
-                    }
-                    
-                    document.getElementById('navMenu').classList.remove('active');
-                });
-
-                document.getElementById('openQRFormMenu').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    if (!this.isAdminLoggedIn) {
-                        document.getElementById('loginModal').style.display = 'flex';
-                    } else {
-                        this.showQRSection();
-                    }
-                    
-                    document.getElementById('navMenu').classList.remove('active');
-                });
-
-                document.getElementById('login-btn').addEventListener('click', async () => {
-                    const email = document.getElementById('admin-email').value.trim();
-                    const password = document.getElementById('admin-password').value;
-                    
-                    if (!email || !password) {
-                        this.showToast('Please enter email and password', 'warning');
-                        return;
-                    }
-                    
-                    try {
-                        const response = await fetch('/api/auth/login', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ email, password })
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (result.success) {
-                            this.isAdminLoggedIn = true;
-                            this.sessionToken = result.token;
-                            
-                            // Save session
-                            sessionStorage.setItem('adminToken', result.token);
-                            sessionStorage.setItem('adminEmail', result.email);
-                            
-                            document.getElementById('loginModal').style.display = 'none';
-                            document.getElementById('admin-photo-btn').classList.add('visible');
-                            this.showToast(`Welcome back, ${result.name}!`, 'success');
-                            
-                            // Load content from server
-                            await this.loadContentFromServer();
-                            await this.loadQRFromServer();
-                            
-                            this.showAdminSection();
-                        } else {
-                            this.showToast('Invalid email or password', 'error');
-                        }
-                    } catch (error) {
-                        console.error('Login error:', error);
-                        this.showToast('Login failed. Check server connection.', 'error');
-                    }
-                });
-
-                document.getElementById('cancel-login').addEventListener('click', () => {
-                    document.getElementById('loginModal').style.display = 'none';
-                });
-
-                window.addEventListener('click', (e) => {
-                    if (e.target.id === 'loginModal') {
-                        document.getElementById('loginModal').style.display = 'none';
-                    }
-                });
-
-                document.getElementById('admin-photo-btn').addEventListener('click', () => {
-                    if (this.isAdminLoggedIn) {
-                        document.getElementById('profile-upload').click();
-                    } else {
-                        this.showToast('Admin login required', 'warning');
-                        document.getElementById('loginModal').style.display = 'flex';
-                    }
-                });
-
-                document.getElementById('profile-upload').addEventListener('change', (e) => {
-                    if (this.isAdminLoggedIn) {
-                        this.handleProfileImageUpload(e);
-                    }
-                });
-
-                document.getElementById('close-admin').addEventListener('click', () => {
-                    document.getElementById('admin').classList.remove('visible');
-                });
-
-                document.getElementById('close-qr').addEventListener('click', () => {
-                    document.getElementById('qr-system-section').classList.remove('visible');
-                });
-
-                document.getElementById('refresh-content').addEventListener('click', async () => {
-                    await this.loadContentFromServer();
-                    await this.loadQRFromServer();
-                    await this.loadStats();
-                    this.showToast('Content refreshed from server', 'success');
-                });
-
-                document.getElementById('submit-content').addEventListener('click', () => {
-                    if (!this.isAdminLoggedIn) {
-                        this.showToast('Admin login required', 'warning');
-                        document.getElementById('loginModal').style.display = 'flex';
-                        return;
-                    }
-                    this.saveContent();
-                });
-
-                document.getElementById('clear-form').addEventListener('click', () => {
-                    document.getElementById('content-title').value = '';
-                    document.getElementById('content-editor').innerHTML = '';
-                    document.getElementById('content-category').value = '';
-                    document.getElementById('images-preview').innerHTML = '';
-                    document.getElementById('video-preview').innerHTML = '';
-                    this.editingContentId = null;
-                    document.getElementById('submit-content').innerHTML = '<i class="fas fa-save"></i> Save Content';
-                    document.getElementById('submit-content').classList.remove('btn-warning');
-                    this.showToast('Form cleared', 'info');
-                });
-
-                document.getElementById('qr-form').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    if (!this.isAdminLoggedIn) {
-                        this.showToast('Admin login required', 'warning');
-                        document.getElementById('loginModal').style.display = 'flex';
-                        return;
-                    }
-                    this.generateQRCode();
-                });
-
-                document.getElementById('clear-qr-form').addEventListener('click', () => {
-                    document.getElementById('qr-form').reset();
-                    document.getElementById('tree-images-preview').innerHTML = '';
-                    document.getElementById('tree-video-preview').innerHTML = '';
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('planted-date').value = today;
-                    this.showToast('QR form cleared', 'info');
-                });
-
-                document.getElementById('print-qr').addEventListener('click', () => this.printQR());
-                document.getElementById('save-qr').addEventListener('click', () => this.saveQR());
-                document.getElementById('generate-another').addEventListener('click', () => {
-                    document.getElementById('qr-preview-section').classList.remove('visible');
-                    document.getElementById('qr-form').reset();
-                    document.getElementById('tree-images-preview').innerHTML = '';
-                    document.getElementById('tree-video-preview').innerHTML = '';
-                    const today = new Date().toISOString().split('T')[0];
-                    document.getElementById('planted-date').value = today;
-                });
-
-                // Search functionality
-                ['cases', 'posts', 'blogs', 'announcements', 'qr'].forEach(type => {
-                    const input = document.getElementById(type + '-search');
-                    if (input) {
-                        input.addEventListener('input', (e) => this.searchContent(type, e.target.value));
-                    }
-                });
-
-                document.querySelectorAll('.filter-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                        e.target.classList.add('active');
-                        this.filterCases(e.target.dataset.filter);
-                    });
-                });
-
-                document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
-                    anchor.addEventListener('click', (e) => {
-                        if (anchor.getAttribute('href') === '#') return;
-                        e.preventDefault();
-                        
-                        const targetId = anchor.getAttribute('href');
-                        if (targetId === '#home') {
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                        } else {
-                            const target = document.querySelector(targetId);
-                            if (target) {
-                                target.scrollIntoView({ behavior: 'smooth' });
-                            }
-                        }
-                        
-                        document.getElementById('navMenu').classList.remove('active');
-                    });
-                });
-
-                document.querySelectorAll('.close-modal').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        document.getElementById('image-modal').style.display = 'none';
-                        document.getElementById('video-modal').style.display = 'none';
-                        document.getElementById('content-modal').style.display = 'none';
-                        
-                        const video = document.getElementById('modal-video');
-                        if (video) {
-                            video.pause();
-                            video.src = '';
-                        }
-                    });
-                });
-
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        this.closeContentModal();
-                        
-                        document.getElementById('video-modal').style.display = 'none';
-                        const video = document.getElementById('modal-video');
-                        if (video) {
-                            video.pause();
-                            video.src = '';
-                        }
-                    }
-                });
-            },
-
             closeContentModal() {
                 document.getElementById('content-modal').style.display = 'none';
             },
 
+            openImageModal(imageUrl) {
+                if (!imageUrl || imageUrl === 'undefined') return;
+                const modal = document.getElementById('image-modal');
+                const modalImg = document.getElementById('modal-image');
+                modalImg.src = imageUrl;
+                modal.style.display = 'flex';
+            },
+
+            openVideoModal(videoUrl, contentId) {
+                if (!videoUrl || videoUrl === 'undefined') return;
+                const modal = document.getElementById('video-modal');
+                const modalVideo = document.getElementById('modal-video');
+                modalVideo.src = videoUrl;
+                modalVideo.load();
+                modal.style.display = 'flex';
+            },
+
+            getShareableLink(contentId) {
+                return `${window.location.origin}${window.location.pathname}?content=${contentId}`;
+            },
+
+            copyShareLink(contentId) {
+                const link = this.getShareableLink(contentId);
+                navigator.clipboard.writeText(link).then(() => {
+                    this.showToast('Link copied to clipboard!', 'success');
+                }).catch(() => {
+                    this.showToast('Failed to copy link', 'error');
+                });
+            },
+
             showAdminSection() {
-                document.getElementById('admin').classList.add('visible');
-                document.getElementById('admin').scrollIntoView({ behavior: 'smooth' });
+                const adminSection = document.getElementById('admin');
+                adminSection.style.display = 'block';
+                adminSection.scrollIntoView({ behavior: 'smooth' });
             },
 
             showQRSection() {
-                document.getElementById('qr-system-section').classList.add('visible');
-                document.getElementById('qr-system-section').scrollIntoView({ behavior: 'smooth' });
+                const qrSection = document.getElementById('qr-system-section');
+                qrSection.style.display = 'block';
+                qrSection.scrollIntoView({ behavior: 'smooth' });
             },
 
+            // Data Loading Methods
             async loadContentFromServer() {
                 try {
                     const response = await fetch('/api/content');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
                     
                     if (data.content) {
@@ -2582,9 +2836,7 @@
             async loadQRFromServer() {
                 try {
                     const response = await fetch('/api/qr');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
                     
                     if (data.qrData) {
@@ -2596,7 +2848,7 @@
                             plantedDate: item.planted_date,
                             displayDate: this.formatDate(item.planted_date),
                             qrCodeUrl: item.qr_code_url,
-                            media: item.treeImages || [],
+                            treeImages: item.treeImages || [],
                             videoData: item.tree_video_url,
                             healthStatus: item.health_status,
                             treeHeight: item.tree_height,
@@ -2613,12 +2865,81 @@
                 }
             },
 
+            async loadNewspapersFromServer() {
+                try {
+                    const response = await fetch('/api/newspapers');
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+                    
+                    if (data.newspapers) {
+                        this.newspapers = data.newspapers.map(item => ({
+                            id: item.id,
+                            name: item.name || 'Unknown',
+                            date: item.date,
+                            title: item.title || '',
+                            caption: item.caption || '',
+                            imageUrl: item.image_url && item.image_url !== 'undefined' ? item.image_url : '/uploads/newspapers/default-newspaper.jpg',
+                            displayDate: this.formatDate(item.date),
+                            created_date: item.created_date
+                        }));
+                        
+                        this.displayNewspapers();
+                        this.updateStats();
+                    }
+                } catch (error) {
+                    console.error('Error loading newspapers:', error);
+                }
+            },
+
+            async loadBooksFromServer() {
+                try {
+                    const response = await fetch('/api/books');
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    const data = await response.json();
+                    
+                    if (data.books) {
+                        this.books = data.books.map(book => ({
+                            id: book.id,
+                            title: book.title || 'Untitled',
+                            url: book.url || '#',
+                            author: book.author || '',
+                            description: book.description || '',
+                            category: book.category || 'legal',
+                            created_date: book.created_date
+                        }));
+                        
+                        this.displayBooks();
+                        this.updateStats();
+                    }
+                } catch (error) {
+                    console.error('Error loading books:', error);
+                }
+            },
+
+            async loadGeneralInquiries() {
+                if (!this.isAdminLoggedIn) return;
+                
+                try {
+                    const response = await fetch('/api/requests', {
+                        headers: {
+                            'Authorization': `Bearer ${this.sessionToken || ''}`
+                        }
+                    });
+                    const data = await response.json();
+                    
+                    if (data.requests) {
+                        this.generalInquiries = data.requests;
+                        this.displayGeneralInquiries();
+                    }
+                } catch (error) {
+                    console.error('Error loading inquiries:', error);
+                }
+            },
+
             async loadProfileImage() {
                 try {
                     const response = await fetch('/api/profile');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
                     
                     if (data.profileImage) {
@@ -2627,285 +2948,41 @@
                     }
                 } catch (error) {
                     console.error('Error loading profile image:', error);
-                    // Fallback to default
-                    document.getElementById('profile-image').src = '/uploads/profile/default-profile.jpg';
                 }
             },
 
             async loadStats() {
                 try {
                     const response = await fetch('/api/stats');
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
                     const data = await response.json();
                     
                     document.getElementById('cases-count').textContent = data.cases || 0;
                     document.getElementById('posts-count').textContent = data.posts || 0;
                     document.getElementById('blogs-count').textContent = data.blogs || 0;
                     document.getElementById('announcements-count').textContent = data.announcements || 0;
+                    document.getElementById('newspapers-count').textContent = data.newspapers || 0;
                     document.getElementById('qr-count').textContent = data.qr || 0;
                 } catch (error) {
                     console.error('Error loading stats:', error);
                 }
             },
 
-            setupFileUploadPreviews() {
-                // Images preview for content
-                document.getElementById('content-images-upload').addEventListener('change', (e) => {
-                    const files = Array.from(e.target.files);
-                    const previewContainer = document.getElementById('images-preview');
-                    previewContainer.innerHTML = '';
-                    
-                    files.forEach((file) => {
-                        if (file.type.startsWith('image/')) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                const previewDiv = document.createElement('div');
-                                previewDiv.className = 'image-preview-item';
-                                previewDiv.innerHTML = `
-                                    <img src="${e.target.result}">
-                                    <button class="remove-image" onclick="this.parentElement.remove()">×</button>
-                                `;
-                                previewContainer.appendChild(previewDiv);
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-                    
-                    if (files.length > 0) {
-                        this.showToast(`${files.length} image(s) selected`, 'info');
-                    }
-                });
-
-                document.getElementById('content-video-upload').addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    const previewContainer = document.getElementById('video-preview');
-                    previewContainer.innerHTML = '';
-                    
-                    if (file) {
-                        const previewDiv = document.createElement('div');
-                        previewDiv.className = 'video-preview-item';
-                        
-                        const reader = new FileReader();
-                        reader.onload = (fileData) => {
-                            previewDiv.setAttribute('data-video-data', fileData.target.result);
-                            previewDiv.setAttribute('data-video-name', file.name);
-                            previewDiv.setAttribute('data-video-type', file.type);
-                        };
-                        reader.readAsDataURL(file);
-                        
-                        previewDiv.innerHTML = `
-                            <i class="fas fa-video"></i>
-                            <span class="video-filename">${file.name.substring(0, 20)}${file.name.length > 20 ? '...' : ''}</span>
-                            <button class="remove-image" onclick="this.parentElement.remove()">×</button>
-                        `;
-                        
-                        previewContainer.appendChild(previewDiv);
-                        this.showToast(`Video selected: ${file.name}`, 'info');
-                    }
-                });
-
-                // Images preview for tree
-                document.getElementById('tree-images-upload').addEventListener('change', (e) => {
-                    const files = Array.from(e.target.files);
-                    const previewContainer = document.getElementById('tree-images-preview');
-                    previewContainer.innerHTML = '';
-                    
-                    files.forEach((file) => {
-                        if (file.type.startsWith('image/')) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                const previewDiv = document.createElement('div');
-                                previewDiv.className = 'image-preview-item';
-                                previewDiv.innerHTML = `
-                                    <img src="${e.target.result}">
-                                    <button class="remove-image" onclick="this.parentElement.remove()">×</button>
-                                `;
-                                previewContainer.appendChild(previewDiv);
-                            };
-                            reader.readAsDataURL(file);
-                        }
-                    });
-                    
-                    if (files.length > 0) {
-                        this.showToast(`${files.length} tree image(s) selected`, 'info');
-                    }
-                });
-
-                document.getElementById('tree-video-upload').addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    const previewContainer = document.getElementById('tree-video-preview');
-                    previewContainer.innerHTML = '';
-                    
-                    if (file) {
-                        const previewDiv = document.createElement('div');
-                        previewDiv.className = 'video-preview-item';
-                        
-                        const reader = new FileReader();
-                        reader.onload = (fileData) => {
-                            previewDiv.setAttribute('data-video-data', fileData.target.result);
-                            previewDiv.setAttribute('data-video-name', file.name);
-                            previewDiv.setAttribute('data-video-type', file.type);
-                        };
-                        reader.readAsDataURL(file);
-                        
-                        previewDiv.innerHTML = `
-                            <i class="fas fa-video"></i>
-                            <span class="video-filename">${file.name.substring(0, 20)}${file.name.length > 20 ? '...' : ''}</span>
-                            <button class="remove-image" onclick="this.parentElement.remove()">×</button>
-                        `;
-                        
-                        previewContainer.appendChild(previewDiv);
-                        this.showToast(`Tree video selected: ${file.name}`, 'info');
-                    }
-                });
-            },
-
-            async handleProfileImageUpload(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    if (file.size > 5 * 1024 * 1024) {
-                        this.showToast('Image size should be less than 5MB', 'error');
-                        return;
-                    }
-                    
-                    this.showToast('Uploading profile image...', 'info');
-                    
-                    const reader = new FileReader();
-                    reader.onload = async (e) => {
-                        const imageData = e.target.result;
-                        
-                        // Show preview immediately (optimistic update)
-                        document.getElementById('profile-image').src = imageData;
-                        
-                        try {
-                            // Upload to server
-                            const response = await fetch('/api/profile/upload', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'Authorization': `Bearer ${this.sessionToken || ''}`
-                                },
-                                body: JSON.stringify({
-                                    imageData: imageData
-                                })
-                            });
-                            
-                            const result = await response.json();
-                            
-                            if (result.success) {
-                                this.showToast('Profile photo updated successfully!', 'success');
-                                // Update with server URL
-                                document.getElementById('profile-image').src = result.profileImage;
-                                this.profileImagePath = result.profileImage;
-                            } else {
-                                this.showToast('Failed to upload: ' + (result.error || 'Unknown error'), 'error');
-                                // Revert preview
-                                await this.loadProfileImage();
-                            }
-                        } catch (error) {
-                            console.error('Upload error:', error);
-                            this.showToast('Failed to upload profile image', 'error');
-                            // Revert preview
-                            await this.loadProfileImage();
-                        }
-                    };
-                    reader.readAsDataURL(file);
-                }
-            },
-
-            async saveContent() {
-                const type = document.getElementById('content-type').value;
-                const title = document.getElementById('content-title').value.trim();
-                const editorContent = document.getElementById('content-editor').innerHTML.trim();
-                const category = document.getElementById('content-category').value.trim() || 'General';
-
-                if (!title || !editorContent || editorContent === '<br>') {
-                    this.showToast('Please fill in title and content', 'error');
-                    return;
-                }
-
-                this.showToast('Saving content...', 'info');
-
-                const files = [];
+            updateStats() {
+                const cases = this.content.filter(c => c.type === 'case').length;
+                const posts = this.content.filter(c => c.type === 'post').length;
+                const blogs = this.content.filter(c => c.type === 'blog').length;
+                const announcements = this.content.filter(c => c.type === 'announcement').length;
                 
-                // Collect images
-                const imagePreviews = document.querySelectorAll('#images-preview .image-preview-item img');
-                for (const img of imagePreviews) {
-                    if (img.src.startsWith('data:')) {
-                        files.push({
-                            name: `image_${Date.now()}.jpg`,
-                            type: 'image',
-                            data: img.src
-                        });
-                    }
-                }
-
-                // Collect video
-                const videoPreview = document.querySelector('#video-preview .video-preview-item');
-                if (videoPreview) {
-                    const videoData = videoPreview.getAttribute('data-video-data');
-                    const videoName = videoPreview.getAttribute('data-video-name') || 'video.mp4';
-                    
-                    if (videoData) {
-                        files.push({
-                            name: videoName,
-                            type: 'video',
-                            data: videoData
-                        });
-                    }
-                }
-
-                const contentData = {
-                    id: this.editingContentId,
-                    type: type,
-                    title: title,
-                    text: editorContent,
-                    category: category,
-                    author: 'KC Jain',
-                    featured: 0,
-                    language: 'en'
-                };
-
-                try {
-                    const url = this.editingContentId ? `/api/content/${this.editingContentId}` : '/api/content';
-                    const method = this.editingContentId ? 'PUT' : 'POST';
-                    
-                    const response = await fetch(url, {
-                        method: method,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${this.sessionToken || ''}`
-                        },
-                        body: JSON.stringify({
-                            data: contentData,
-                            files: files
-                        })
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        this.showToast(this.editingContentId ? 'Content updated successfully!' : 'Content saved successfully!', 'success');
-                        
-                        await this.loadContentFromServer();
-                        await this.loadStats();
-                        
-                        this.clearContentForm();
-                        
-                        if (!this.editingContentId) {
-                            document.getElementById('qr-system-section').classList.remove('visible');
-                        }
-                    } else {
-                        this.showToast('Error saving: ' + (result.error || 'Unknown error'), 'error');
-                    }
-                } catch (error) {
-                    console.error('Save error:', error);
-                    this.showToast('Failed to save content', 'error');
-                }
+                document.getElementById('cases-count').textContent = cases;
+                document.getElementById('posts-count').textContent = posts;
+                document.getElementById('blogs-count').textContent = blogs;
+                document.getElementById('announcements-count').textContent = announcements;
+                document.getElementById('newspapers-count').textContent = this.newspapers.length;
+                document.getElementById('qr-count').textContent = this.qrData.length;
             },
 
+            // Display Methods
             displayAllContent() {
                 const containers = {
                     'cases': 'case',
@@ -2932,7 +3009,6 @@
                         }
 
                         items.sort((a, b) => new Date(b.date) - new Date(a.date));
-                        
                         items.forEach(item => {
                             container.appendChild(this.createContentCard(item));
                         });
@@ -2949,18 +3025,16 @@
                 let mediaHTML = '';
                 if (item.media && item.media.length > 0) {
                     const firstMedia = item.media[0];
-                    if (firstMedia.type === 'image') {
+                    if (firstMedia.type === 'image' && firstMedia.url && firstMedia.url !== 'undefined') {
                         mediaHTML = `
                             <div class="card-media">
-                                <img src="${firstMedia.url}" class="card-image" onclick="app.openImageModal('${firstMedia.url}')">
+                                <img src="${firstMedia.url}" class="card-image" onclick="app.openImageModal('${firstMedia.url}')" onerror="this.style.display='none'">
                             </div>
                         `;
-                    } else if (firstMedia.type === 'video') {
-                        const videoUrl = firstMedia.url;
-                        
+                    } else if (firstMedia.type === 'video' && firstMedia.url && firstMedia.url !== 'undefined') {
                         mediaHTML = `
                             <div class="card-media">
-                                <button class="video-play-btn" onclick="app.openVideoModal('${videoUrl}', '${item.id}')">
+                                <button class="video-play-btn" onclick="app.openVideoModal('${firstMedia.url}', '${item.id}')">
                                     <i class="fas fa-play"></i>
                                 </button>
                             </div>
@@ -2971,7 +3045,7 @@
                 card.innerHTML = `
                     ${mediaHTML}
                     <div class="card-header">
-                        <span class="card-category">${item.category || item.type}</span>
+                        <span class="card-category">${this.escapeHTML(item.category || item.type)}</span>
                         <div class="card-date"><i class="far fa-calendar"></i> ${item.displayDate}</div>
                     </div>
                     <div class="card-body">
@@ -3001,35 +3075,6 @@
                 return card;
             },
 
-            stripHTML(html) {
-                const div = document.createElement('div');
-                div.innerHTML = html;
-                return div.textContent || div.innerText || '';
-            },
-
-            getShareableLink(contentId) {
-                return `${window.location.origin}${window.location.pathname}?content=${contentId}`;
-            },
-
-            copyShareLink(contentId) {
-                const link = this.getShareableLink(contentId);
-                navigator.clipboard.writeText(link).then(() => {
-                    this.showToast('Link copied to clipboard!', 'success');
-                }).catch(() => {
-                    this.showToast('Failed to copy link', 'error');
-                });
-            },
-
-            checkSharedContent() {
-                const params = new URLSearchParams(window.location.search);
-                const contentId = params.get('content');
-                if (contentId) {
-                    setTimeout(() => {
-                        this.showFullContent(contentId);
-                    }, 1500);
-                }
-            },
-
             showFullContent(contentId) {
                 const item = this.content.find(c => c.id === contentId);
                 if (item) {
@@ -3039,17 +3084,14 @@
                     let mediaHTML = '';
                     if (item.media) {
                         item.media.forEach(media => {
-                            if (media.type === 'image') {
+                            if (media.type === 'image' && media.url && media.url !== 'undefined') {
                                 mediaHTML += `<img src="${media.url}" style="max-width: 100%; margin: 20px 0; border-radius: var(--border-radius-lg); cursor: pointer; box-shadow: var(--shadow-lg);" onclick="app.openImageModal('${media.url}')">`;
-                            } else if (media.type === 'video') {
-                                const videoUrl = media.url;
-                                if (videoUrl && videoUrl !== '#') {
-                                    mediaHTML += `
-                                        <video controls style="max-width: 100%; margin: 20px 0; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-lg);">
-                                            <source src="${videoUrl}" type="video/mp4">
-                                        </video>
-                                    `;
-                                }
+                            } else if (media.type === 'video' && media.url && media.url !== 'undefined') {
+                                mediaHTML += `
+                                    <video controls style="max-width: 100%; margin: 20px 0; border-radius: var(--border-radius-lg); box-shadow: var(--shadow-lg);">
+                                        <source src="${media.url}" type="video/mp4">
+                                    </video>
+                                `;
                             }
                         });
                     }
@@ -3065,6 +3107,287 @@
                     `;
                     
                     modal.style.display = 'flex';
+                }
+            },
+
+            displayNewspapers() {
+                const container = document.getElementById('newspapers-container');
+                if (!container) return;
+                
+                if (this.newspapers.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-newspaper"></i>
+                            <h3>No Newspaper Cuttings</h3>
+                            <p>Add newspaper cuttings using the admin panel.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+                this.newspapers.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                this.newspapers.forEach(item => {
+                    let imageUrl = item.imageUrl;
+                    if (!imageUrl || imageUrl === 'undefined' || imageUrl === 'null') {
+                        imageUrl = '/uploads/newspapers/default-newspaper.jpg';
+                    }
+                    
+                    const card = document.createElement('div');
+                    card.className = 'newspaper-card';
+                    card.innerHTML = `
+                        <div class="card-media">
+                            <img src="${imageUrl}" class="card-image" onclick="app.openImageModal('${imageUrl}')" onerror="this.src='/uploads/newspapers/default-newspaper.jpg'">
+                        </div>
+                        <div class="card-header">
+                            <span class="card-category">${this.escapeHTML(item.name)}</span>
+                            <div class="card-date"><i class="far fa-calendar"></i> ${item.displayDate}</div>
+                        </div>
+                        ${item.title ? `<div class="card-body"><h3 class="card-title">${this.escapeHTML(item.title)}</h3></div>` : ''}
+                        ${item.caption ? `<div class="newspaper-caption">${this.escapeHTML(item.caption)}</div>` : ''}
+                        <div class="card-footer">
+                            <button class="admin-btn share-btn" onclick="app.copyShareLink('newspaper-${item.id}')">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                            ${this.isAdminLoggedIn ? `
+                                <button class="admin-btn edit-btn" onclick="app.editNewspaper('${item.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="admin-btn delete-btn" onclick="app.deleteNewspaper('${item.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            },
+
+            displayBooks() {
+                const container = document.getElementById('books-container');
+                if (!container) return;
+                
+                if (!this.books || this.books.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-book"></i>
+                            <h3>No Books/Resources Added</h3>
+                            <p>Add books and resources using the admin panel.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = '';
+                this.books.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'book-card';
+                    bookCard.innerHTML = `
+                        <div class="book-title">
+                            <i class="fas fa-book"></i>
+                            ${this.escapeHTML(book.title)}
+                        </div>
+                        ${book.author ? `<div style="color: var(--text-light); margin-bottom: 10px;"><i class="fas fa-user"></i> ${this.escapeHTML(book.author)}</div>` : ''}
+                        ${book.description ? `<p style="color: var(--text-dark);">${this.escapeHTML(book.description)}</p>` : ''}
+                        <a href="${book.url}" target="_blank" class="book-link" ${!book.url || book.url === '#' ? 'style="pointer-events: none; opacity: 0.6;"' : ''}>
+                            <i class="fas fa-external-link-alt"></i> View Resource
+                        </a>
+                        ${this.isAdminLoggedIn ? `
+                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                <button class="admin-btn edit-btn" onclick="app.editBook('${book.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="admin-btn delete-btn" onclick="app.deleteBook('${book.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        ` : ''}
+                    `;
+                    container.appendChild(bookCard);
+                });
+            },
+
+            displayQRHistory() {
+                const container = document.getElementById('qr-history-container');
+                if (!container) return;
+                
+                if (this.qrData.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-qrcode"></i>
+                            <h3>No QR Codes Generated</h3>
+                            <p>Generate your first tree QR code using the form above.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '<div class="table-responsive"><table class="qr-table"><thead><tr><th>QR</th><th>Tree ID</th><th>Name</th><th>Location</th><th>Planted</th><th>Actions</th></tr></thead><tbody>';
+                
+                this.qrData.forEach(item => {
+                    html += `
+                        <tr>
+                            <td><img src="${item.qrCodeUrl}" class="qr-small" onclick="app.openImageModal('${item.qrCodeUrl}')"></td>
+                            <td>${this.escapeHTML(item.treeId)}</td>
+                            <td>${this.escapeHTML(item.treeName)}</td>
+                            <td>${this.escapeHTML(item.location)}</td>
+                            <td>${item.displayDate || item.plantedDate}</td>
+                            <td>
+                                <button class="admin-btn share-btn" onclick="app.copyShareLink('qr-${item.id}')">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                                ${this.isAdminLoggedIn ? `
+                                    <button class="admin-btn edit-btn" onclick="app.editQR('${item.id}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="admin-btn delete-btn" onclick="app.deleteQR('${item.id}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+            },
+
+            displayGeneralInquiries() {
+                const container = document.getElementById('inquiries-container');
+                if (!container) return;
+                
+                if (!this.generalInquiries || this.generalInquiries.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <h3>No Inquiries</h3>
+                            <p>No general inquiries have been submitted yet.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                this.generalInquiries.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+                
+                this.generalInquiries.forEach(inquiry => {
+                    const card = document.createElement('div');
+                    card.className = 'content-card';
+                    card.style.marginBottom = '20px';
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <span class="card-category">${inquiry.status || 'Pending'}</span>
+                            <div class="card-date"><i class="far fa-calendar"></i> ${this.formatDate(inquiry.created_date)}</div>
+                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">${this.escapeHTML(inquiry.subject)}</h3>
+                            <p><strong>From:</strong> ${this.escapeHTML(inquiry.name)} (${this.escapeHTML(inquiry.email)})</p>
+                            ${inquiry.phone ? `<p><strong>Phone:</strong> ${this.escapeHTML(inquiry.phone)}</p>` : ''}
+                            <div class="card-text" style="margin-top: 15px; background: #f8fafc; padding: 15px; border-radius: var(--border-radius-md);">
+                                ${this.escapeHTML(inquiry.message)}
+                            </div>
+                            ${inquiry.response ? `
+                                <div style="margin-top: 15px; background: #e8f5e9; padding: 15px; border-radius: var(--border-radius-md);">
+                                    <strong><i class="fas fa-reply"></i> Response:</strong>
+                                    <p style="margin-top: 8px;">${this.escapeHTML(inquiry.response)}</p>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="card-footer">
+                            <textarea id="response-${inquiry.id}" class="form-control" placeholder="Type your response..." rows="2" style="margin-right: 10px;"></textarea>
+                            <button class="admin-btn btn-success" onclick="app.respondToInquiry('${inquiry.id}')">
+                                <i class="fas fa-paper-plane"></i> Respond
+                            </button>
+                            <button class="admin-btn btn-info" onclick="app.markInquiryResolved('${inquiry.id}')">
+                                <i class="fas fa-check"></i> Mark Resolved
+                            </button>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            },
+
+            // Content Management
+            async saveContent() {
+                const type = document.getElementById('content-type').value;
+                const title = document.getElementById('content-title').value.trim();
+                const editorContent = document.getElementById('content-editor').innerHTML.trim();
+                const category = document.getElementById('content-category').value.trim() || 'General';
+
+                if (!title || !editorContent || editorContent === '<br>') {
+                    this.showToast('Please fill in title and content', 'error');
+                    return;
+                }
+
+                this.showToast('Saving content...', 'info');
+
+                const files = [];
+                
+                const imagePreviews = document.querySelectorAll('#images-preview .image-preview-item img');
+                for (const img of imagePreviews) {
+                    if (img.src.startsWith('data:')) {
+                        files.push({
+                            name: `image_${Date.now()}.jpg`,
+                            type: 'image',
+                            data: img.src
+                        });
+                    }
+                }
+
+                const videoPreview = document.querySelector('#video-preview .video-preview-item');
+                if (videoPreview) {
+                    const videoData = videoPreview.getAttribute('data-video-data');
+                    const videoName = videoPreview.getAttribute('data-video-name') || 'video.mp4';
+                    
+                    if (videoData) {
+                        files.push({
+                            name: videoName,
+                            type: 'video',
+                            data: videoData
+                        });
+                    }
+                }
+
+                const contentData = {
+                    id: this.editingContentId,
+                    type: type,
+                    title: title,
+                    text: editorContent,
+                    category: category,
+                    author: 'KC Jain'
+                };
+
+                try {
+                    const url = this.editingContentId ? `/api/content/${this.editingContentId}` : '/api/content';
+                    const method = this.editingContentId ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.sessionToken || ''}`
+                        },
+                        body: JSON.stringify({
+                            data: contentData,
+                            files: files
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showToast(this.editingContentId ? 'Content updated successfully!' : 'Content saved successfully!', 'success');
+                        await this.loadContentFromServer();
+                        await this.loadStats();
+                        this.clearContentForm();
+                    } else {
+                        this.showToast('Error saving: ' + (result.error || 'Unknown error'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Save error:', error);
+                    this.showToast('Failed to save content', 'error');
                 }
             },
 
@@ -3098,7 +3421,6 @@
                             } else if (media.type === 'video') {
                                 const previewDiv = document.createElement('div');
                                 previewDiv.className = 'video-preview-item';
-                                
                                 previewDiv.innerHTML = `
                                     <i class="fas fa-video"></i>
                                     <span class="video-filename">Video Preview</span>
@@ -3160,6 +3482,282 @@
                 document.getElementById('submit-content').classList.remove('btn-warning');
             },
 
+            // Newspaper Management
+            async saveNewspaper() {
+                const name = document.getElementById('newspaper-name').value.trim();
+                const date = document.getElementById('newspaper-date').value;
+                const title = document.getElementById('newspaper-title').value.trim();
+                const caption = document.getElementById('newspaper-caption').value.trim();
+
+                if (!name || !date) {
+                    this.showToast('Please fill newspaper name and date', 'error');
+                    return;
+                }
+
+                const previewDiv = document.querySelector('#newspaper-preview .image-preview-item img');
+                let imageData = null;
+                
+                if (previewDiv && previewDiv.src.startsWith('data:')) {
+                    imageData = previewDiv.src;
+                } else if (previewDiv && previewDiv.src) {
+                    imageData = previewDiv.src;
+                }
+
+                if (!imageData && !this.editingNewspaperId) {
+                    this.showToast('Please upload a newspaper image', 'error');
+                    return;
+                }
+
+                this.showToast('Saving newspaper cutting...', 'info');
+
+                const files = [];
+                if (imageData && imageData.startsWith('data:')) {
+                    files.push({
+                        name: `newspaper_${Date.now()}.jpg`,
+                        type: 'image',
+                        data: imageData
+                    });
+                }
+
+                const newspaperData = {
+                    id: this.editingNewspaperId,
+                    name: name,
+                    date: date,
+                    title: title,
+                    caption: caption,
+                    existingImageUrl: !imageData?.startsWith('data:') ? imageData : null
+                };
+
+                try {
+                    const url = this.editingNewspaperId ? `/api/newspapers/${this.editingNewspaperId}` : '/api/newspapers';
+                    const method = this.editingNewspaperId ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.sessionToken || ''}`
+                        },
+                        body: JSON.stringify({
+                            data: newspaperData,
+                            files: files
+                        })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showToast(this.editingNewspaperId ? 'Newspaper updated successfully!' : 'Newspaper saved successfully!', 'success');
+                        await this.loadNewspapersFromServer();
+                        await this.loadStats();
+                        
+                        document.getElementById('newspaper-name').value = '';
+                        document.getElementById('newspaper-date').value = new Date().toISOString().split('T')[0];
+                        document.getElementById('newspaper-title').value = '';
+                        document.getElementById('newspaper-caption').value = '';
+                        document.getElementById('newspaper-preview').innerHTML = '';
+                        document.getElementById('newspaper-image-upload').value = '';
+                        
+                        this.editingNewspaperId = null;
+                        document.getElementById('submit-newspaper').innerHTML = '<i class="fas fa-save"></i> Save Newspaper Cutting';
+                        document.getElementById('submit-newspaper').classList.remove('btn-warning');
+                    } else {
+                        this.showToast('Error saving: ' + (result.error || 'Unknown error'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Save error:', error);
+                    this.showToast('Failed to save newspaper cutting', 'error');
+                }
+            },
+
+            async editNewspaper(newspaperId) {
+                if (!this.isAdminLoggedIn) {
+                    this.showToast('Admin login required', 'warning');
+                    return;
+                }
+
+                const item = this.newspapers.find(n => n.id === newspaperId);
+                if (item) {
+                    document.getElementById('newspaper-name').value = item.name || '';
+                    document.getElementById('newspaper-date').value = item.date || new Date().toISOString().split('T')[0];
+                    document.getElementById('newspaper-title').value = item.title || '';
+                    document.getElementById('newspaper-caption').value = item.caption || '';
+                    
+                    const previewContainer = document.getElementById('newspaper-preview');
+                    previewContainer.innerHTML = '';
+                    
+                    let imageUrl = item.imageUrl;
+                    if (imageUrl && imageUrl !== 'undefined' && imageUrl !== 'null') {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'image-preview-item';
+                        previewDiv.innerHTML = `
+                            <img src="${imageUrl}" onerror="this.src='/uploads/newspapers/default-newspaper.jpg'">
+                            <button class="remove-image" onclick="this.parentElement.remove()">×</button>
+                        `;
+                        previewContainer.appendChild(previewDiv);
+                    }
+                    
+                    this.editingNewspaperId = newspaperId;
+                    document.getElementById('submit-newspaper').innerHTML = '<i class="fas fa-save"></i> Update Newspaper';
+                    document.getElementById('submit-newspaper').classList.add('btn-warning');
+                    
+                    this.showAdminSection();
+                    const newspaperTab = document.querySelector('[data-tab="newspaper-tab"]');
+                    if (newspaperTab) newspaperTab.click();
+                    this.showToast('Edit mode activated for newspaper', 'info');
+                }
+            },
+
+            async deleteNewspaper(newspaperId) {
+                if (!this.isAdminLoggedIn) {
+                    this.showToast('Admin login required', 'warning');
+                    return;
+                }
+
+                if (confirm('Delete this newspaper cutting?')) {
+                    try {
+                        const response = await fetch(`/api/newspapers/${newspaperId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${this.sessionToken || ''}`
+                            }
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            await this.loadNewspapersFromServer();
+                            await this.loadStats();
+                            this.showToast('Newspaper cutting deleted', 'success');
+                        } else {
+                            this.showToast('Error deleting', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Delete error:', error);
+                        this.showToast('Failed to delete', 'error');
+                    }
+                }
+            },
+
+            // Book Management
+            async saveBook() {
+                const title = document.getElementById('book-title').value.trim();
+                const url = document.getElementById('book-url').value.trim();
+                const author = document.getElementById('book-author').value.trim();
+                const description = document.getElementById('book-description').value.trim();
+                const category = document.getElementById('book-category').value;
+
+                if (!title || !url) {
+                    this.showToast('Please fill book title and link URL', 'error');
+                    return;
+                }
+
+                this.showToast('Saving book/link...', 'info');
+
+                const bookData = {
+                    id: this.editingBookId,
+                    title: title,
+                    url: url,
+                    author: author,
+                    description: description,
+                    category: category
+                };
+
+                try {
+                    const urlEndpoint = this.editingBookId ? `/api/books/${this.editingBookId}` : '/api/books';
+                    const method = this.editingBookId ? 'PUT' : 'POST';
+                    
+                    const response = await fetch(urlEndpoint, {
+                        method: method,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.sessionToken || ''}`
+                        },
+                        body: JSON.stringify(bookData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showToast(this.editingBookId ? 'Book/Link updated successfully!' : 'Book/Link saved successfully!', 'success');
+                        await this.loadBooksFromServer();
+                        await this.loadStats();
+                        
+                        document.getElementById('book-title').value = '';
+                        document.getElementById('book-url').value = '';
+                        document.getElementById('book-author').value = '';
+                        document.getElementById('book-description').value = '';
+                        document.getElementById('book-category').value = 'legal';
+                        
+                        this.editingBookId = null;
+                        document.getElementById('submit-book').innerHTML = '<i class="fas fa-save"></i> Save Book/Link';
+                        document.getElementById('submit-book').classList.remove('btn-warning');
+                    } else {
+                        this.showToast('Error saving: ' + (result.error || 'Unknown error'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Save error:', error);
+                    this.showToast('Failed to save book/link', 'error');
+                }
+            },
+
+            async editBook(bookId) {
+                if (!this.isAdminLoggedIn) {
+                    this.showToast('Admin login required', 'warning');
+                    return;
+                }
+
+                const book = this.books.find(b => b.id === bookId);
+                if (book) {
+                    document.getElementById('book-title').value = book.title;
+                    document.getElementById('book-url').value = book.url;
+                    document.getElementById('book-author').value = book.author || '';
+                    document.getElementById('book-description').value = book.description || '';
+                    document.getElementById('book-category').value = book.category || 'legal';
+                    
+                    this.editingBookId = bookId;
+                    document.getElementById('submit-book').innerHTML = '<i class="fas fa-save"></i> Update Book';
+                    document.getElementById('submit-book').classList.add('btn-warning');
+                    
+                    this.showAdminSection();
+                    const booksTab = document.querySelector('[data-tab="books-tab"]');
+                    if (booksTab) booksTab.click();
+                    this.showToast('Edit mode activated for book', 'info');
+                }
+            },
+
+            async deleteBook(bookId) {
+                if (!this.isAdminLoggedIn) {
+                    this.showToast('Admin login required', 'warning');
+                    return;
+                }
+
+                if (confirm('Delete this book/link?')) {
+                    try {
+                        const response = await fetch(`/api/books/${bookId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${this.sessionToken || ''}`
+                            }
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            await this.loadBooksFromServer();
+                            await this.loadStats();
+                            this.showToast('Book/Link deleted', 'success');
+                        } else {
+                            this.showToast('Error deleting', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Delete error:', error);
+                        this.showToast('Failed to delete', 'error');
+                    }
+                }
+            },
+
+            // QR Code Management
             async generateQRCode() {
                 const treeId = document.getElementById('tree-id').value.trim();
                 const treeName = document.getElementById('tree-name').value.trim();
@@ -3292,104 +3890,68 @@
                 }
             },
 
-            displayQRHistory() {
-                const container = document.getElementById('qr-history-container');
-                if (!container) return;
-                
-                if (this.qrData.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-qrcode"></i>
-                            <h3>No QR Codes Generated</h3>
-                            <p>Generate your first tree QR code using the form above.</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                let html = '<div class="table-responsive"><table class="qr-table"><thead><tr><th>QR</th><th>Tree ID</th><th>Name</th><th>Location</th><th>Planted</th><th>Actions</th></tr></thead><tbody>';
-                
-                this.qrData.forEach(item => {
-                    html += `
-                        <tr>
-                            <td><img src="${item.qrCodeUrl}" class="qr-small"></td>
-                            <td><strong>${item.treeId}</strong></td>
-                            <td>${item.treeName}</td>
-                            <td>${item.location}</td>
-                            <td>${item.displayDate}</td>
-                            <td>
-                                <button class="admin-btn" style="background: #3b82f6; color: white; padding: 8px;" onclick="app.viewQRDetails('${item.id}')">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                ${this.isAdminLoggedIn ? `
-                                    <button class="admin-btn delete-btn" style="padding: 8px;" onclick="app.deleteQRItem('${item.id}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                ` : ''}
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                html += '</tbody></table></div>';
-                container.innerHTML = html;
-            },
-
-            viewQRDetails(qrId) {
-                const item = this.qrData.find(q => q.id === qrId);
-                if (item) {
-                    let qrDataHTML = `
-                        <div class="qr-data-row"><strong>Tree ID:</strong> ${item.treeId}</div>
-                        <div class="qr-data-row"><strong>Tree Name:</strong> ${item.treeName}</div>
-                        <div class="qr-data-row"><strong>Location:</strong> ${item.location}</div>
-                        <div class="qr-data-row"><strong>Planted:</strong> ${item.displayDate}</div>
-                        ${item.healthStatus ? `<div class="qr-data-row"><strong>Health:</strong> ${item.healthStatus}</div>` : ''}
-                        ${item.treeHeight ? `<div class="qr-data-row"><strong>Height:</strong> ${item.treeHeight} ft</div>` : ''}
-                        ${item.scientificName ? `<div class="qr-data-row"><strong>Scientific:</strong> ${item.scientificName}</div>` : ''}
-                        ${item.plantedBy ? `<div class="qr-data-row"><strong>Planted By:</strong> ${item.plantedBy}</div>` : ''}
-                        ${item.description ? `<div class="qr-data-row"><strong>Description:</strong> ${item.description.substring(0, 100)}${item.description.length > 100 ? '...' : ''}</div>` : ''}
-                    `;
-
-                    let mediaHTML = '';
-                    if (item.media && item.media.length > 0) {
-                        mediaHTML += '<div style="margin-top: 20px;"><strong>Tree Images:</strong><div class="images-grid">';
-                        item.media.forEach(img => {
-                            mediaHTML += `
-                                <div class="image-preview-item" style="cursor: pointer;" onclick="app.openImageModal('${img.url}')">
-                                    <img src="${img.url}">
-                                </div>
-                            `;
-                        });
-                        mediaHTML += '</div></div>';
-                    }
-
-                    if (item.videoData) {
-                        mediaHTML += `
-                            <div style="margin-top: 20px;">
-                                <strong>Tree Video:</strong>
-                                <video controls style="max-width: 100%; margin-top: 10px; border-radius: var(--border-radius-lg);">
-                                    <source src="${item.videoData}" type="video/mp4">
-                                </video>
-                            </div>
-                        `;
-                    }
-
-                    document.getElementById('qr-code-img').src = item.qrCodeUrl;
-                    document.getElementById('qr-data-display').innerHTML = qrDataHTML;
-                    document.getElementById('qr-media-preview').innerHTML = mediaHTML;
-                    document.getElementById('qr-preview-section').classList.add('visible');
-                    
-                    document.getElementById('qr-preview-section').scrollIntoView({ behavior: 'smooth' });
-                }
-            },
-
-            async deleteQRItem(qrId) {
+            async editQR(qrId) {
                 if (!this.isAdminLoggedIn) {
                     this.showToast('Admin login required', 'warning');
                     return;
                 }
 
-                if (confirm('Delete this QR entry?')) {
+                const qr = this.qrData.find(q => q.id === qrId);
+                if (qr) {
+                    document.getElementById('tree-id').value = qr.treeId;
+                    document.getElementById('tree-name').value = qr.treeName;
+                    document.getElementById('planted-date').value = qr.plantedDate;
+                    document.getElementById('location').value = qr.location;
+                    document.getElementById('planted-by').value = qr.plantedBy;
+                    document.getElementById('scientific-name').value = qr.scientificName || '';
+                    document.getElementById('tree-health').value = qr.healthStatus || 'Good';
+                    document.getElementById('tree-height').value = qr.treeHeight || '';
+                    document.getElementById('tree-description').value = qr.description || '';
+                    
+                    const previewContainer = document.getElementById('tree-images-preview');
+                    previewContainer.innerHTML = '';
+                    if (qr.treeImages && qr.treeImages.length > 0) {
+                        qr.treeImages.forEach(img => {
+                            const previewDiv = document.createElement('div');
+                            previewDiv.className = 'image-preview-item';
+                            previewDiv.innerHTML = `
+                                <img src="${img.url}">
+                                <button class="remove-image" onclick="this.parentElement.remove()">×</button>
+                            `;
+                            previewContainer.appendChild(previewDiv);
+                        });
+                    }
+                    
+                    const videoPreviewContainer = document.getElementById('tree-video-preview');
+                    videoPreviewContainer.innerHTML = '';
+                    if (qr.videoData) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'video-preview-item';
+                        previewDiv.setAttribute('data-video-url', qr.videoData);
+                        previewDiv.innerHTML = `
+                            <i class="fas fa-video"></i>
+                            <span class="video-filename">Existing Video</span>
+                            <button class="remove-image" onclick="this.parentElement.remove()">×</button>
+                        `;
+                        videoPreviewContainer.appendChild(previewDiv);
+                    }
+                    
+                    this.editingQRId = qrId;
+                    this.showAdminSection();
+                    const qrSection = document.getElementById('qr-system-section');
+                    qrSection.style.display = 'block';
+                    qrSection.scrollIntoView({ behavior: 'smooth' });
+                    this.showToast('Edit mode activated for QR code', 'info');
+                }
+            },
+
+            async deleteQR(qrId) {
+                if (!this.isAdminLoggedIn) {
+                    this.showToast('Admin login required', 'warning');
+                    return;
+                }
+
+                if (confirm('Delete this QR code and associated tree data?')) {
                     try {
                         const response = await fetch(`/api/qr/${qrId}`, {
                             method: 'DELETE',
@@ -3403,179 +3965,1045 @@
                         if (result.success) {
                             await this.loadQRFromServer();
                             await this.loadStats();
-                            this.showToast('QR entry deleted', 'success');
+                            this.showToast('QR code deleted successfully', 'success');
                         } else {
-                            this.showToast('Error deleting QR entry', 'error');
+                            this.showToast('Error deleting QR code', 'error');
                         }
                     } catch (error) {
                         console.error('Delete error:', error);
-                        this.showToast('Failed to delete QR entry', 'error');
+                        this.showToast('Failed to delete QR code', 'error');
                     }
                 }
             },
 
             printQR() {
                 const qrPreview = document.getElementById('qr-preview-section');
-                if (qrPreview.classList.contains('visible')) {
-                    const treeId = document.getElementById('tree-id').value || 'Tree';
-                    const printWindow = window.open('', '_blank');
-                    printWindow.document.write(`
-                        <html>
-                            <head>
-                                <title>Tree QR Code - ${treeId}</title>
-                                <style>
-                                    body { font-family: Inter, sans-serif; padding: 40px; text-align: center; background: #f8fafc; }
-                                    h1 { color: #0a1a2f; font-family: 'Playfair Display', serif; }
-                                    img { max-width: 300px; margin: 20px; border: 4px solid #c9a959; border-radius: 16px; }
-                                    .data { text-align: left; max-width: 500px; margin: 20px auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-                                    .row { margin: 10px 0; padding: 5px; border-bottom: 1px solid #ddd; }
-                                </style>
-                            </head>
-                            <body>
-                                <h1>Tree QR Code - ${treeId}</h1>
-                                <img src="${document.getElementById('qr-code-img').src}">
-                                <div class="data">${document.getElementById('qr-data-display').innerHTML.replace(/<div class="qr-data-row">/g, '<div class="row">')}</div>
-                            </body>
-                        </html>
-                    `);
-                    printWindow.document.close();
-                    printWindow.focus();
-                    setTimeout(() => {
-                        printWindow.print();
-                        printWindow.close();
-                    }, 250);
-                }
+                const originalDisplay = qrPreview.style.display;
+                qrPreview.style.display = 'block';
+                
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>KC Jain - Tree QR Code</title>
+                        <style>
+                            body { font-family: 'Inter', sans-serif; padding: 40px; text-align: center; }
+                            .qr-container { max-width: 400px; margin: 0 auto; }
+                            img { max-width: 100%; border: 3px solid #c9a959; border-radius: 16px; }
+                            .details { margin-top: 30px; text-align: left; }
+                            .detail-row { padding: 8px 0; border-bottom: 1px solid #e2e8f0; }
+                            .detail-label { font-weight: bold; color: #0a1a2f; }
+                            h2 { color: #c9a959; margin-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="qr-container">
+                            <h2>KC Jain - Tree Plantation Initiative</h2>
+                            <img src="${document.getElementById('qr-code-img').src}" alt="QR Code">
+                            <div class="details">
+                                ${document.getElementById('qr-data-display').innerHTML}
+                            </div>
+                            ${document.getElementById('qr-media-preview').innerHTML}
+                            <p style="margin-top: 40px; font-size: 12px; color: #666;">
+                                Scan QR code to view complete tree details and media
+                            </p>
+                        </div>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+                qrPreview.style.display = originalDisplay;
             },
 
             saveQR() {
                 const qrImg = document.getElementById('qr-code-img');
-                if (qrImg.src) {
-                    const link = document.createElement('a');
-                    link.href = qrImg.src;
-                    link.download = 'tree-qr-' + Date.now() + '.png';
-                    link.click();
-                    this.showToast('QR code saved', 'success');
-                }
+                const link = document.createElement('a');
+                link.download = `tree_qr_${Date.now()}.png`;
+                link.href = qrImg.src;
+                link.click();
+                this.showToast('QR code saved to downloads', 'success');
             },
 
-            updateStats() {
-                document.getElementById('cases-count').textContent = this.content.filter(i => i.type === 'case').length;
-                document.getElementById('posts-count').textContent = this.content.filter(i => i.type === 'post').length;
-                document.getElementById('blogs-count').textContent = this.content.filter(i => i.type === 'blog').length;
-                document.getElementById('announcements-count').textContent = this.content.filter(i => i.type === 'announcement').length;
-                document.getElementById('qr-count').textContent = this.qrData.length;
-            },
-
-            searchContent(type, query) {
-                const container = document.getElementById(type + '-container');
-                if (!container) return;
-                
-                const cards = container.querySelectorAll('.content-card');
-                const normalizedQuery = query.toLowerCase().trim();
-                
-                if (!normalizedQuery) {
-                    cards.forEach(card => card.style.display = 'block');
+            // Inquiry Management
+            async respondToInquiry(inquiryId) {
+                const responseText = document.getElementById(`response-${inquiryId}`).value.trim();
+                if (!responseText) {
+                    this.showToast('Please enter a response', 'warning');
                     return;
                 }
                 
-                cards.forEach(card => {
-                    const title = card.querySelector('.card-title')?.textContent.toLowerCase() || '';
-                    const text = card.querySelector('.card-text')?.textContent.toLowerCase() || '';
-                    const category = card.querySelector('.card-category')?.textContent.toLowerCase() || '';
+                try {
+                    const response = await fetch(`/api/requests/${inquiryId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.sessionToken || ''}`
+                        },
+                        body: JSON.stringify({
+                            status: 'Responded',
+                            response: responseText
+                        })
+                    });
                     
-                    if (title.includes(normalizedQuery) || text.includes(normalizedQuery) || category.includes(normalizedQuery)) {
-                        card.style.display = 'block';
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showToast('Response sent successfully', 'success');
+                        await this.loadGeneralInquiries();
                     } else {
-                        card.style.display = 'none';
+                        this.showToast('Error sending response', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showToast('Failed to send response', 'error');
+                }
+            },
+
+            async markInquiryResolved(inquiryId) {
+                try {
+                    const response = await fetch(`/api/requests/${inquiryId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${this.sessionToken || ''}`
+                        },
+                        body: JSON.stringify({
+                            status: 'Resolved'
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        this.showToast('Inquiry marked as resolved', 'success');
+                        await this.loadGeneralInquiries();
+                    } else {
+                        this.showToast('Error updating status', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.showToast('Failed to update status', 'error');
+                }
+            },
+
+            // Form Submissions
+            async submitAppointment() {
+                const name = document.getElementById('app-name').value.trim();
+                const email = document.getElementById('app-email').value.trim();
+                const phone = document.getElementById('app-phone').value.trim();
+                const date = document.getElementById('app-date').value;
+                const time = document.getElementById('app-time').value;
+                const type = document.getElementById('app-type').value;
+                const matter = document.getElementById('app-matter').value.trim();
+
+                if (!name || !email || !phone || !date || !matter) {
+                    this.showToast('Please fill all required fields', 'error');
+                    return;
+                }
+
+                this.showToast('Sending consultation request...', 'info');
+
+                const appointmentData = {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    date: date,
+                    time: time,
+                    type: type,
+                    matter: matter
+                };
+
+                try {
+                    const response = await fetch('/api/appointments', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(appointmentData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showToast('Consultation request sent! You will receive a confirmation email.', 'success');
+                        document.getElementById('appointmentForm').reset();
+                        const today = new Date().toISOString().split('T')[0];
+                        document.getElementById('app-date').value = today;
+                    } else {
+                        this.showToast('Error: ' + (result.error || 'Failed to send request'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Appointment error:', error);
+                    this.showToast('Failed to send request', 'error');
+                }
+            },
+
+            async submitGeneralRequest() {
+                const name = document.getElementById('req-name').value.trim();
+                const email = document.getElementById('req-email').value.trim();
+                const phone = document.getElementById('req-phone').value.trim();
+                const subject = document.getElementById('req-subject').value.trim();
+                const message = document.getElementById('req-message').value.trim();
+
+                if (!name || !email || !subject || !message) {
+                    this.showToast('Please fill all required fields', 'error');
+                    return;
+                }
+
+                this.showToast('Sending message...', 'info');
+
+                const requestData = {
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    subject: subject,
+                    message: message
+                };
+
+                try {
+                    const response = await fetch('/api/requests', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        this.showToast('Message sent successfully! We will get back to you soon.', 'success');
+                        document.getElementById('generalRequestForm').reset();
+                    } else {
+                        this.showToast('Error: ' + (result.error || 'Failed to send message'), 'error');
+                    }
+                } catch (error) {
+                    console.error('Request error:', error);
+                    this.showToast('Failed to send message', 'error');
+                }
+            },
+
+            async handleProfileImageUpload(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        this.showToast('Image size should be less than 5MB', 'error');
+                        return;
+                    }
+                    
+                    this.showToast('Uploading profile image...', 'info');
+                    
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const imageData = e.target.result;
+                        document.getElementById('profile-image').src = imageData;
+                        
+                        try {
+                            const response = await fetch('/api/profile/upload', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${this.sessionToken || ''}`
+                                },
+                                body: JSON.stringify({ imageData: imageData })
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                this.showToast('Profile photo updated successfully!', 'success');
+                                document.getElementById('profile-image').src = result.profileImage;
+                                this.profileImagePath = result.profileImage;
+                            } else {
+                                this.showToast('Failed to upload: ' + (result.error || 'Unknown error'), 'error');
+                                await this.loadProfileImage();
+                            }
+                        } catch (error) {
+                            console.error('Upload error:', error);
+                            this.showToast('Failed to upload profile image', 'error');
+                            await this.loadProfileImage();
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+
+            setupFileUploadPreviews() {
+                // Images preview for content
+                document.getElementById('content-images-upload').addEventListener('change', (e) => {
+                    const files = Array.from(e.target.files);
+                    const previewContainer = document.getElementById('images-preview');
+                    previewContainer.innerHTML = '';
+                    
+                    files.forEach((file) => {
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const previewDiv = document.createElement('div');
+                                previewDiv.className = 'image-preview-item';
+                                previewDiv.innerHTML = `
+                                    <img src="${e.target.result}">
+                                    <button class="remove-image" onclick="this.parentElement.remove()">×</button>
+                                `;
+                                previewContainer.appendChild(previewDiv);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
+
+                document.getElementById('content-video-upload').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    const previewContainer = document.getElementById('video-preview');
+                    previewContainer.innerHTML = '';
+                    
+                    if (file) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'video-preview-item';
+                        
+                        const reader = new FileReader();
+                        reader.onload = (fileData) => {
+                            previewDiv.setAttribute('data-video-data', fileData.target.result);
+                            previewDiv.setAttribute('data-video-name', file.name);
+                            previewDiv.setAttribute('data-video-type', file.type);
+                        };
+                        reader.readAsDataURL(file);
+                        
+                        previewDiv.innerHTML = `
+                            <i class="fas fa-video"></i>
+                            <span class="video-filename">${file.name.substring(0, 20)}${file.name.length > 20 ? '...' : ''}</span>
+                            <button class="remove-image" onclick="this.parentElement.remove()">×</button>
+                        `;
+                        
+                        previewContainer.appendChild(previewDiv);
+                    }
+                });
+
+                // Newspaper image preview
+                document.getElementById('newspaper-image-upload').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    const previewContainer = document.getElementById('newspaper-preview');
+                    previewContainer.innerHTML = '';
+                    
+                    if (file && file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const previewDiv = document.createElement('div');
+                            previewDiv.className = 'image-preview-item';
+                            previewDiv.innerHTML = `
+                                <img src="${e.target.result}">
+                                <button class="remove-image" onclick="this.parentElement.remove()">×</button>
+                            `;
+                            previewContainer.appendChild(previewDiv);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+
+                // Tree images preview
+                document.getElementById('tree-images-upload').addEventListener('change', (e) => {
+                    const files = Array.from(e.target.files);
+                    const previewContainer = document.getElementById('tree-images-preview');
+                    previewContainer.innerHTML = '';
+                    
+                    files.forEach((file) => {
+                        if (file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const previewDiv = document.createElement('div');
+                                previewDiv.className = 'image-preview-item';
+                                previewDiv.innerHTML = `
+                                    <img src="${e.target.result}">
+                                    <button class="remove-image" onclick="this.parentElement.remove()">×</button>
+                                `;
+                                previewContainer.appendChild(previewDiv);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                });
+
+                document.getElementById('tree-video-upload').addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    const previewContainer = document.getElementById('tree-video-preview');
+                    previewContainer.innerHTML = '';
+                    
+                    if (file) {
+                        const previewDiv = document.createElement('div');
+                        previewDiv.className = 'video-preview-item';
+                        
+                        const reader = new FileReader();
+                        reader.onload = (fileData) => {
+                            previewDiv.setAttribute('data-video-data', fileData.target.result);
+                            previewDiv.setAttribute('data-video-name', file.name);
+                            previewDiv.setAttribute('data-video-type', file.type);
+                        };
+                        reader.readAsDataURL(file);
+                        
+                        previewDiv.innerHTML = `
+                            <i class="fas fa-video"></i>
+                            <span class="video-filename">${file.name.substring(0, 20)}${file.name.length > 20 ? '...' : ''}</span>
+                            <button class="remove-image" onclick="this.parentElement.remove()">×</button>
+                        `;
+                        
+                        previewContainer.appendChild(previewDiv);
                     }
                 });
             },
 
-            filterCases(filter) {
-                const cards = document.querySelectorAll('#cases-container .content-card');
-                cards.forEach(card => {
-                    const category = card.querySelector('.card-category')?.textContent.toLowerCase() || '';
-                    if (filter === 'all' || category.includes(filter)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
+            setupScrollProgress() {
+                window.addEventListener('scroll', () => {
+                    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+                    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+                    document.getElementById('scrollProgress').style.width = scrolled + '%';
                 });
             },
 
-            openImageModal(src) {
-                const modal = document.getElementById('image-modal');
-                const img = document.getElementById('modal-image');
-                img.src = src;
-                modal.style.display = 'flex';
-            },
-
-            openVideoModal(src, contentId) {
-                const modal = document.getElementById('video-modal');
-                const video = document.getElementById('modal-video');
+            setupMobileMenu() {
+                const navLinks = document.querySelectorAll('nav a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        if (this.isMobileDevice()) {
+                            document.getElementById('navMenu').classList.remove('active');
+                        }
+                    });
+                });
                 
-                if (src && src !== '#' && src !== 'video-preview-placeholder') {
-                    video.src = src;
-                } else {
-                    if (contentId) {
-                        const item = this.content.find(c => c.id === contentId);
-                        if (item && item.media) {
-                            const videoMedia = item.media.find(m => m.type === 'video');
-                            if (videoMedia && videoMedia.url) {
-                                video.src = videoMedia.url;
+                document.addEventListener('click', (e) => {
+                    const nav = document.getElementById('navMenu');
+                    const menuBtn = document.getElementById('mobileMenuBtn');
+                    if (nav && nav.classList.contains('active') && 
+                        !nav.contains(e.target) && 
+                        !menuBtn.contains(e.target)) {
+                        nav.classList.remove('active');
+                    }
+                });
+            },
+
+            smoothScrollToElement(elementId) {
+                const element = document.querySelector(elementId);
+                if (element) {
+                    const headerOffset = this.isMobileDevice() ? 70 : 80;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            },
+
+            updateNavigationLinks() {
+                document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+                    anchor.addEventListener('click', (e) => {
+                        const href = anchor.getAttribute('href');
+                        if (href === '#') return;
+                        
+                        e.preventDefault();
+                        
+                        if (href === '#home') {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        } else {
+                            const target = document.querySelector(href);
+                            if (target) {
+                                this.smoothScrollToElement(href);
                             }
                         }
-                    }
+                        
+                        if (this.isMobileDevice()) {
+                            document.getElementById('navMenu').classList.remove('active');
+                        }
+                    });
+                });
+            },
+
+            optimizeImagesForMobile() {
+                if (this.isMobileDevice()) {
+                    document.querySelectorAll('img').forEach(img => {
+                        if (!img.hasAttribute('loading')) {
+                            img.setAttribute('loading', 'lazy');
+                        }
+                    });
                 }
-                
-                modal.style.display = 'flex';
-                
-                video.play().catch(e => {
-                    console.log('Autoplay prevented');
+            },
+
+            handleOrientationChange() {
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => {
+                        window.scrollTo(0, 0);
+                    }, 100);
                 });
             },
 
-            formatDate(date) {
-                if (!date) return 'Unknown date';
-                return new Date(date).toLocaleDateString('en-IN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
+            improveTouchInteractions() {
+                if (this.isMobileDevice()) {
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        button, .btn, nav a, .filter-btn, .admin-btn, .read-more-btn {
+                            cursor: pointer;
+                            -webkit-tap-highlight-color: transparent;
+                        }
+                        button:active, .btn:active, nav a:active {
+                            opacity: 0.7;
+                            transform: scale(0.98);
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
             },
 
-            escapeHTML(text) {
-                if (!text) return '';
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
+            hideLoading() {
+                setTimeout(() => {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }, 1200);
             },
 
-            // Logout function
-            logout() {
-                if (this.isAdminLoggedIn) {
-                    fetch('/api/auth/logout', {
+            checkSavedSession() {
+                const savedToken = sessionStorage.getItem('adminToken');
+                const savedEmail = sessionStorage.getItem('adminEmail');
+                if (savedToken && savedEmail) {
+                    this.verifyToken(savedToken);
+                }
+            },
+
+            async verifyToken(token) {
+                try {
+                    const response = await fetch('/api/auth/verify', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token: this.sessionToken })
-                    }).finally(() => {
-                        this.isAdminLoggedIn = false;
-                        this.sessionToken = null;
-                        sessionStorage.removeItem('adminToken');
-                        sessionStorage.removeItem('adminEmail');
-                        document.getElementById('admin-photo-btn').classList.remove('visible');
-                        this.showToast('Logged out successfully', 'info');
+                        body: JSON.stringify({ token })
                     });
+                    
+                    const result = await response.json();
+                    
+                    if (result.valid) {
+                        this.isAdminLoggedIn = true;
+                        this.sessionToken = token;
+                        document.getElementById('admin-photo-btn').classList.add('visible');
+                        this.showToast(`Welcome back, ${result.name}!`, 'success');
+                        await this.loadGeneralInquiries();
+                    }
+                } catch (error) {
+                    console.error('Token verification failed:', error);
+                    sessionStorage.removeItem('adminToken');
+                    sessionStorage.removeItem('adminEmail');
+                }
+            },
+
+            searchContent(type, searchTerm) {
+                let items = [];
+                const term = searchTerm.toLowerCase().trim();
+                
+                if (type === 'cases' || type === 'posts' || type === 'blogs' || type === 'announcements') {
+                    items = this.content.filter(item => item.type === type.slice(0, -1));
+                } else if (type === 'newspapers') {
+                    items = this.newspapers;
+                } else if (type === 'books') {
+                    items = this.books;
+                } else if (type === 'qr') {
+                    items = this.qrData;
+                }
+                
+                const filtered = items.filter(item => {
+                    const titleMatch = item.title?.toLowerCase().includes(term) || false;
+                    const textMatch = item.text?.toLowerCase().includes(term) || false;
+                    const nameMatch = item.name?.toLowerCase().includes(term) || false;
+                    const treeIdMatch = item.treeId?.toLowerCase().includes(term) || false;
+                    const treeNameMatch = item.treeName?.toLowerCase().includes(term) || false;
+                    const locationMatch = item.location?.toLowerCase().includes(term) || false;
+                    
+                    return titleMatch || textMatch || nameMatch || treeIdMatch || treeNameMatch || locationMatch;
+                });
+                
+                if (type === 'cases' || type === 'posts' || type === 'blogs' || type === 'announcements') {
+                    const container = document.getElementById(`${type}-container`);
+                    if (container) {
+                        container.innerHTML = '';
+                        if (filtered.length === 0) {
+                            container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><h3>No results found</h3><p>Try a different search term</p></div>`;
+                        } else {
+                            filtered.forEach(item => {
+                                container.appendChild(this.createContentCard(item));
+                            });
+                        }
+                    }
+                } else if (type === 'newspapers') {
+                    this.displayFilteredNewspapers(filtered);
+                } else if (type === 'books') {
+                    this.displayFilteredBooks(filtered);
+                } else if (type === 'qr') {
+                    this.displayFilteredQR(filtered);
+                }
+            },
+
+            displayFilteredNewspapers(filtered) {
+                const container = document.getElementById('newspapers-container');
+                if (!container) return;
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><h3>No results found</h3><p>Try a different search term</p></div>`;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                filtered.forEach(item => {
+                    let imageUrl = item.imageUrl;
+                    if (!imageUrl || imageUrl === 'undefined' || imageUrl === 'null') {
+                        imageUrl = '/uploads/newspapers/default-newspaper.jpg';
+                    }
+                    
+                    const card = document.createElement('div');
+                    card.className = 'newspaper-card';
+                    card.innerHTML = `
+                        <div class="card-media">
+                            <img src="${imageUrl}" class="card-image" onclick="app.openImageModal('${imageUrl}')" onerror="this.src='/uploads/newspapers/default-newspaper.jpg'">
+                        </div>
+                        <div class="card-header">
+                            <span class="card-category">${this.escapeHTML(item.name)}</span>
+                            <div class="card-date"><i class="far fa-calendar"></i> ${item.displayDate}</div>
+                        </div>
+                        ${item.title ? `<div class="card-body"><h3 class="card-title">${this.escapeHTML(item.title)}</h3></div>` : ''}
+                        ${item.caption ? `<div class="newspaper-caption">${this.escapeHTML(item.caption)}</div>` : ''}
+                        <div class="card-footer">
+                            <button class="admin-btn share-btn" onclick="app.copyShareLink('newspaper-${item.id}')">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                            ${this.isAdminLoggedIn ? `
+                                <button class="admin-btn edit-btn" onclick="app.editNewspaper('${item.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="admin-btn delete-btn" onclick="app.deleteNewspaper('${item.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            },
+
+            displayFilteredBooks(filtered) {
+                const container = document.getElementById('books-container');
+                if (!container) return;
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><h3>No results found</h3><p>Try a different search term</p></div>`;
+                    return;
+                }
+                
+                container.innerHTML = '';
+                filtered.forEach(book => {
+                    const bookCard = document.createElement('div');
+                    bookCard.className = 'book-card';
+                    bookCard.innerHTML = `
+                        <div class="book-title">
+                            <i class="fas fa-book"></i>
+                            ${this.escapeHTML(book.title)}
+                        </div>
+                        ${book.author ? `<div style="color: var(--text-light); margin-bottom: 10px;"><i class="fas fa-user"></i> ${this.escapeHTML(book.author)}</div>` : ''}
+                        ${book.description ? `<p style="color: var(--text-dark);">${this.escapeHTML(book.description)}</p>` : ''}
+                        <a href="${book.url}" target="_blank" class="book-link" ${!book.url || book.url === '#' ? 'style="pointer-events: none; opacity: 0.6;"' : ''}>
+                            <i class="fas fa-external-link-alt"></i> View Resource
+                        </a>
+                        ${this.isAdminLoggedIn ? `
+                            <div style="margin-top: 15px; display: flex; gap: 10px;">
+                                <button class="admin-btn edit-btn" onclick="app.editBook('${book.id}')">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="admin-btn delete-btn" onclick="app.deleteBook('${book.id}')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        ` : ''}
+                    `;
+                    container.appendChild(bookCard);
+                });
+            },
+
+            displayFilteredQR(filtered) {
+                const container = document.getElementById('qr-history-container');
+                if (!container) return;
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><h3>No results found</h3><p>Try a different search term</p></div>`;
+                    return;
+                }
+                
+                let html = '<div class="table-responsive"><table class="qr-table"><thead><tr><th>QR</th><th>Tree ID</th><th>Name</th><th>Location</th><th>Planted</th><th>Actions</th></tr></thead><tbody>';
+                
+                filtered.forEach(item => {
+                    html += `
+                        <tr>
+                            <td><img src="${item.qrCodeUrl}" class="qr-small" onclick="app.openImageModal('${item.qrCodeUrl}')"></td>
+                            <td>${this.escapeHTML(item.treeId)}</td>
+                            <td>${this.escapeHTML(item.treeName)}</td>
+                            <td>${this.escapeHTML(item.location)}</td>
+                            <td>${item.displayDate || item.plantedDate}</td>
+                            <td>
+                                <button class="admin-btn share-btn" onclick="app.copyShareLink('qr-${item.id}')">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                                ${this.isAdminLoggedIn ? `
+                                    <button class="admin-btn edit-btn" onclick="app.editQR('${item.id}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="admin-btn delete-btn" onclick="app.deleteQR('${item.id}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table></div>';
+                container.innerHTML = html;
+            },
+
+            filterCases(category) {
+                const container = document.getElementById('cases-container');
+                if (!container) return;
+                
+                const cases = this.content.filter(item => item.type === 'case');
+                const filtered = category === 'all' ? cases : cases.filter(item => 
+                    (item.category || '').toLowerCase() === category.toLowerCase()
+                );
+                
+                container.innerHTML = '';
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="empty-state"><i class="fas fa-gavel"></i><h3>No cases found</h3><p>Try a different category</p></div>`;
+                } else {
+                    filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    filtered.forEach(item => {
+                        container.appendChild(this.createContentCard(item));
+                    });
+                }
+            },
+
+            async init() {
+                this.setupScrollProgress();
+                this.setupFileUploadPreviews();
+                this.setupMobileMenu();
+                this.updateNavigationLinks();
+                this.optimizeImagesForMobile();
+                this.handleOrientationChange();
+                this.improveTouchInteractions();
+                this.hideLoading();
+                this.checkSharedContent();
+                
+                await this.loadContentFromServer();
+                await this.loadQRFromServer();
+                await this.loadNewspapersFromServer();
+                await this.loadBooksFromServer();
+                await this.loadProfileImage();
+                await this.loadStats();
+                
+                const today = new Date().toISOString().split('T')[0];
+                if (document.getElementById('planted-date')) {
+                    document.getElementById('planted-date').value = today;
+                }
+                if (document.getElementById('newspaper-date')) {
+                    document.getElementById('newspaper-date').value = today;
+                }
+                if (document.getElementById('app-date')) {
+                    document.getElementById('app-date').value = today;
+                }
+                
+                this.checkSavedSession();
+
+                // Event Listeners
+                document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+                    document.getElementById('navMenu').classList.toggle('active');
+                });
+
+                document.getElementById('openAdminMenu').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (!this.isAdminLoggedIn) {
+                        document.getElementById('loginModal').style.display = 'flex';
+                    } else {
+                        this.showAdminSection();
+                    }
+                    document.getElementById('navMenu').classList.remove('active');
+                });
+
+                document.getElementById('openQRFormMenu').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    if (!this.isAdminLoggedIn) {
+                        document.getElementById('loginModal').style.display = 'flex';
+                    } else {
+                        this.showQRSection();
+                    }
+                    document.getElementById('navMenu').classList.remove('active');
+                });
+
+                document.getElementById('login-btn').addEventListener('click', async () => {
+                    const email = document.getElementById('admin-email').value.trim();
+                    const password = document.getElementById('admin-password').value;
+                    
+                    if (!email || !password) {
+                        this.showToast('Please enter email and password', 'warning');
+                        return;
+                    }
+                    
+                    try {
+                        const response = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email, password })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            this.isAdminLoggedIn = true;
+                            this.sessionToken = result.token;
+                            
+                            sessionStorage.setItem('adminToken', result.token);
+                            sessionStorage.setItem('adminEmail', result.email);
+                            
+                            document.getElementById('loginModal').style.display = 'none';
+                            document.getElementById('admin-photo-btn').classList.add('visible');
+                            this.showToast(`Welcome back, ${result.name}!`, 'success');
+                            
+                            await this.loadContentFromServer();
+                            await this.loadQRFromServer();
+                            await this.loadNewspapersFromServer();
+                            await this.loadBooksFromServer();
+                            await this.loadGeneralInquiries();
+                            
+                            this.showAdminSection();
+                        } else {
+                            this.showToast('Invalid email or password', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Login error:', error);
+                        this.showToast('Login failed. Check server connection.', 'error');
+                    }
+                });
+
+                document.getElementById('cancel-login').addEventListener('click', () => {
+                    document.getElementById('loginModal').style.display = 'none';
+                });
+
+                window.addEventListener('click', (e) => {
+                    if (e.target.id === 'loginModal') {
+                        document.getElementById('loginModal').style.display = 'none';
+                    }
+                });
+
+                document.getElementById('admin-photo-btn').addEventListener('click', () => {
+                    if (this.isAdminLoggedIn) {
+                        document.getElementById('profile-upload').click();
+                    } else {
+                        this.showToast('Admin login required', 'warning');
+                        document.getElementById('loginModal').style.display = 'flex';
+                    }
+                });
+
+                document.getElementById('profile-upload').addEventListener('change', (e) => {
+                    if (this.isAdminLoggedIn) {
+                        this.handleProfileImageUpload(e);
+                    }
+                });
+
+                document.getElementById('close-admin').addEventListener('click', () => {
+                    document.getElementById('admin').style.display = 'none';
+                });
+
+                document.getElementById('close-qr').addEventListener('click', () => {
+                    document.getElementById('qr-system-section').style.display = 'none';
+                });
+
+                document.getElementById('refresh-content').addEventListener('click', async () => {
+                    await this.loadContentFromServer();
+                    await this.loadQRFromServer();
+                    await this.loadNewspapersFromServer();
+                    await this.loadBooksFromServer();
+                    await this.loadStats();
+                    this.showToast('Content refreshed from server', 'success');
+                });
+
+                document.getElementById('submit-content').addEventListener('click', () => {
+                    if (!this.isAdminLoggedIn) {
+                        this.showToast('Admin login required', 'warning');
+                        document.getElementById('loginModal').style.display = 'flex';
+                        return;
+                    }
+                    this.saveContent();
+                });
+
+                document.getElementById('clear-form').addEventListener('click', () => {
+                    this.clearContentForm();
+                });
+
+                document.getElementById('submit-newspaper').addEventListener('click', () => {
+                    if (!this.isAdminLoggedIn) {
+                        this.showToast('Admin login required', 'warning');
+                        document.getElementById('loginModal').style.display = 'flex';
+                        return;
+                    }
+                    this.saveNewspaper();
+                });
+
+                document.getElementById('clear-newspaper-form').addEventListener('click', () => {
+                    document.getElementById('newspaper-name').value = '';
+                    document.getElementById('newspaper-date').value = new Date().toISOString().split('T')[0];
+                    document.getElementById('newspaper-title').value = '';
+                    document.getElementById('newspaper-caption').value = '';
+                    document.getElementById('newspaper-preview').innerHTML = '';
+                    document.getElementById('newspaper-image-upload').value = '';
+                    this.editingNewspaperId = null;
+                    document.getElementById('submit-newspaper').innerHTML = '<i class="fas fa-save"></i> Save Newspaper Cutting';
+                    document.getElementById('submit-newspaper').classList.remove('btn-warning');
+                    this.showToast('Newspaper form cleared', 'info');
+                });
+
+                document.getElementById('submit-book').addEventListener('click', () => {
+                    if (!this.isAdminLoggedIn) {
+                        this.showToast('Admin login required', 'warning');
+                        document.getElementById('loginModal').style.display = 'flex';
+                        return;
+                    }
+                    this.saveBook();
+                });
+
+                document.getElementById('clear-book-form').addEventListener('click', () => {
+                    document.getElementById('book-title').value = '';
+                    document.getElementById('book-url').value = '';
+                    document.getElementById('book-author').value = '';
+                    document.getElementById('book-description').value = '';
+                    document.getElementById('book-category').value = 'legal';
+                    this.editingBookId = null;
+                    document.getElementById('submit-book').innerHTML = '<i class="fas fa-save"></i> Save Book/Link';
+                    document.getElementById('submit-book').classList.remove('btn-warning');
+                    this.showToast('Book form cleared', 'info');
+                });
+
+                document.querySelectorAll('[data-tab]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('[data-tab]').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        const tabId = btn.dataset.tab;
+                        document.querySelectorAll('.form-panel').forEach(panel => panel.classList.remove('active'));
+                        document.getElementById(tabId).classList.add('active');
+                    });
+                });
+
+                document.querySelectorAll('[data-form-tab]').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('[data-form-tab]').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        const tabId = btn.dataset.formTab;
+                        document.querySelectorAll('#contact-form .form-panel').forEach(panel => panel.classList.remove('active'));
+                        document.getElementById(tabId + '-form').classList.add('active');
+                    });
+                });
+
+                document.getElementById('appointmentForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.submitAppointment();
+                });
+
+                document.getElementById('generalRequestForm').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    await this.submitGeneralRequest();
+                });
+
+                document.getElementById('qr-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (!this.isAdminLoggedIn) {
+                        this.showToast('Admin login required', 'warning');
+                        document.getElementById('loginModal').style.display = 'flex';
+                        return;
+                    }
+                    this.generateQRCode();
+                });
+
+                document.getElementById('clear-qr-form').addEventListener('click', () => {
+                    document.getElementById('qr-form').reset();
+                    document.getElementById('tree-images-preview').innerHTML = '';
+                    document.getElementById('tree-video-preview').innerHTML = '';
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('planted-date').value = today;
+                    this.editingQRId = null;
+                    this.showToast('QR form cleared', 'info');
+                });
+
+                document.getElementById('print-qr').addEventListener('click', () => this.printQR());
+                document.getElementById('save-qr').addEventListener('click', () => this.saveQR());
+                document.getElementById('generate-another').addEventListener('click', () => {
+                    document.getElementById('qr-preview-section').classList.remove('visible');
+                    document.getElementById('qr-form').reset();
+                    document.getElementById('tree-images-preview').innerHTML = '';
+                    document.getElementById('tree-video-preview').innerHTML = '';
+                    const today = new Date().toISOString().split('T')[0];
+                    document.getElementById('planted-date').value = today;
+                    this.editingQRId = null;
+                });
+
+                ['cases', 'posts', 'blogs', 'announcements', 'newspapers', 'books', 'qr'].forEach(type => {
+                    const input = document.getElementById(type + '-search');
+                    if (input) {
+                        input.addEventListener('input', (e) => this.searchContent(type, e.target.value));
+                    }
+                });
+
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.filterCases(e.target.dataset.filter);
+                    });
+                });
+
+                document.querySelectorAll('.close-modal').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.getElementById('image-modal').style.display = 'none';
+                        document.getElementById('video-modal').style.display = 'none';
+                        document.getElementById('content-modal').style.display = 'none';
+                        
+                        const video = document.getElementById('modal-video');
+                        if (video) {
+                            video.pause();
+                            video.src = '';
+                        }
+                    });
+                });
+
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeContentModal();
+                        document.getElementById('video-modal').style.display = 'none';
+                        const video = document.getElementById('modal-video');
+                        if (video) {
+                            video.pause();
+                            video.src = '';
+                        }
+                    }
+                });
+            },
+
+            checkSharedContent() {
+                const params = new URLSearchParams(window.location.search);
+                const contentId = params.get('content');
+                if (contentId) {
+                    setTimeout(() => {
+                        this.showFullContent(contentId);
+                    }, 1500);
                 }
             }
         };
 
-        // Add logout button to admin panel (optional)
-        // You can add this to your HTML if you want a logout button
-
-        // Initialize the app
-        document.addEventListener('DOMContentLoaded', () => app.init());
-        window.app = app;
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
     </script>
 </body>
 </html>
