@@ -33,6 +33,13 @@ MAX_CONTENT_LENGTH = 100 * 1024 * 1024  # 100MB max file size
 MAX_IMAGE_SIZE = 10 * 1024 * 1024  # 10MB max image size
 MAX_VIDEO_SIZE = 100 * 1024 * 1024  # 100MB max video size
 
+EMAIL_ENABLED = True  # Set to False to disable emails
+SMTP_SERVER = "smtp.gmail.com"  # or your email provider's SMTP server
+SMTP_PORT = 587
+SMTP_USERNAME = "princeb744@gmail.com"  # Replace with your email
+SMTP_PASSWORD = "Shivam@5697"  # Replace with your app password
+ADMIN_EMAIL = "kcjain@gmail.com"
+
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
 app.config['MAX_IMAGE_SIZE'] = MAX_IMAGE_SIZE
@@ -738,6 +745,59 @@ def log_activity(user_id, action, entity_type, entity_id, details=None, ip_addre
         conn.close()
     except Exception as e:
         app.logger.error(f"Error logging activity: {e}")
+
+def send_consultation_notification(appointment_data):
+    """Send email notification for new consultation request"""
+    if not EMAIL_ENABLED:
+        app.logger.info("Email notifications disabled")
+        return False
+    
+    try:
+        # Create message
+        msg = MIMEMultipart()
+        msg['From'] = SMTP_USERNAME
+        msg['To'] = ADMIN_EMAIL
+        msg['Subject'] = f"New Consultation Request - {appointment_data.get('name')}"
+        
+        # Email body
+        body = f"""
+        <html>
+        <body style="font-family: Arial, sans-serif; line-height: 1.6;">
+            <h2 style="color: #c9a959;">New Consultation Request</h2>
+            <div style="background: #f5f5f5; padding: 20px; border-radius: 8px;">
+                <p><strong>Name:</strong> {appointment_data.get('name')}</p>
+                <p><strong>Email:</strong> {appointment_data.get('email')}</p>
+                <p><strong>Phone:</strong> {appointment_data.get('phone')}</p>
+                <p><strong>Preferred Date:</strong> {appointment_data.get('date')}</p>
+                <p><strong>Preferred Time:</strong> {appointment_data.get('time')}</p>
+                <p><strong>Consultation Type:</strong> {appointment_data.get('type')}</p>
+                <p><strong>Matter Description:</strong><br>{appointment_data.get('matter')}</p>
+                <p><strong>Submitted on:</strong> {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
+            </div>
+            <p style="margin-top: 20px;">
+                <a href="https://mis327.pythonanywhere.com/admin" style="background: #c9a959; color: #0a1a2f; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                    View in Admin Panel
+                </a>
+            </p>
+        </body>
+        </html>
+        """
+        
+        msg.attach(MIMEText(body, 'html'))
+        
+        # Send email
+        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
+        server.starttls()
+        server.login(SMTP_USERNAME, SMTP_PASSWORD)
+        server.send_message(msg)
+        server.quit()
+        
+        app.logger.info(f"Consultation notification email sent for {appointment_data.get('name')}")
+        return True
+        
+    except Exception as e:
+        app.logger.error(f"Failed to send email: {e}")
+        return False
 
 def cleanup_temp_files():
     """Clean up old temporary files"""
@@ -2071,7 +2131,6 @@ def delete_book(book_id):
         app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
-# ============ APPOINTMENT ENDPOINTS ============
 @app.route('/api/appointments', methods=['GET'])
 def get_all_appointments():
     """Get all appointments (admin only)"""
@@ -2096,11 +2155,11 @@ def get_all_appointments():
         limit = request.args.get('limit', 100)
         offset = request.args.get('offset', 0)
         
-        query = "SELECT * FROM appointments"
+        query = "SELECT * FROM appointments WHERE status != 'Deleted'"
         params = []
         
         if status:
-            query += " WHERE status = ?"
+            query += " AND status = ?"
             params.append(status)
         
         query += " ORDER BY created_date DESC LIMIT ? OFFSET ?"
@@ -2119,9 +2178,9 @@ def get_all_appointments():
         
         # Get total count
         if status:
-            cursor.execute("SELECT COUNT(*) FROM appointments WHERE status = ?", (status,))
+            cursor.execute("SELECT COUNT(*) FROM appointments WHERE status != 'Deleted' AND status = ?", (status,))
         else:
-            cursor.execute("SELECT COUNT(*) FROM appointments")
+            cursor.execute("SELECT COUNT(*) FROM appointments WHERE status != 'Deleted'")
         total = cursor.fetchone()[0]
         
         conn.close()
@@ -2133,6 +2192,68 @@ def get_all_appointments():
         
     except Exception as e:
         app.logger.error(f"Error getting appointments: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/requests', methods=['GET'])
+def get_all_requests():
+    """Get all general requests (admin only)"""
+    try:
+        # Check admin auth
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+        session = cursor.fetchone()
+        
+        if not session:
+            return jsonify({'error': 'Invalid token'}), 401
+        
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        status = request.args.get('status')
+        limit = request.args.get('limit', 100)
+        offset = request.args.get('offset', 0)
+        
+        query = "SELECT * FROM requests WHERE status != 'Deleted'"
+        params = []
+        
+        if status:
+            query += " AND status = ?"
+            params.append(status)
+        
+        query += " ORDER BY created_date DESC LIMIT ? OFFSET ?"
+        params.extend([limit, offset])
+        
+        cursor.execute(query, params)
+        
+        rows = cursor.fetchall()
+        requests = []
+        
+        for row in rows:
+            item = dict(row)
+            item['displayCreated'] = format_date(item['created_date'])
+            requests.append(item)
+        
+        # Get total count
+        if status:
+            cursor.execute("SELECT COUNT(*) FROM requests WHERE status != 'Deleted' AND status = ?", (status,))
+        else:
+            cursor.execute("SELECT COUNT(*) FROM requests WHERE status != 'Deleted'")
+        total = cursor.fetchone()[0]
+        
+        conn.close()
+        
+        return jsonify({
+            'requests': requests,
+            'total': total
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error getting requests: {e}")
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/appointments', methods=['POST'])
@@ -2169,7 +2290,26 @@ def create_appointment():
         ))
         
         conn.commit()
+        
+        # Get the inserted appointment
+        cursor.execute('SELECT * FROM appointments WHERE id = ?', (appointment_id,))
+        appointment = cursor.fetchone()
+        
         conn.close()
+        
+        # Send email notification for consultation requests only
+        if appointment:
+            appointment_dict = {
+                'id': appointment_id,
+                'name': data.get('name'),
+                'email': data.get('email'),
+                'phone': data.get('phone'),
+                'date': data.get('date'),
+                'time': data.get('time'),
+                'type': data.get('type'),
+                'matter': data.get('matter')
+            }
+            send_consultation_notification(appointment_dict)
         
         app.logger.info(f"Appointment created: {appointment_id} - {data.get('name')}")
         
@@ -2183,6 +2323,110 @@ def create_appointment():
     except Exception as e:
         app.logger.error(f"Error creating appointment: {e}")
         app.logger.error(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/appointments/<appointment_id>', methods=['DELETE'])
+def delete_appointment(appointment_id):
+    """Delete appointment (admin only)"""
+    try:
+        # Get admin info from token
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
+        admin_info = None
+        if token:
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+            session = cursor.fetchone()
+            if session:
+                cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
+                admin_info = cursor.fetchone()
+            conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        
+        # Soft delete (update status)
+        cursor.execute('UPDATE appointments SET status = "Deleted" WHERE id = ?', (appointment_id,))
+        conn.commit()
+        conn.close()
+        
+        # Log activity
+        if admin_info:
+            log_activity(
+                user_id=admin_info[0],
+                action='delete',
+                entity_type='appointment',
+                entity_id=appointment_id
+            )
+        
+        app.logger.info(f"Appointment deleted: {appointment_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Appointment deleted successfully',
+            'appointmentId': appointment_id
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error deleting appointment {appointment_id}: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/api/requests/<request_id>', methods=['DELETE'])
+def delete_request(request_id):
+    """Delete request (admin only)"""
+    try:
+        # Get admin info from token
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        if not token:
+            return jsonify({'success': False, 'error': 'No token provided'}), 401
+            
+        admin_info = None
+        if token:
+            conn = sqlite3.connect(DATABASE)
+            cursor = conn.cursor()
+            cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
+            session = cursor.fetchone()
+            if session:
+                cursor.execute('SELECT id, email FROM admin_users WHERE id = ?', (session[0],))
+                admin_info = cursor.fetchone()
+            conn.close()
+            
+        if not admin_info:
+            return jsonify({'success': False, 'error': 'Invalid or expired token'}), 401
+        
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        
+        # Soft delete (update status)
+        cursor.execute('UPDATE requests SET status = "Deleted" WHERE id = ?', (request_id,))
+        conn.commit()
+        conn.close()
+        
+        # Log activity
+        if admin_info:
+            log_activity(
+                user_id=admin_info[0],
+                action='delete',
+                entity_type='request',
+                entity_id=request_id
+            )
+        
+        app.logger.info(f"Request deleted: {request_id}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Request deleted successfully',
+            'requestId': request_id
+        })
+        
+    except Exception as e:
+        app.logger.error(f"Error deleting request {request_id}: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/api/appointments/<appointment_id>', methods=['PUT'])
@@ -2228,68 +2472,6 @@ def update_appointment(appointment_id):
         app.logger.error(f"Error updating appointment {appointment_id}: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
-# ============ REQUEST ENDPOINTS ============
-@app.route('/api/requests', methods=['GET'])
-def get_all_requests():
-    """Get all general requests (admin only)"""
-    try:
-        # Check admin auth
-        token = request.headers.get('Authorization', '').replace('Bearer ', '')
-        if not token:
-            return jsonify({'error': 'Unauthorized'}), 401
-        
-        conn = sqlite3.connect(DATABASE)
-        cursor = conn.cursor()
-        cursor.execute('SELECT user_id FROM sessions WHERE token = ? AND expires_at > ?', (token, time.time()))
-        session = cursor.fetchone()
-        
-        if not session:
-            return jsonify({'error': 'Invalid token'}), 401
-        
-        conn.row_factory = sqlite3.Row
-        cursor = conn.cursor()
-        
-        status = request.args.get('status')
-        limit = request.args.get('limit', 100)
-        offset = request.args.get('offset', 0)
-        
-        query = "SELECT * FROM requests"
-        params = []
-        
-        if status:
-            query += " WHERE status = ?"
-            params.append(status)
-        
-        query += " ORDER BY created_date DESC LIMIT ? OFFSET ?"
-        params.extend([limit, offset])
-        
-        cursor.execute(query, params)
-        
-        rows = cursor.fetchall()
-        requests = []
-        
-        for row in rows:
-            item = dict(row)
-            item['displayCreated'] = format_date(item['created_date'])
-            requests.append(item)
-        
-        # Get total count
-        if status:
-            cursor.execute("SELECT COUNT(*) FROM requests WHERE status = ?", (status,))
-        else:
-            cursor.execute("SELECT COUNT(*) FROM requests")
-        total = cursor.fetchone()[0]
-        
-        conn.close()
-        
-        return jsonify({
-            'requests': requests,
-            'total': total
-        })
-        
-    except Exception as e:
-        app.logger.error(f"Error getting requests: {e}")
-        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/requests', methods=['POST'])
 def create_request():

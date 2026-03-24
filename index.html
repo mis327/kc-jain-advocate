@@ -38,6 +38,9 @@
             --shadow-2xl: 0 25px 50px -12px rgba(0,0,0,0.25);
             --gradient-primary: linear-gradient(135deg, #0a1a2f 0%, #1e3a5f 100%);
             --gradient-gold: linear-gradient(135deg, #c9a959 0%, #d4b778 50%, #b38f3f 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
             --border-radius-sm: 8px;
             --border-radius-md: 12px;
             --border-radius-lg: 16px;
@@ -127,6 +130,7 @@
             top: 0;
             z-index: 1000;
             border-bottom: 1px solid rgba(201, 169, 89, 0.2);
+            transition: all 0.3s ease;
         }
 
         .header-container {
@@ -142,6 +146,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            cursor: pointer;
         }
 
         .logo-icon {
@@ -547,7 +552,7 @@
         }
 
         .content-card:hover {
-            transform: translateY(-10px) scale(1.02);
+            transform: translateY(-10px);
             box-shadow: var(--shadow-2xl);
             border-color: var(--secondary);
         }
@@ -672,6 +677,7 @@
             display: flex;
             gap: 12px;
             background: #f8fafc;
+            flex-wrap: wrap;
         }
 
         .admin-btn {
@@ -721,6 +727,16 @@
         .delete-btn:hover {
             background: #dc2626;
             transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .images-grid {
@@ -1028,34 +1044,24 @@
             box-shadow: var(--shadow-lg);
         }
 
-        .btn-success {
-            background: var(--gradient-gold);
-            color: var(--primary);
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
         .btn-warning {
-            background: #f59e0b;
+            background: var(--gradient-warning);
             color: var(--primary);
         }
 
         .btn-warning:hover {
-            background: #d97706;
             transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-danger {
-            background: #ef4444;
+            background: var(--gradient-danger);
             color: var(--white);
         }
 
         .btn-danger:hover {
-            background: #dc2626;
             transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
 
         .btn-info {
@@ -1572,9 +1578,40 @@
             font-family: 'Playfair Display', serif;
         }
 
-        #inquiries-container {
+        #inquiries-container, #appointments-container {
             max-height: 600px;
             overflow-y: auto;
+        }
+
+        /* Status badges */
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status-confirmed {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-completed {
+            background: #e0e7ff;
+            color: #4f46e5;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .status-responded {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status-resolved {
+            background: #d1fae5;
+            color: #059669;
         }
 
         /* Responsive Styles */
@@ -2120,6 +2157,7 @@
                     <button class="form-tab" data-tab="newspaper-tab">Newspaper Cuttings</button>
                     <button class="form-tab" data-tab="books-tab">Books/Links</button>
                     <button class="form-tab" data-tab="inquiries-tab">Inquiries</button>
+                    <button class="form-tab" data-tab="appointments-tab">Consultations</button>
                 </div>
 
                 <!-- Content Tab -->
@@ -2286,6 +2324,17 @@
                         </button>
                     </div>
                     <div id="inquiries-container"></div>
+                </div>
+
+                <!-- Appointments Tab -->
+                <div id="appointments-tab" class="form-panel">
+                    <div class="section-header" style="margin-bottom: 20px;">
+                        <h3 class="section-title" style="font-size: 1.5rem;"><i class="fas fa-calendar-check"></i> Consultation Requests</h3>
+                        <button id="refresh-appointments" class="btn btn-primary" onclick="app.loadAppointments()">
+                            <i class="fas fa-sync"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="appointments-container"></div>
                 </div>
             </div>
         </section>
@@ -2688,7 +2737,7 @@
             </div>
         </div>
     </div>
-
+    
     <script>
         // Complete Enhanced App with all features
         let app = {
@@ -3254,60 +3303,249 @@
                 container.innerHTML = html;
             },
 
-            displayGeneralInquiries() {
-                const container = document.getElementById('inquiries-container');
-                if (!container) return;
-                
-                if (!this.generalInquiries || this.generalInquiries.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-inbox"></i>
-                            <h3>No Inquiries</h3>
-                            <p>No general inquiries have been submitted yet.</p>
-                        </div>
-                    `;
-                    return;
-                }
-                
-                container.innerHTML = '';
-                this.generalInquiries.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
-                
-                this.generalInquiries.forEach(inquiry => {
-                    const card = document.createElement('div');
-                    card.className = 'content-card';
-                    card.style.marginBottom = '20px';
-                    card.innerHTML = `
-                        <div class="card-header">
-                            <span class="card-category">${inquiry.status || 'Pending'}</span>
-                            <div class="card-date"><i class="far fa-calendar"></i> ${this.formatDate(inquiry.created_date)}</div>
-                        </div>
-                        <div class="card-body">
-                            <h3 class="card-title">${this.escapeHTML(inquiry.subject)}</h3>
-                            <p><strong>From:</strong> ${this.escapeHTML(inquiry.name)} (${this.escapeHTML(inquiry.email)})</p>
-                            ${inquiry.phone ? `<p><strong>Phone:</strong> ${this.escapeHTML(inquiry.phone)}</p>` : ''}
-                            <div class="card-text" style="margin-top: 15px; background: #f8fafc; padding: 15px; border-radius: var(--border-radius-md);">
-                                ${this.escapeHTML(inquiry.message)}
-                            </div>
-                            ${inquiry.response ? `
-                                <div style="margin-top: 15px; background: #e8f5e9; padding: 15px; border-radius: var(--border-radius-md);">
-                                    <strong><i class="fas fa-reply"></i> Response:</strong>
-                                    <p style="margin-top: 8px;">${this.escapeHTML(inquiry.response)}</p>
-                                </div>
-                            ` : ''}
-                        </div>
-                        <div class="card-footer">
-                            <textarea id="response-${inquiry.id}" class="form-control" placeholder="Type your response..." rows="2" style="margin-right: 10px;"></textarea>
-                            <button class="admin-btn btn-success" onclick="app.respondToInquiry('${inquiry.id}')">
-                                <i class="fas fa-paper-plane"></i> Respond
-                            </button>
-                            <button class="admin-btn btn-info" onclick="app.markInquiryResolved('${inquiry.id}')">
-                                <i class="fas fa-check"></i> Mark Resolved
-                            </button>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
+            // Load appointments (consultations) for admin
+async loadAppointments() {
+    if (!this.isAdminLoggedIn) return;
+    
+    try {
+        const response = await fetch('/api/appointments', {
+            headers: {
+                'Authorization': `Bearer ${this.sessionToken || ''}`
+            }
+        });
+        const data = await response.json();
+        
+        if (data.appointments) {
+            this.appointments = data.appointments;
+            this.displayAppointments();
+        }
+    } catch (error) {
+        console.error('Error loading appointments:', error);
+    }
+},
+
+// Display appointments in admin panel
+displayAppointments() {
+    let container = document.getElementById('appointments-container');
+    if (!container) {
+        // Create container if it doesn't exist
+        const inquiriesContainer = document.getElementById('inquiries-container');
+        if (inquiriesContainer) {
+            const appointmentsSection = document.createElement('div');
+            appointmentsSection.id = 'appointments-section';
+            appointmentsSection.innerHTML = `
+                <div class="section-header" style="margin-top: 30px;">
+                    <h3 class="section-title" style="font-size: 1.5rem;"><i class="fas fa-calendar-check"></i> Consultation Requests</h3>
+                </div>
+                <div id="appointments-container"></div>
+            `;
+            inquiriesContainer.parentNode.insertBefore(appointmentsSection, inquiriesContainer.nextSibling);
+            container = document.getElementById('appointments-container');
+        }
+    }
+    
+    if (!container) return;
+    
+    if (!this.appointments || this.appointments.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-calendar-check"></i>
+                <h3>No Consultation Requests</h3>
+                <p>No consultation requests have been submitted yet.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = '';
+    this.appointments.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    
+    this.appointments.forEach(appointment => {
+        const card = document.createElement('div');
+        card.className = 'content-card';
+        card.style.marginBottom = '20px';
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="card-category ${appointment.status === 'Pending' ? 'warning' : 'success'}">${appointment.status || 'Pending'}</span>
+                <div class="card-date"><i class="far fa-calendar"></i> ${this.formatDate(appointment.created_date)}</div>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">Consultation: ${this.escapeHTML(appointment.name)}</h3>
+                <p><strong>Email:</strong> ${this.escapeHTML(appointment.email)}</p>
+                <p><strong>Phone:</strong> ${this.escapeHTML(appointment.phone)}</p>
+                <p><strong>Preferred Date:</strong> ${this.formatDate(appointment.date)} at ${appointment.time || 'Not specified'}</p>
+                <p><strong>Type:</strong> ${appointment.type === 'in-person' ? 'In-Person' : appointment.type === 'video' ? 'Video Call' : 'Phone Call'}</p>
+                <div class="card-text" style="margin-top: 15px; background: #f8fafc; padding: 15px; border-radius: var(--border-radius-md);">
+                    <strong>Matter:</strong><br>
+                    ${this.escapeHTML(appointment.matter)}
+                </div>
+                ${appointment.notes ? `
+                    <div style="margin-top: 15px; background: #e8f5e9; padding: 15px; border-radius: var(--border-radius-md);">
+                        <strong><i class="fas fa-sticky-note"></i> Notes:</strong>
+                        <p style="margin-top: 8px;">${this.escapeHTML(appointment.notes)}</p>
+                    </div>
+                ` : ''}
+            </div>
+            <div class="card-footer">
+                <select id="status-${appointment.id}" class="form-control" style="flex: 1; margin-right: 10px;">
+                    <option value="Pending" ${appointment.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                    <option value="Confirmed" ${appointment.status === 'Confirmed' ? 'selected' : ''}>Confirmed</option>
+                    <option value="Completed" ${appointment.status === 'Completed' ? 'selected' : ''}>Completed</option>
+                    <option value="Cancelled" ${appointment.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                </select>
+                <button class="admin-btn btn-success" onclick="app.updateAppointmentStatus('${appointment.id}')">
+                    <i class="fas fa-save"></i> Update
+                </button>
+                <button class="admin-btn delete-btn" onclick="app.deleteAppointment('${appointment.id}')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+},
+
+// Update appointment status
+async updateAppointmentStatus(appointmentId) {
+    const statusSelect = document.getElementById(`status-${appointmentId}`);
+    const newStatus = statusSelect.value;
+    
+    try {
+        const response = await fetch(`/api/appointments/${appointmentId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${this.sessionToken || ''}`
             },
+            body: JSON.stringify({ status: newStatus })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            this.showToast('Appointment status updated', 'success');
+            await this.loadAppointments();
+        } else {
+            this.showToast('Error updating status', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        this.showToast('Failed to update status', 'error');
+    }
+},
+
+// Delete appointment
+async deleteAppointment(appointmentId) {
+    if (!confirm('Delete this consultation request?')) return;
+    
+    try {
+        const response = await fetch(`/api/appointments/${appointmentId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${this.sessionToken || ''}`
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            this.showToast('Appointment deleted successfully', 'success');
+            await this.loadAppointments();
+        } else {
+            this.showToast('Error deleting appointment', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        this.showToast('Failed to delete appointment', 'error');
+    }
+},
+
+// Update displayGeneralInquiries to include delete button
+displayGeneralInquiries() {
+    const container = document.getElementById('inquiries-container');
+    if (!container) return;
+    
+    if (!this.generalInquiries || this.generalInquiries.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>No Inquiries</h3>
+                <p>No general inquiries have been submitted yet.</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = '';
+    this.generalInquiries.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+    
+    this.generalInquiries.forEach(inquiry => {
+        const card = document.createElement('div');
+        card.className = 'content-card';
+        card.style.marginBottom = '20px';
+        card.innerHTML = `
+            <div class="card-header">
+                <span class="card-category ${inquiry.status === 'Pending' ? 'warning' : inquiry.status === 'Responded' ? 'info' : 'success'}">
+                    ${inquiry.status || 'Pending'}
+                </span>
+                <div class="card-date"><i class="far fa-calendar"></i> ${this.formatDate(inquiry.created_date)}</div>
+            </div>
+            <div class="card-body">
+                <h3 class="card-title">${this.escapeHTML(inquiry.subject)}</h3>
+                <p><strong>From:</strong> ${this.escapeHTML(inquiry.name)} (${this.escapeHTML(inquiry.email)})</p>
+                ${inquiry.phone ? `<p><strong>Phone:</strong> ${this.escapeHTML(inquiry.phone)}</p>` : ''}
+                <div class="card-text" style="margin-top: 15px; background: #f8fafc; padding: 15px; border-radius: var(--border-radius-md);">
+                    ${this.escapeHTML(inquiry.message)}
+                </div>
+                ${inquiry.response ? `
+                    <div style="margin-top: 15px; background: #e8f5e9; padding: 15px; border-radius: var(--border-radius-md);">
+                        <strong><i class="fas fa-reply"></i> Response:</strong>
+                        <p style="margin-top: 8px;">${this.escapeHTML(inquiry.response)}</p>
+                    </div>
+                ` : ''}
+            </div>
+            <div class="card-footer">
+                <textarea id="response-${inquiry.id}" class="form-control" placeholder="Type your response..." rows="2" style="margin-right: 10px;"></textarea>
+                <button class="admin-btn btn-success" onclick="app.respondToInquiry('${inquiry.id}')">
+                    <i class="fas fa-paper-plane"></i> Respond
+                </button>
+                <button class="admin-btn btn-info" onclick="app.markInquiryResolved('${inquiry.id}')">
+                    <i class="fas fa-check"></i> Resolve
+                </button>
+                <button class="admin-btn delete-btn" onclick="app.deleteInquiry('${inquiry.id}')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+},
+
+// Delete inquiry
+async deleteInquiry(inquiryId) {
+    if (!confirm('Delete this inquiry?')) return;
+    
+    try {
+        const response = await fetch(`/api/requests/${inquiryId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${this.sessionToken || ''}`
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            this.showToast('Inquiry deleted successfully', 'success');
+            await this.loadGeneralInquiries();
+        } else {
+            this.showToast('Error deleting inquiry', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        this.showToast('Failed to delete inquiry', 'error');
+    }
+},
 
             // Content Management
             async saveContent() {
