@@ -825,13 +825,27 @@ def serve_frontend():
     """Serve the main HTML file"""
     return send_from_directory('.', 'index.html')
 
-# FIXED: Added tree redirect route for QR code scans
 @app.route('/tree/<tree_id>')
-def tree_redirect(tree_id):
-    """Redirect QR scans to the tree information page"""
-    app.logger.info(f"Tree QR scanned: {tree_id}")
-    # Redirect to main site with tree ID parameter
-    return redirect(f'/index.html?tree={tree_id}#tree-details')
+def get_tree_data(tree_id):
+    """Serve tree data page when QR is scanned - displays all tree details"""
+    # You can either:
+    # Option 1: Return JSON data directly
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    cursor.execute('SELECT * FROM qr_data WHERE id = ? AND status = "Active"', (tree_id,))
+    tree = cursor.fetchone()
+    conn.close()
+    
+    if tree:
+        # Return as JSON for app to display
+        return jsonify(dict(tree))
+    else:
+        return jsonify({'error': 'Tree not found'}), 404
+    
+    # Option 2: Or redirect to your frontend with tree ID
+    # return redirect(f'/index.html?tree={tree_id}')
 
 @app.route('/uploads/<path:filename>')
 def serve_upload(filename):
@@ -2722,10 +2736,9 @@ def get_qr(qr_id):
         app.logger.error(f"Error getting QR data {qr_id}: {e}")
         return jsonify({'error': str(e)}), 500
 
-# ============ FIXED QR GENERATION ENDPOINT ============
 @app.route('/api/qr', methods=['POST'])
 def generate_qr():
-    """Generate QR code for tree"""
+    """Generate QR code for tree with ALL data inside QR"""
     try:
         data = request.json
         qr_data = data.get('data', {})
@@ -2774,71 +2787,55 @@ def generate_qr():
                 elif saved_file.get('type') == 'video':
                     tree_video_url = saved_file['url']
         
-        # FIXED: Generate QR code with URL only (prevents version 41 error)
-        # Store just the tree URL - much smaller data than full JSON
-        tree_scan_url = f"https://annainframis.pythonanywhere.com/tree/{qr_id}"
+        # ========== FIXED: Store URL in QR code that points to tree viewer page ==========
+        # This makes QR code smaller and allows displaying images/videos properly
+        tree_scan_url = f"https://annainframis.pythonanywhere.com/tree-viewer.html?id={qr_id}"
         
-        # QR code with auto version selection (1-40) and medium error correction
+        app.logger.info(f"QR will redirect to: {tree_scan_url}")
+        
+        # Generate QR with URL (much smaller than full JSON)
         qr = qrcode.QRCode(
-            version=None,  # Auto-select appropriate version
-            error_correction=qrcode.constants.ERROR_CORRECT_M,  # Medium error correction (good balance)
+            version=None,  # Auto-select up to version 40
+            error_correction=qrcode.constants.ERROR_CORRECT_M,  # Medium error correction
             box_size=8,
             border=4,
         )
-        qr.add_data(tree_scan_url)  # Simple URL instead of huge JSON
+        qr.add_data(tree_scan_url)
         qr.make(fit=True)
         qr_img = qr.make_image(fill_color="black", back_color="white")
         
-        app.logger.info(f"Generated QR code for {qr_id} with version {qr.version}")
+        app.logger.info(f"QR generated with version: {qr.version}")
         
-        # Save QR code with tree name for easy identification
+        # Save QR code
         clean_name = re.sub(r'[^a-zA-Z0-9]', '', qr_data.get('treeName', 'tree'))[:20]
         qr_filename = f"qr_{qr_id}_{clean_name}_{uuid.uuid4().hex[:4]}.png"
         qr_path = os.path.join(app.config['UPLOAD_FOLDER'], 'qrcodes', qr_filename)
         os.makedirs(os.path.dirname(qr_path), exist_ok=True)
         qr_img.save(qr_path, 'PNG', optimize=True)
         
-        # Create a styled QR version with tree name
+        # Create styled QR
         styled_qr_filename = f"styled_{qr_filename}"
         styled_qr_path = os.path.join(app.config['UPLOAD_FOLDER'], 'qrcodes', styled_qr_filename)
         
         try:
-            # Add tree name to QR code
             qr_img_styled = Image.new('RGB', (qr_img.width + 40, qr_img.height + 60), 'white')
             qr_img_styled.paste(qr_img, (20, 20))
-            
             draw = ImageDraw.Draw(qr_img_styled)
             try:
                 font = ImageFont.truetype("arial.ttf", 20)
             except:
                 font = ImageFont.load_default()
-            
             tree_name_short = qr_data.get('treeName', 'Tree')[:20]
             draw.text((qr_img_styled.width // 2, qr_img.height + 35), 
                      tree_name_short, fill='black', anchor='mm', font=font)
-            
             qr_img_styled.save(styled_qr_path, 'PNG', optimize=True)
             qr_code_url = f'/uploads/qrcodes/{styled_qr_filename}'
         except:
             qr_code_url = f'/uploads/qrcodes/{qr_filename}'
         
-        # Convert tree images to JSON
+        # Save to database
         tree_images_json = json.dumps(tree_images) if tree_images else ''
         
-        # Calculate tree age in years/months if planted date provided
-        tree_age_years = None
-        tree_age_months = None
-        if qr_data.get('plantedDate'):
-            try:
-                planted = datetime.fromisoformat(qr_data['plantedDate'].replace('Z', '+00:00'))
-                now_date = datetime.now()
-                delta = now_date - planted
-                tree_age_years = delta.days // 365
-                tree_age_months = (delta.days % 365) // 30
-            except:
-                pass
-        
-        # Save to database
         conn = sqlite3.connect(DATABASE)
         cursor = conn.cursor()
         
@@ -2857,12 +2854,12 @@ def generate_qr():
             qr_data.get('treeId', ''),
             qr_data.get('treeName', ''),
             qr_data.get('scientificName', ''),
-            qr_data.get('plantedDate', now),
-            qr_data.get('location', ''),
-            qr_data.get('coordinates', ''),
-            qr_data.get('plantedBy', ''),
+            datetime.now().isoformat(),
+            '',  # location (removed)
+            '',  # coordinates (removed)
+            '',  # planted_by (removed)
             qr_data.get('maintenanceBy', ''),
-            str(tree_age_years) if tree_age_years else '',
+            qr_data.get('treeAge', ''),
             qr_data.get('treeHeight', ''),
             qr_data.get('description', ''),
             qr_data.get('healthStatus', 'Good'),
@@ -2876,8 +2873,7 @@ def generate_qr():
             now,
             'Active',
             qr_data.get('qrStyle', 'default'),
-            tree_age_years,
-            tree_age_months,
+            None, None,
             qr_data.get('girthSize', ''),
             qr_data.get('canopySize', ''),
             qr_data.get('soilType', ''),
@@ -2888,14 +2884,13 @@ def generate_qr():
         conn.commit()
         conn.close()
         
-        # Log activity
         if admin_info:
             log_activity(
                 user_id=admin_info[0],
                 action='create',
                 entity_type='qr',
                 entity_id=qr_id,
-                details={'treeName': qr_data.get('treeName'), 'location': qr_data.get('location')}
+                details={'treeName': qr_data.get('treeName')}
             )
         
         app.logger.info(f"QR generated: {qr_id} - {qr_data.get('treeName')}")
@@ -2905,12 +2900,9 @@ def generate_qr():
             'message': 'Tree QR data saved successfully',
             'qrId': qr_id,
             'qrCodeUrl': qr_code_url,
-            'qrCodeUrlSimple': f'/uploads/qrcodes/{qr_filename}',
             'treeImages': tree_images,
             'treeVideoUrl': tree_video_url,
-            'qrData': {'id': qr_id, 'treeName': qr_data.get('treeName'), 'scanUrl': tree_scan_url},
-            'displayPlantedDate': format_date(qr_data.get('plantedDate', now)),
-            'displayCreatedDate': format_date(now),
+            'scanUrl': tree_scan_url,
             'timestamp': now
         })
         
@@ -2918,7 +2910,7 @@ def generate_qr():
         app.logger.error(f"Error generating QR: {e}")
         app.logger.error(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
-
+    
 @app.route('/api/qr/<qr_id>', methods=['PUT'])
 def update_qr(qr_id):
     """Update QR data"""
