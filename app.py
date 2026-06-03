@@ -825,6 +825,14 @@ def serve_frontend():
     """Serve the main HTML file"""
     return send_from_directory('.', 'index.html')
 
+# FIXED: Added tree redirect route for QR code scans
+@app.route('/tree/<tree_id>')
+def tree_redirect(tree_id):
+    """Redirect QR scans to the tree information page"""
+    app.logger.info(f"Tree QR scanned: {tree_id}")
+    # Redirect to main site with tree ID parameter
+    return redirect(f'/index.html?tree={tree_id}#tree-details')
+
 @app.route('/uploads/<path:filename>')
 def serve_upload(filename):
     """Serve uploaded files"""
@@ -2714,6 +2722,7 @@ def get_qr(qr_id):
         app.logger.error(f"Error getting QR data {qr_id}: {e}")
         return jsonify({'error': str(e)}), 500
 
+# ============ FIXED QR GENERATION ENDPOINT ============
 @app.route('/api/qr', methods=['POST'])
 def generate_qr():
     """Generate QR code for tree"""
@@ -2765,45 +2774,22 @@ def generate_qr():
                 elif saved_file.get('type') == 'video':
                     tree_video_url = saved_file['url']
         
-        # Prepare QR data
-        qr_text_data = {
-            'id': qr_id,
-            'treeId': qr_data.get('treeId', ''),
-            'treeName': qr_data.get('treeName', ''),
-            'scientificName': qr_data.get('scientificName', ''),
-            'plantedDate': qr_data.get('plantedDate', now),
-            'location': qr_data.get('location', ''),
-            'coordinates': qr_data.get('coordinates', ''),
-            'plantedBy': qr_data.get('plantedBy', ''),
-            'maintenanceBy': qr_data.get('maintenanceBy', ''),
-            'treeAge': qr_data.get('treeAge', ''),
-            'treeHeight': qr_data.get('treeHeight', ''),
-            'description': qr_data.get('description', ''),
-            'healthStatus': qr_data.get('healthStatus', 'Good'),
-            'lastMaintenance': qr_data.get('lastMaintenance', ''),
-            'nextMaintenance': qr_data.get('nextMaintenance', ''),
-            'wateringSchedule': qr_data.get('wateringSchedule', ''),
-            'generated': format_date(now),
-            'imageCount': len(tree_images),
-            'hasVideo': bool(tree_video_url),
-            'girthSize': qr_data.get('girthSize', ''),
-            'canopySize': qr_data.get('canopySize', ''),
-            'soilType': qr_data.get('soilType', ''),
-            'wateringFrequency': qr_data.get('wateringFrequency', ''),
-            'specialNotes': qr_data.get('specialNotes', '')
-        }
+        # FIXED: Generate QR code with URL only (prevents version 41 error)
+        # Store just the tree URL - much smaller data than full JSON
+        tree_scan_url = f"https://annainframis.pythonanywhere.com/tree/{qr_id}"
         
-        # Generate QR code image with better error correction
+        # QR code with auto version selection (1-40) and medium error correction
         qr = qrcode.QRCode(
-            version=2,
-            box_size=10,
+            version=None,  # Auto-select appropriate version
+            error_correction=qrcode.constants.ERROR_CORRECT_M,  # Medium error correction (good balance)
+            box_size=8,
             border=4,
-            error_correction=qrcode.constants.ERROR_CORRECT_H
         )
-        qr.add_data(json.dumps(qr_text_data, indent=2))
+        qr.add_data(tree_scan_url)  # Simple URL instead of huge JSON
         qr.make(fit=True)
-        
         qr_img = qr.make_image(fill_color="black", back_color="white")
+        
+        app.logger.info(f"Generated QR code for {qr_id} with version {qr.version}")
         
         # Save QR code with tree name for easy identification
         clean_name = re.sub(r'[^a-zA-Z0-9]', '', qr_data.get('treeName', 'tree'))[:20]
@@ -2922,7 +2908,7 @@ def generate_qr():
             'qrCodeUrlSimple': f'/uploads/qrcodes/{qr_filename}',
             'treeImages': tree_images,
             'treeVideoUrl': tree_video_url,
-            'qrData': qr_text_data,
+            'qrData': {'id': qr_id, 'treeName': qr_data.get('treeName'), 'scanUrl': tree_scan_url},
             'displayPlantedDate': format_date(qr_data.get('plantedDate', now)),
             'displayCreatedDate': format_date(now),
             'timestamp': now
@@ -3810,7 +3796,7 @@ def too_large_error(error):
 # ============ MAIN ============
 if __name__ == '__main__':
     print("=" * 70)
-    print(" KC Jain Advocate Website - Python Backend v4.5")
+    print(" KC Jain Advocate Website - Python Backend v4.5 (QR Fixed)")
     print("=" * 70)
     print(f" Database: {DATABASE}")
     print(f" Upload folder: {UPLOAD_FOLDER}")
@@ -3820,7 +3806,7 @@ if __name__ == '__main__':
     print("=" * 70)
     print(" Features:")
     print("  ✓ Content Management (Cases, Posts, Blogs, Announcements)")
-    print("  ✓ QR Code Generation for Trees")
+    print("  ✓ QR Code Generation for Trees (FIXED: auto version selection)")
     print("  ✓ Newspaper Cuttings Management")
     print("  ✓ Books & Resources Management")
     print("  ✓ Appointment Request Management")
