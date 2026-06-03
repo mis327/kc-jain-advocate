@@ -3241,52 +3241,51 @@
                 });
             },
 
-            displayQRHistory() {
-                const container = document.getElementById('qr-history-container');
-                if (!container) return;
-                
-                if (this.qrData.length === 0) {
-                    container.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-qrcode"></i>
-                            <h3>No QR Codes Generated</h3>
-                            <p>Generate your first tree QR code using the form above.</p>
-                        </div>
-                    `;
-                    return;
-                }
+         displayQRHistory() {
+    const container = document.getElementById('qr-history-container');
+    if (!container) return;
+    
+    if (this.qrData.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-qrcode"></i>
+                <h3>No QR Codes Generated</h3>
+                <p>Generate your first tree QR code using the form above.</p>
+            </div>
+        `;
+        return;
+    }
 
-                let html = '<div class="table-responsive"><table class="qr-table"><thead><tr><th>QR</th><th>Tree ID</th><th>Name</th><th>Location</th><th>Planted</th><th>Actions</th></tr></thead><tbody>';
-                
-                this.qrData.forEach(item => {
-                    html += `
-                        <tr>
-                            <td><img src="${item.qrCodeUrl}" class="qr-small" onclick="app.openImageModal('${item.qrCodeUrl}')"></td>
-                            <td>${this.escapeHTML(item.treeId)}</td>
-                            <td>${this.escapeHTML(item.treeName)}</td>
-                            <td>${this.escapeHTML(item.location)}</td>
-                            <td>${item.displayDate || item.plantedDate}</td>
-                            <td>
-                                <button class="admin-btn share-btn" onclick="app.copyShareLink('qr-${item.id}')">
-                                    <i class="fas fa-share-alt"></i>
-                                </button>
-                                ${this.isAdminLoggedIn ? `
-                                    <button class="admin-btn edit-btn" onclick="app.editQR('${item.id}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="admin-btn delete-btn" onclick="app.deleteQR('${item.id}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                ` : ''}
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                html += '</tbody></table></div>';
-                container.innerHTML = html;
-            },
-
+    let html = '<div class="table-responsive"><table class="qr-table"><thead><tr><th>QR</th><th>Tree ID</th><th>Name</th><th>Location</th><th>Planted</th><th>Actions</th></tr></thead><tbody>';
+    
+    this.qrData.forEach(item => {
+        html += `
+            <tr>
+                <td><img src="${item.qrCodeUrl}" class="qr-small" onclick="app.openImageModal('${item.qrCodeUrl}')"></td>
+                <td>${this.escapeHTML(item.treeId)}</td>
+                <td>${this.escapeHTML(item.treeName)}</td>
+                <td>${this.escapeHTML(item.location)}</td>
+                <td>${item.displayDate || item.plantedDate}</td>
+                <td>
+                    <button class="admin-btn share-btn" onclick="app.copyShareLink('qr-${item.id}')">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                    ${this.isAdminLoggedIn ? `
+                        <button class="admin-btn edit-btn" onclick="app.editQR('${item.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="admin-btn delete-btn" onclick="app.deleteQR('${item.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    ` : ''}
+                </td>
+            </tr>
+        `;
+    });
+    
+    html += '</tbody></table></div>';
+    container.innerHTML = html;
+},
             // Load appointments (consultations) for admin
 async loadAppointments() {
     if (!this.isAdminLoggedIn) return;
@@ -4102,7 +4101,7 @@ async deleteInquiry(inquiryId) {
     }
 },
 
-           async editQR(qrId) {
+         async editQR(qrId) {
     if (!this.isAdminLoggedIn) {
         this.showToast('Admin login required', 'warning');
         return;
@@ -4117,6 +4116,7 @@ async deleteInquiry(inquiryId) {
         document.getElementById('tree-height').value = qr.treeHeight || '';
         document.getElementById('tree-description').value = qr.description || '';
         
+        // Clear and reload images preview
         const previewContainer = document.getElementById('tree-images-preview');
         previewContainer.innerHTML = '';
         if (qr.treeImages && qr.treeImages.length > 0) {
@@ -4131,59 +4131,46 @@ async deleteInquiry(inquiryId) {
             });
         }
         
-        const videoPreviewContainer = document.getElementById('tree-video-preview');
-        videoPreviewContainer.innerHTML = '';
-        if (qr.videoData) {
-            const previewDiv = document.createElement('div');
-            previewDiv.className = 'video-preview-item';
-            previewDiv.setAttribute('data-video-url', qr.videoData);
-            previewDiv.innerHTML = `
-                <i class="fas fa-video"></i>
-                <span class="video-filename">Existing Video</span>
-                <button class="remove-image" onclick="this.parentElement.remove()">×</button>
-            `;
-            videoPreviewContainer.appendChild(previewDiv);
-        }
-        
         this.editingQRId = qrId;
         this.showAdminSection();
         const qrSection = document.getElementById('qr-system-section');
         qrSection.style.display = 'block';
         qrSection.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('submit-qr').innerHTML = '<i class="fas fa-save"></i> Update QR';
         this.showToast('Edit mode activated for QR code', 'info');
     }
 },
 
-            async deleteQR(qrId) {
-                if (!this.isAdminLoggedIn) {
-                    this.showToast('Admin login required', 'warning');
-                    return;
+async deleteQR(qrId) {
+    if (!this.isAdminLoggedIn) {
+        this.showToast('Admin login required', 'warning');
+        return;
+    }
+
+    if (confirm('Delete this QR code and associated tree data?')) {
+        try {
+            const response = await fetch(`/api/qr/${qrId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${this.sessionToken || ''}`
                 }
+            });
 
-                if (confirm('Delete this QR code and associated tree data?')) {
-                    try {
-                        const response = await fetch(`/api/qr/${qrId}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Authorization': `Bearer ${this.sessionToken || ''}`
-                            }
-                        });
+            const result = await response.json();
 
-                        const result = await response.json();
-
-                        if (result.success) {
-                            await this.loadQRFromServer();
-                            await this.loadStats();
-                            this.showToast('QR code deleted successfully', 'success');
-                        } else {
-                            this.showToast('Error deleting QR code', 'error');
-                        }
-                    } catch (error) {
-                        console.error('Delete error:', error);
-                        this.showToast('Failed to delete QR code', 'error');
-                    }
-                }
-            },
+            if (result.success) {
+                await this.loadQRFromServer();
+                await this.loadStats();
+                this.showToast('QR code deleted successfully', 'success');
+            } else {
+                this.showToast('Error deleting QR code', 'error');
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            this.showToast('Failed to delete QR code', 'error');
+        }
+    }
+},
 
             printQR() {
                 const qrPreview = document.getElementById('qr-preview-section');
@@ -5125,15 +5112,20 @@ async deleteInquiry(inquiryId) {
                     await this.submitGeneralRequest();
                 });
 
-                document.getElementById('qr-form').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    if (!this.isAdminLoggedIn) {
-                        this.showToast('Admin login required', 'warning');
-                        document.getElementById('loginModal').style.display = 'flex';
-                        return;
-                    }
-                    this.generateQRCode();
-                });
+                // In your init() function, update the QR form submit
+document.getElementById('qr-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!this.isAdminLoggedIn) {
+        this.showToast('Admin login required', 'warning');
+        document.getElementById('loginModal').style.display = 'flex';
+        return;
+    }
+    if (this.editingQRId) {
+        this.updateQRCode(); // Call update function
+    } else {
+        this.generateQRCode(); // Call create function
+    }
+});
 
                 document.getElementById('clear-qr-form').addEventListener('click', () => {
                     document.getElementById('qr-form').reset();
