@@ -2562,15 +2562,6 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label><i class="fas fa-heartbeat"></i> Health Status</label>
-                        <select id="tree-health" class="form-control">
-                            <option value="Excellent">Excellent</option>
-                            <option value="Good" selected>Good</option>
-                            <option value="Fair">Fair</option>
-                            <option value="Poor">Poor</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label><i class="fas fa-ruler-vertical"></i> Height (feet)</label>
                         <input type="number" id="tree-height" class="form-control" placeholder="e.g., 15">
                     </div>
@@ -2893,7 +2884,6 @@
                 treeImages: item.treeImages || [],
                 tree_image_urls: item.tree_image_urls,
                 tree_video_url: item.tree_video_url,
-                healthStatus: item.health_status,
                 treeHeight: item.tree_height,
                 description: item.description,
                 girthSize: item.girth_size,
@@ -3353,9 +3343,6 @@ displayQRHistory() {
             <button class="sort-btn ${this.qrSortField === 'qr_scan_count' ? 'active' : ''}" onclick="app.sortQR('qr_scan_count')">
                 Scans <i class="fas fa-sort${this.qrSortField === 'qr_scan_count' ? (this.qrSortOrder === 'asc' ? '-up' : '-down') : ''}"></i>
             </button>
-            <button class="sort-btn ${this.qrSortField === 'health_status' ? 'active' : ''}" onclick="app.sortQR('health_status')">
-                Health <i class="fas fa-sort${this.qrSortField === 'health_status' ? (this.qrSortOrder === 'asc' ? '-up' : '-down') : ''}"></i>
-            </button>
         </div>
         
         <!-- QR Table -->
@@ -3400,9 +3387,6 @@ displayQRHistory() {
                         </div>
                         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
                             ${item.scientificName ? `<span style="background: #f1f5f9; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;"><i class="fas fa-leaf"></i> ${this.escapeHTML(item.scientificName)}</span>` : ''}
-                            <span style="background: ${item.healthStatus === 'Excellent' ? '#10b981' : item.healthStatus === 'Good' ? '#3b82f6' : item.healthStatus === 'Fair' ? '#f59e0b' : '#ef4444'}; color: white; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem;">
-                                <i class="fas fa-heartbeat"></i> ${this.escapeHTML(item.healthStatus || 'Good')}
-                            </span>
                         </div>
                         <div style="margin-top: 8px; font-size: 0.75rem; color: #64748b;">
                             <i class="far fa-calendar"></i> Created: ${this.formatDate(item.created_date)}
@@ -3666,14 +3650,6 @@ async shareQR(qrId, treeName) {
     }
 },
 
-copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        this.showToast('Link copied to clipboard!', 'success');
-    }).catch(() => {
-        this.showToast('Failed to copy link', 'error');
-    });
-},
-
 // View tree details
 async viewTreeDetails(qrId) {
     try {
@@ -3698,7 +3674,6 @@ async viewTreeDetails(qrId) {
                     <h2 style="color: #c9a959;">🌳 ${this.escapeHTML(data.tree_name)}</h2>
                     <p><strong><i class="fas fa-barcode"></i> Tree ID:</strong> ${this.escapeHTML(data.tree_id)}</p>
                     ${data.scientific_name ? `<p><strong><i class="fas fa-leaf"></i> Scientific Name:</strong> ${this.escapeHTML(data.scientific_name)}</p>` : ''}
-                    ${data.health_status ? `<p><strong><i class="fas fa-heartbeat"></i> Health:</strong> <span style="background: ${data.health_status === 'Excellent' ? '#10b981' : data.health_status === 'Good' ? '#3b82f6' : '#f59e0b'}; color: white; padding: 2px 10px; border-radius: 20px;">${this.escapeHTML(data.health_status)}</span></p>` : ''}
                     ${data.tree_height ? `<p><strong><i class="fas fa-ruler-vertical"></i> Height:</strong> ${data.tree_height} ft</p>` : ''}
                     ${data.description ? `<div style="background: #f8fafc; padding: 15px; border-radius: 12px; margin: 15px 0;"><strong>📝 Description:</strong><br>${data.description}</div>` : ''}
                     ${imagesHtml ? `<div style="margin: 15px 0;"><strong>📸 Images:</strong><br>${imagesHtml}</div>` : ''}
@@ -3745,13 +3720,31 @@ async shareQR(qrId, treeName) {
     }
 },
 
-// Copy to clipboard
 copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
+    // Fallback for non-HTTPS or browsers without clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            this.showToast('Link copied to clipboard!', 'success');
+        }).catch(() => {
+            this.fallbackCopyToClipboard(text);
+        });
+    } else {
+        this.fallbackCopyToClipboard(text);
+    }
+},
+
+fallbackCopyToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
         this.showToast('Link copied to clipboard!', 'success');
-    }).catch(() => {
+    } catch (err) {
         this.showToast('Failed to copy link', 'error');
-    });
+    }
+    document.body.removeChild(textArea);
 },
 
 // Print QR code
@@ -3812,7 +3805,6 @@ async viewTreeDetails(qrId) {
                     <h2 style="color: #c9a959;">🌳 ${this.escapeHTML(data.tree_name)}</h2>
                     <p><strong><i class="fas fa-barcode"></i> Tree ID:</strong> ${this.escapeHTML(data.tree_id)}</p>
                     ${data.scientific_name ? `<p><strong><i class="fas fa-leaf"></i> Scientific Name:</strong> ${this.escapeHTML(data.scientific_name)}</p>` : ''}
-                    ${data.health_status ? `<p><strong><i class="fas fa-heartbeat"></i> Health Status:</strong> <span style="background: ${data.health_status === 'Excellent' ? '#10b981' : data.health_status === 'Good' ? '#3b82f6' : '#f59e0b'}; color: white; padding: 2px 10px; border-radius: 20px;">${this.escapeHTML(data.health_status)}</span></p>` : ''}
                     ${data.tree_height ? `<p><strong><i class="fas fa-ruler-vertical"></i> Height:</strong> ${data.tree_height} ft</p>` : ''}
                     ${data.girth_size ? `<p><strong><i class="fas fa-arrows-alt-h"></i> Girth Size:</strong> ${data.girth_size}</p>` : ''}
                     ${data.canopy_size ? `<p><strong><i class="fas fa-circle"></i> Canopy Size:</strong> ${data.canopy_size}</p>` : ''}
@@ -4525,7 +4517,6 @@ async deleteInquiry(inquiryId) {
     const treeId = document.getElementById('tree-id').value.trim();
     const treeName = document.getElementById('tree-name').value.trim();
     const scientificName = document.getElementById('scientific-name').value.trim();
-    const treeHealth = document.getElementById('tree-health').value;
     const treeHeight = document.getElementById('tree-height').value;
     const description = document.getElementById('tree-description').value.trim();
 
@@ -4562,14 +4553,13 @@ async deleteInquiry(inquiryId) {
         }
     }
 
-    const qrData = {
-        treeId: treeId,
-        treeName: treeName,
-        scientificName: scientificName,
-        healthStatus: treeHealth,
-        treeHeight: treeHeight,
-        description: description
-    };
+  const qrData = {
+    treeId: treeId,
+    treeName: treeName,
+    scientificName: scientificName,
+    treeHeight: treeHeight,
+    description: description
+};
 
     try {
         const response = await fetch('/api/qr', {
@@ -4593,7 +4583,6 @@ async deleteInquiry(inquiryId) {
                 <div class="qr-data-row"><strong>Tree ID:</strong> ${treeId}</div>
                 <div class="qr-data-row"><strong>Tree Name:</strong> ${treeName}</div>
                 ${scientificName ? `<div class="qr-data-row"><strong>Scientific:</strong> ${scientificName}</div>` : ''}
-                ${treeHealth ? `<div class="qr-data-row"><strong>Health:</strong> ${treeHealth}</div>` : ''}
                 ${treeHeight ? `<div class="qr-data-row"><strong>Height:</strong> ${treeHeight} ft</div>` : ''}
                 ${description ? `<div class="qr-data-row"><strong>Description:</strong> ${description.substring(0, 100)}${description.length > 100 ? '...' : ''}</div>` : ''}
             `;
@@ -4655,7 +4644,6 @@ async deleteInquiry(inquiryId) {
         document.getElementById('tree-id').value = qr.treeId;
         document.getElementById('tree-name').value = qr.treeName;
         document.getElementById('scientific-name').value = qr.scientificName || '';
-        document.getElementById('tree-health').value = qr.healthStatus || 'Good';
         document.getElementById('tree-height').value = qr.treeHeight || '';
         document.getElementById('tree-description').value = qr.description || '';
         
